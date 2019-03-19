@@ -1,0 +1,52 @@
+language: nix
+sudo: false
+os:
+- linux
+#- osx
+
+env:
+  global:
+  - CACHIX_CACHE=arc
+  #- NUR_REPO=arcnmx
+  - HOME_MANAGER=master
+  - secure: "hYxexqpNaqnQu/vn4sjinci91WTuRDIqZXDRQ8sB8xrBlCXxUZYkQ+RWznXOkHEpEb8Xifc3P5ljnIZpl9a1RvzCu8XB+VfiVa+ivfh9gq/iKnRrAM4zAZJ/crxig4Nkd8qupsBl76M1Uu2A5pn313Q9vJztBvYS1VqBShl1Of0toeR2Ly7bKvWzbQB6ITGqaeAs1KnIEXcG585deXNm4vCcilRgg9S/f9YuJOw1NG1zdMWJQxZFdrB+5+7gqTv7eUze2GmhipdRAGFlaI9+XLiedFn2LxGqmHHHVhqWTzTMPmMJMQ9xUhKAlwiB3rj9buP2O9R/Pr3xsdxwiZyZaikgpW1soPN82Bwl+zygWnrFIvtkGfMmGBU9B+CbDbqCm8EgYqy8kxWLN/1UfRyP6j8YaG9Ablwv2me6xbijnhljlUr3WT4z+JYD3ce4TuBjMXdMVF1TjFu9ENkpPm5gZXX5uDu7da6iWqkKCdrcB470DTdxwi4v4s8zs3qsB0A7MtP5NGA/VYq/nUbBP4q5PgVWybHUAkLNwDDXxRna7h+iBre1shJLAd5B4OqTQxUgz+mZFHoSL6qxcyf6D28Q0hh5eH/wyA/h85BlW39iGKRVLxc/hHb94CJnw4YsMjSNg7McUfLFs807Y2iRix6rcsSViiirMdhTWQTXAryPWpw="
+  - secure: "j1wYRVwZKBQpscWf5jkRjx+64R+20Po4sdfnH4jJ4Dp3qo3dfu3teCZHjFwIYLvL1f2dq8XYSwrY8nT0gBcZQa0YoT3pZOin4mN59ImiQTqelhUx4I7KSh9vSvSvCf5rmFdaaNo+XBh4flHec/tug7BrF64WSIlRxdBjVxhOsvMkEV4MFTRwhlbRC7L2ZVyi62kUBYf22+BqqaHEjfjSC5tnHzSeCfUzqne/KoUZixVJoXbi5j0XJ4QtO4z7/kuOngIZL2awTYU/gS/ecBx7ACgI869YknADtyEPu1x29xup6ZUuf4KTC9vNkZKHpaNiraNhW7d3GNxjH5I9NPD7T5bONJEaPViiBd5MjO214VLlMo82piqfpD3WctGagx5lFIuIwZrjWypzFuYEoCUaXSghnWGBiJG0DTlAAcFt/kqMsgLU3eumJ2q15FjZtT9AxUmDhXWcpnl2TnyfKpNp7KTnycVZnw7newdkpnDLm944urMIYsl1e42O9XB/eHbqV+a/4W6wbrdKn1oXWMuZvdcoW3PS8LlQXjkeLcYzGvc4hlzvKofNraZ1wu47bz4Q/uRD8ZlsnIOfxS6SU1ssiOLgm1xVE0gCwA1zM5EyoV8n1fGQH3/Dty9LNenOY++wQ2nbqh/U59JrnC1vUMnnQDitS1wL3SpfGKvt9BveeX0="
+
+matrix:
+  include:
+  - env: NIX_CHANNEL=nixos-unstable-small
+  - env: NIX_CHANNEL=nixos-unstable
+  - env: NIX_CHANNEL=nixos-18.09
+  - env: NIX_CHANNEL=nixpkgs-unstable
+
+install:
+- cachix() { nix run nixpkgs.cachix -c cachix "$@"; }
+- nix-channel --add https://nixos.org/channels/$NIX_CHANNEL nixpkgs
+- nix-channel --add https://github.com/rycee/home-manager/archive/$HOME_MANAGER.tar.gz home-manager
+- travis_retry nix-channel --update
+- export NIX_PATH="nixpkgs=$HOME/.nix-defexpr/channels/nixpkgs:home-manager=$HOME/.nix-defexpr/channels/home-manager" # ugh how to do this properly
+- |
+  if [[ -n $CACHIX_CACHE ]]; then
+    cachix use $CACHIX_CACHE
+  fi
+
+script:
+- ./ci/build.sh
+
+deploy:
+  provider: script
+  script: "true"
+  on:
+    condition: "$NIX_CHANNEL = nixos-unstable"
+
+before_deploy:
+- |
+  if [[ -n $CACHIX_SIGNING_KEY ]]; then
+    nix-build ci -A packages | cachix push $CACHIX_CACHE
+  fi
+
+after_deploy:
+- |
+  if [[ -n $NUR_REPO ]]; then
+    curl -XPOST "https://nur-update.herokuapp.com/update?repo=$NUR_REPO"
+  fi
