@@ -3,7 +3,7 @@
 A collection of packages and modules for Nix, NixOS, and home-manager.
 
 ```bash
-nix run nixpkgs.cachix use arc
+nix run nixpkgs.cachix -c cachix use arc
 ```
 
 
