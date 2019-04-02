@@ -1,5 +1,6 @@
 { callPackage }: callPackage {
   cargo-outdated = { rustPlatform, fetchFromGitHub, pkgconfig, openssl }: rustPlatform.buildRustPackage rec {
+    name = "${pname}-${version}";
     pname = "cargo-outdated";
     version = "0.8.0";
     src = fetchFromGitHub {
@@ -14,6 +15,7 @@
     buildInputs = [ openssl ];
   };
   cargo-expand = { rustPlatform, fetchFromGitHub }: rustPlatform.buildRustPackage rec {
+    name = "${pname}-${version}";
     pname = "cargo-expand";
     version = "0.4.10";
     src = fetchFromGitHub {
