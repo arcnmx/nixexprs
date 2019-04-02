@@ -83,6 +83,10 @@ in {
       default = [ ];
     };
 
+    address = mkOption {
+      type = types.str;
+    };
+
     encryptionPublicKey = mkOption {
       type = types.str;
     };
