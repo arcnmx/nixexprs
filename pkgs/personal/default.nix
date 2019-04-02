@@ -6,4 +6,5 @@
   benc = callPackage ./benc { };
   qemucomm = callPackage ./qemucomm.nix { };
   filebin = callPackage ./filebin { };
+  winpath = callPackage ./winpath.nix { };
 }
