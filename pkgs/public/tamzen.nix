@@ -3,7 +3,7 @@
 let
   version = "1.11.4"; 
 in stdenvNoCC.mkDerivation {
-  pname = "tamzen-font";
+  name = "tamzen-font";
   inherit version;
 
   src = fetchzip {

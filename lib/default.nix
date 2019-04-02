@@ -19,6 +19,10 @@
     else if lib.isAttrs fn then
       lib.mapAttrs (_: p: callFunctionAs callPackage p args) fn
     else builtins.trace fn throw "expected package function";
+  isRust2018 = rustPlatform: let
+    major = lib.versions.major rustPlatform.rust.cargo.version;
+    minor = lib.versions.minor rustPlatform.rust.cargo.version;
+  in lib.toInt major == 1 && lib.toInt minor >= 31;
   build-support = callLibs ./build-support;
 in {
   inherit
@@ -26,5 +30,6 @@ in {
     isPath asFile
     update attrNameValues moduleValue
     foldAttrs foldAttrsRecursive
+    isRust2018
     build-support;
 })

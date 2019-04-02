@@ -1,5 +1,5 @@
 { callPackage }: callPackage {
-  cargo-outdated = { rustPlatform, fetchFromGitHub, pkgconfig, openssl }: rustPlatform.buildRustPackage rec {
+  cargo-outdated = { arc, rustPlatform, fetchFromGitHub, pkgconfig, openssl }: rustPlatform.buildRustPackage rec {
     name = "${pname}-${version}";
     pname = "cargo-outdated";
     version = "0.8.0";
@@ -13,8 +13,9 @@
     cargoSha256 = "0xd58wwlh3shch83bxaxnwznb3028f7i0n93h0kwh2cdacnx4cpy";
     nativeBuildInputs = [ pkgconfig ];
     buildInputs = [ openssl ];
+    meta.broken = !arc.lib.isRust2018 rustPlatform;
   };
-  cargo-expand = { rustPlatform, fetchFromGitHub }: rustPlatform.buildRustPackage rec {
+  cargo-expand = { arc, rustPlatform, fetchFromGitHub }: rustPlatform.buildRustPackage rec {
     name = "${pname}-${version}";
     pname = "cargo-expand";
     version = "0.4.10";
@@ -25,5 +26,6 @@
       sha256 = "1f90v67clmql2bb32sgs7c48q8nhyw2pfk4hpkiy8qll8fypjgik";
     };
     cargoSha256 = "042s28p68jz3my2q1crmq7xzcajwxmcprgg9z7r9ffhrybk4jvwz";
+    meta.broken = !arc.lib.isRust2018 rustPlatform;
   };
 } { }
