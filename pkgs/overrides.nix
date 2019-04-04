@@ -14,7 +14,7 @@
     });
 
     # usbmuxd is old/broken
-    usbmuxd = { fetchFromGitHub, usbmuxd }: usbmuxd.overrideAttrs(old: rec {
+    usbmuxd = { fetchFromGitHub, usbmuxd, libimobiledevice }: (usbmuxd.overrideAttrs (old: rec {
       version = "git";
       src = fetchFromGitHub {
         owner = "libimobiledevice";
@@ -22,8 +22,8 @@
         rev = "b1b0bf390363fa36aff1bc09443ff751943b9c34";
         sha256 = "176hapckx98h4x0ni947qpkv2s95f8xfwz00wi2w7rgbr6cviwjq";
       };
-    });
-    libusbmuxd = { fetchFromGitHub, libusbmuxd }: libusbmuxd.overrideAttrs(old: rec {
+    })).override { inherit libimobiledevice; };
+    libusbmuxd = { fetchFromGitHub, libusbmuxd }: (libusbmuxd.overrideAttrs (old: rec {
       version = "git";
       src = fetchFromGitHub {
         owner = "libimobiledevice";
@@ -31,8 +31,8 @@
         rev = "c75605d862cd1c312494f6c715246febc26b2e05";
         sha256 = "0467a045k4znmaz61i7a2s7yywj67q830ja6zn7z39k5pqcl2z4p";
       };
-    });
-    libimobiledevice = { fetchFromGitHub, libimobiledevice }: libimobiledevice.overrideAttrs(old: rec {
+    }));
+    libimobiledevice = { fetchFromGitHub, libimobiledevice, libusbmuxd }: (libimobiledevice.overrideAttrs (old: rec {
       version = "git";
       src = fetchFromGitHub {
         owner = "libimobiledevice";
@@ -40,9 +40,13 @@
         rev = "0584aa90c93ff6ce46927b8d67887cb987ab9545";
         sha256 = "0rvj0aw9m44z457qnjmsp72bvflc0zvlmd3z98mpgli93pvf6cz9";
       };
-    });
+    })).override { inherit libusbmuxd; };
   };
-in {
   overrides = callPackage packages { };
+in {
+  overrides = overrides // rec {
+    libimobiledevice = overrides.libimobiledevice.override { inherit (overrides) libusbmuxd; };
+    usbmuxd = overrides.usbmuxd.override { inherit libimobiledevice; };
+  };
   override = packages;
 }
