@@ -7,4 +7,5 @@
   qemucomm = callPackage ./qemucomm.nix { };
   filebin = callPackage ./filebin { };
   winpath = callPackage ./winpath.nix { };
+  task-blocks = callPackage ./task-blocks.nix { };
 }
