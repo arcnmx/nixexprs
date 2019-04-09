@@ -1,4 +1,4 @@
-{ buildGoPackage, fetchFromGitHub }:
+{ buildGoPackage, fetchFromGitHub, makeWrapper, lib, i3 }:
 let
   version = "0.1.0";
   package = buildGoPackage {
@@ -13,6 +13,12 @@ let
     };
 
     goDeps = ./deps.nix;
+
+    nativeBuildInputs = [ makeWrapper ];
+    i3Path = lib.makeBinPath [ i3 ];
+    preFixup = ''
+      wrapProgram $bin/bin/i3gopher --prefix PATH : $i3Path
+    '';
 
     passthru = {
       exec = "${package}/bin/i3gopher";
