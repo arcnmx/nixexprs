@@ -42,7 +42,7 @@ deploy:
   provider: script
   script: "true"
   on:
-    condition: "$NIX_CHANNEL = nixos-unstable"
+    condition: "$NIX_CHANNEL = nixos-unstable || $NIX_CHANNEL = nixos-unstable-small"
 
 before_deploy:
 - |
