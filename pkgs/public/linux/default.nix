@@ -51,5 +51,6 @@
   in drv;
   packages = {
     inherit mergeLinuxConfig generateLinuxConfig;
+    linux-gce = ./gce.nix;
   };
 in (callPackage packages { })
