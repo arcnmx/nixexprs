@@ -33,7 +33,7 @@ install:
   fi
 
 script:
-- nix eval -f default.nix lib
+- # nix eval -f default.nix lib
 - nix eval -f default.nix modules
 - nix eval -f default.nix overlays
 - ./ci/build.sh
