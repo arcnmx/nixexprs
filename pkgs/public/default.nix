@@ -8,3 +8,4 @@
 // (import ./droid.nix { inherit callPackage; })
 // (import ./crates { inherit callPackage; })
 // (import ./programs.nix { inherit callPackage; })
+// (import ./linux { inherit callPackage; })

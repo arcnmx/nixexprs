@@ -1,6 +1,6 @@
 { super, lib, callPackage }:
 let
-  arc_lib = import ./lib { inherit lib super; };
+  arc_lib = import ./lib { inherit lib super callPackage; };
   arc_pkgs = import ./pkgs {
     callPackage = arc_lib.callFunctionAs callPackage;
   };

@@ -1,4 +1,4 @@
-{ super, lib }: lib.makeExtensible (self: let
+{ super, lib, callPackage }: lib.makeExtensible (self: let
   isPath = lib.types.path.check;
   asFile = name: strOrPath: if isPath strOrPath
     then strOrPath
@@ -8,7 +8,7 @@
   foldAttrs = lib.foldl update {};
   foldAttrsRecursive = lib.foldl lib.updateRecursive {};
   moduleValue = config: builtins.removeAttrs config ["_module"];
-  callLibs = file: import file { inherit lib self super; };
+  callLibs = file: import file { inherit lib self super callPackage; };
   copyFunctionArgs = src: dst: lib.setFunctionArgs dst (lib.functionArgs src);
   callFunctionAs = callPackage: fn: args: let
     res = callPackage fn args;
