@@ -20,6 +20,7 @@ in {
       };
       Service = {
         Type = "exec";
+        Restart = "on-failure";
         # TODO: systemd/shell string escapes
         ${if cfg.exec != null then "Environment" else null} = ["I3GOPHER_EXEC=\"${cfg.exec}\""];
         ExecStart = if cfg.exec != null
