@@ -15,7 +15,8 @@ in stdenvNoCC.mkDerivation {
 
   phases = ["installPhase"];
   installPhase = ''
-    install -Dm0644 -t $out/share/fonts/tamzen/ $src/pcf/*.pcf $src/psf/*.psf
+    install -Dm0644 -t $out/share/fonts/tamzen/ $src/pcf/*.pcf
+    install -Dm0644 -t $out/share/consolefonts/ $src/psf/*.psf
 
     cd $out/share/fonts/tamzen/
     mkfontdir
