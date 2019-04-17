@@ -4,7 +4,7 @@ with lib; let
   authorizedKeysFile = { runCommand }: runCommand "authorized_keys" {
     source = map (pkgs.arc.lib.asFile "authorized_key") cfg.authorizedKeys;
   } ''
-    cat $source > $out
+    sed -s '$G' $source > $out
   '';
   activationScript = ''
     $DRY_RUN_CMD install -Dm0644 ${pkgs.callPackage authorizedKeysFile { }} ~/.ssh/authorized_keys
