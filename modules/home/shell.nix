@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }: with lib; let
   cfg = config.home.shell;
   shellFunctions = lib.concatStringsSep "\n" (lib.mapAttrsToList (fn: body: ''
-    ${fn}() {
+    function ${fn}() {
       ${body}
     }
   '') cfg.functions);
