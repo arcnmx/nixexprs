@@ -17,9 +17,9 @@ matrix:
   - env: NIX_CHANNEL=nixos-unstable
   - env: NIX_CHANNEL=nixos-unstable-small
   - env: NIX_CHANNEL=nixpkgs-unstable
-  - env:
-    - NIX_CHANNEL=nixos-19.03
-    - HOME_MANAGER=release-19.03
+  #- env:
+  #  - NIX_CHANNEL=nixos-19.03
+  #  - HOME_MANAGER=release-19.03
   allow_failures:
   - env: NIX_CHANNEL=nixos-unstable-small
   - env: NIX_CHANNEL=nixpkgs-unstable
