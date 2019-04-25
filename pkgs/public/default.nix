@@ -4,6 +4,7 @@
   inherit (callPackage ./yggdrasil {}) yggdrasil yggdrasilctl;
   tamzen = callPackage ./tamzen.nix {};
   lorri = callPackage ./lorri.nix {};
+  paswitch = callPackage ./paswitch.nix {};
 } // (import ./nixos.nix { inherit callPackage; })
 // (import ./droid.nix { inherit callPackage; })
 // (import ./crates { inherit callPackage; })
