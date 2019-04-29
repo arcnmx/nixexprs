@@ -8,4 +8,4 @@
   filebin = callPackage ./filebin { };
   winpath = callPackage ./winpath.nix { };
   task-blocks = callPackage ./task-blocks.nix { };
-}
+} // (import ./yggdrasil-7n/default.nix { inherit callPackage; })

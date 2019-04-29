@@ -2,8 +2,7 @@
 let
   version = "0.3.5";
   buildPackage = pname: let package = buildGoPackage {
-    inherit version;
-    name = "${pname}-${version}";
+    inherit pname version;
     goPackagePath = "github.com/yggdrasil-network/yggdrasil-go";
     subPackages = ["cmd/${pname}"];
     src = fetchFromGitHub {
