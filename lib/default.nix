@@ -1,5 +1,10 @@
 { super, lib, callPackage }: lib.makeExtensible (self: let
   isPath = lib.types.path.check;
+  asStoreFile = name: strOrPath: if lib.isStorePath strOrPath
+    then strOrPath
+    else if isPath strOrPath
+    then /. + strOrPath
+    else builtins.toFile name strOrPath;
   asFile = name: strOrPath: if isPath strOrPath
     then strOrPath
     else builtins.toFile name strOrPath;
@@ -27,7 +32,7 @@
 in {
   inherit
     copyFunctionArgs callFunctionAs
-    isPath asFile
+    isPath asFile asStoreFile
     update attrNameValues moduleValue
     foldAttrs foldAttrsRecursive
     isRust2018

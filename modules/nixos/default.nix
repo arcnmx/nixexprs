@@ -1,7 +1,7 @@
 {
   imports = [
     ./yggdrasil.nix
-    ./keychain.nix
+    (import ./keychain.nix true)
     ./filebin.nix
     ./mosh.nix
   ];
