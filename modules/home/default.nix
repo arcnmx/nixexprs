@@ -10,6 +10,7 @@
     ./filebin.nix
     ./i3.nix
     ./i3gopher.nix
+    ./lorri.nix
     ./shell.nix
     ../nixos/keychain.nix
   ];
