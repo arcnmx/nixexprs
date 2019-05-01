@@ -5,8 +5,8 @@
     src = fetchFromGitHub {
       owner = "arcnmx";
       repo = name;
-      rev = "7b477629db13b67bc99a153d7acacccbfcb8944f";
-      sha256 = "058bii4fgw6c83s9qna7qxzrn1dhk94b2q840shpw0hk3qswcnmv";
+      rev = "e09c29f8482f02838a2eae24ff5253eb78af7993";
+      sha256 = "1bgy0m0ggbx5jf7jq39gxfhwz87y4nyvczvsrcxb02blhl9s7ca4";
     };
 
     nativeBuildInputs = [ makeWrapper ];
@@ -14,7 +14,7 @@
 
     makeFlags = ["TASKDATA=$(out)"];
 
-    taskHooks = [ "on-exit" ];
+    taskHooks = [ "on-exit" "on-add" "on-modify" ];
     wrapperPath = makeBinPath buildInputs;
     preFixupPhases = ["wrapInstall"];
     wrapInstall = ''
