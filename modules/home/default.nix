@@ -4,7 +4,6 @@
     ./github.nix
     ./sshd.nix
     ./konawall.nix
-    ./mpv.nix
     ./task.nix
     ./symlink.nix
     ./filebin.nix
