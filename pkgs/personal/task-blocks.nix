@@ -5,8 +5,8 @@
     src = fetchFromGitHub {
       owner = "arcnmx";
       repo = name;
-      rev = "e09c29f8482f02838a2eae24ff5253eb78af7993";
-      sha256 = "1bgy0m0ggbx5jf7jq39gxfhwz87y4nyvczvsrcxb02blhl9s7ca4";
+      rev = "189d6fc94647b7c8cab509a785edcf5bf7763f31";
+      sha256 = "0yw5313q5jg5bpxkvsk6jdhlx2fahm039aawlrx3f4sq88lz5qqn";
     };
 
     nativeBuildInputs = [ makeWrapper ];
