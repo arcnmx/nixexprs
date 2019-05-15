@@ -44,4 +44,15 @@
       sha256 = "1x6pv9v7f6psxkkskm04dar90jv61qix18q68qdwcgvacbhy1784";
     };
   };
+  LanguageClient-neovim = { LanguageClient-neovim, vimUtils }: vimUtils.buildVimPluginFrom2Nix {
+    inherit (LanguageClient-neovim) pname version src;
+
+    propagatedBuildInputs = [ LanguageClient-neovim ];
+
+    preFixup = ''
+      substituteInPlace "$out"/share/vim-plugins/LanguageClient-neovim/autoload/LanguageClient.vim \
+        --replace "let l:path = s:root . '/bin/'" "let l:path = '${LanguageClient-neovim}' . '/bin/'"
+    '';
+  };
+  coc-nvim = import public/coc-nvim.nix;
 } { }

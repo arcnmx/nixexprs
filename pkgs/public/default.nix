@@ -5,6 +5,8 @@
   tamzen = callPackage ./tamzen.nix {};
   lorri = callPackage ./lorri.nix {};
   paswitch = callPackage ./paswitch.nix {};
+  coc-nvim = callPackage ./coc-nvim.nix {};
+  LanguageClient-neovim = callPackage ./language-client-neovim.nix {};
   tridactyl = callPackage ./tridactyl.nix {};
   yarn2nix = let
     yarn2nix = ../../yarn2nix/default.nix;
