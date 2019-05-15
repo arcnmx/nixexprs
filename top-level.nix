@@ -3,6 +3,7 @@ let
   arc_lib = import ./lib { inherit lib super callPackage; };
   arc_pkgs = import ./pkgs {
     callPackage = arc_lib.callFunctionAs callPackage;
+    callPackageOnce = callPackage;
   };
   arc = {
     lib = arc_lib;

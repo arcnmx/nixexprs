@@ -1,7 +1,7 @@
-{ callPackage }:
+{ callPackage, callPackageOnce }:
 let
   personal = import ./personal { inherit callPackage; };
-  public = import ./public { inherit callPackage; };
+  public = import ./public { inherit callPackage callPackageOnce; };
   overrides = import ./overrides.nix { inherit callPackage; };
   vimPlugins = import ./vimPlugins.nix { inherit callPackage; };
   gitAndTools = import ./git { inherit callPackage; };
