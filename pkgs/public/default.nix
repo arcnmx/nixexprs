@@ -5,6 +5,7 @@
   tamzen = callPackage ./tamzen.nix {};
   lorri = callPackage ./lorri.nix {};
   paswitch = callPackage ./paswitch.nix {};
+  tridactyl = callPackage ./tridactyl.nix {};
   yarn2nix = let
     yarn2nix = ../../yarn2nix/default.nix;
   in if builtins.pathExists yarn2nix
