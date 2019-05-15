@@ -4,12 +4,12 @@
     xdg_utils-mimi = { xdg_utils }: xdg_utils.override { mimiSupport = true; };
     luakit-develop = { fetchFromGitHub, luakit }: luakit.overrideAttrs (old: rec {
       name = "luakit-${version}";
-      version = "c6b5a031a50daf757cd1d24535bbf5f88de79434";
+      version = "b24e6d46e5e79f4a9c280a5dcf2118c1847a1019";
       src = fetchFromGitHub {
         owner = "luakit";
         repo = "luakit";
         rev = "${version}";
-        sha256 = "024cnka5cg8cggr625cdpda3ynss4yffqfhvyhg0m8y8w43qk90c";
+        sha256 = "0pyyy7ibd5csxvbkf2q4dripykd0xqgsricslafgv13j4fvm0zm7";
       };
     });
     passff-host = { fetchFromGitHub, passff-host, pass }: (passff-host.override { inherit pass; }).overrideAttrs (old: rec {
