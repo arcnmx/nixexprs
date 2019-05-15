@@ -37,7 +37,7 @@ if [[ -d "$HOOK_DIR" ]]; then
 				fi
 			fi
 
-			if [[ "$RETVAL" != 0 -a "$EXIT_CODE" = 0 ]]; then
+			if [[ "$RETVAL" != 0 && "$EXIT_CODE" = 0 ]]; then
 				EXIT_CODE=$RETVAL
 			fi
 		fi
