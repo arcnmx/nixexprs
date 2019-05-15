@@ -12,6 +12,31 @@
         sha256 = "024cnka5cg8cggr625cdpda3ynss4yffqfhvyhg0m8y8w43qk90c";
       };
     });
+    passff-host = { fetchFromGitHub, passff-host, pass }: (passff-host.override { inherit pass; }).overrideAttrs (old: rec {
+      pname = "passff-host";
+      version = "1.2.1";
+      name = "${pname}-${version}";
+
+      src = fetchFromGitHub {
+        owner = "passff";
+        repo = pname;
+        rev = version;
+        sha256 = "0ydfwvhgnw5c3ydx2gn5d7ys9g7cxlck57vfddpv6ix890v21451";
+      };
+
+      nativeMessagingPaths = [
+        "lib/mozilla/native-messaging-hosts"
+      ];
+
+      preBuild = "";
+      postBuild = "";
+
+      installPhase = old.installPhase + ''
+        for messagingDir in $nativeMessagingPaths; do
+          install -Dm0644 -t $out/$messagingDir $out/share/$pname/passff.json
+        done
+      '';
+    });
 
     # usbmuxd is old/broken
     usbmuxd = { fetchFromGitHub, usbmuxd, libimobiledevice }: (usbmuxd.overrideAttrs (old: rec {

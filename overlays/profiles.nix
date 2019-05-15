@@ -5,6 +5,7 @@ in {
   # TODO: move this into profiles, which should be able to modify nixpkgs.overlays?
   inherit (overrides) pass-otp xdg_utils-mimi luakit-develop;
   flashplayer-standalone = super.callPackage overrides.override.flashplayer-standalone { inherit (super) flashplayer-standalone; };
+  passff-host = super.callPackage overrides.override.passff-host { inherit (super) passff-host; };
 
   # fix broken usbmuxd
   usbmuxd = super.callPackage overrides.override.usbmuxd { inherit (super) usbmuxd; };
