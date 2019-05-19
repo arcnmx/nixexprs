@@ -12,6 +12,14 @@
         sha256 = "0pyyy7ibd5csxvbkf2q4dripykd0xqgsricslafgv13j4fvm0zm7";
       };
     });
+    electrum-cli = { electrum }: electrum.overrideAttrs (old: {
+      propagatedBuildInputs = builtins.filter (p: (p.pname or null) != "PyQt" && (p.pname or null) != "qdarkstyle") old.propagatedBuildInputs;
+      postPatch = ''
+        sed -i -e '/qdarkstyle/d' contrib/requirements/requirements.txt
+      '';
+      installCheckPhase = "true";
+      doCheck = false;
+    });
     passff-host = { fetchFromGitHub, passff-host, pass }: (passff-host.override { inherit pass; }).overrideAttrs (old: rec {
       pname = "passff-host";
       version = "1.2.1";

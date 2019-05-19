@@ -3,7 +3,7 @@ self: super: let
   overrides = arc.packages.select.overrides;
 in {
   # TODO: move this into profiles, which should be able to modify nixpkgs.overlays?
-  inherit (overrides) pass-otp xdg_utils-mimi luakit-develop;
+  inherit (overrides) pass-otp xdg_utils-mimi luakit-develop electrum-cli;
   flashplayer-standalone = super.callPackage overrides.override.flashplayer-standalone { inherit (super) flashplayer-standalone; };
   passff-host = super.callPackage overrides.override.passff-host { inherit (super) passff-host; };
 
