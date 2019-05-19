@@ -27,7 +27,7 @@ in {
           if ! ${pkgs.systemd}/bin/systemctl --user --quiet is-active $LORRI_SERVICE; then
             ${pkgs.systemd}/bin/systemctl --user import-environment LOCALE_ARCHIVE TZDIR ''${TZ+TZ}
             ${pkgs.systemd}/bin/systemctl --user start $LORRI_SERVICE
-            echo "[lorri] build status: journalctl --user -fu $LORRI_SERVICE" >&2
+            echo "[lorri] build status: journalctl --user -fu '$LORRI_SERVICE'" >&2
           fi
         }
       '' + optionalString cfg.useNix ''
