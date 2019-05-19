@@ -35,6 +35,15 @@
       sha256 = "1nxla8r4036shbmyx6wpxy9ncy1s2c5ghi5n5ip22b01lcv6lnv5";
     };
   };
+  vim-hug-neovim-rpc = { fetchFromGitHub, vimUtils }: vimUtils.buildVimPlugin {
+    name = "vim-osc52";
+    src = fetchFromGitHub {
+      owner = "roxma";
+      repo = "vim-hug-neovim-rpc";
+      rev = "55db7affbc9527464a88fb2d5f133f4994415f10";
+      sha256 = "1zlr761q12ds9z7xazrjfzqzrxd3z1dcxfq0p0vghwngrx8yqgyx";
+    };
+  };
   oscyank = { fetchFromGitHub, vimUtils }: vimUtils.buildVimPlugin {
     name = "oscyank";
     src = fetchFromGitHub {

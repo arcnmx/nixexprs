@@ -22,6 +22,10 @@ in vimUtils.buildVimPluginFrom2Nix {
     ln -s ${deps}/node_modules/.bin node_modules/
   '';
 
+  buildPhase = ''
+    ${yarn}/bin/yarn build
+  '';
+
   postFixup = ''
     substituteInPlace $target/autoload/coc/util.vim \
       --replace "'yarnpkg'" "'${yarn}/bin/yarnpkg'"

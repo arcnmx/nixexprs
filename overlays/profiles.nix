@@ -11,4 +11,10 @@ in {
   usbmuxd = super.callPackage overrides.override.usbmuxd { inherit (super) usbmuxd; };
   libusbmuxd = super.callPackage overrides.override.libusbmuxd { inherit (super) libusbmuxd; };
   libimobiledevice = super.callPackage overrides.override.libimobiledevice { inherit (super) libimobiledevice; };
+
+  # vim with python3
+  vim_configurable = super.vim_configurable.override {
+    python = self.python3.withPackages(ps: with ps; [ pynvim ]);
+    wrapPythonDrv = true;
+  };
 }
