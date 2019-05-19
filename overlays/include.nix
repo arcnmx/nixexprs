@@ -1,5 +1,4 @@
-let
-  overlays = (import ./.).ordered;
+{ pkgs, overlays ? (import ./default.nix).ordered }: let
   callOverlay = self: super:
   {
     callPackage = super.newScope self;
@@ -20,4 +19,4 @@ let
   in lib.makeScope pkgs.newScope (lib.flip overlay pkgs);
   withOverlay' = overlayScope overlays;
 in
-withOverlay
+withOverlay pkgs

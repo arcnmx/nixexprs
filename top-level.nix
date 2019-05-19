@@ -9,6 +9,10 @@ let
     lib = arc_lib;
     modules = import ./modules;
     overlays = import ./overlays;
+    shells = import ./shells {
+      callPackage = arc_lib.callFunctionAs callPackage;
+      callPackageOnce = callPackage;
+    };
     packages = arc_pkgs;
   } // arc_pkgs.select.all // arc_lib.build-support;
 in arc

@@ -1,16 +1,27 @@
 let
   config = { allowUnfree = true; doCheckByDefault = false; };
-  overlays = [(import ../overlay.nix)];
+  overlays = let
+    mozilla = builtins.tryEval (import <mozilla/rust-overlay.nix>);
+  in if mozilla.success then [mozilla.value] else [];
   pkgss = [
-    (import <nixpkgs> { inherit config; })
-    (import <nixpkgs> { inherit config overlays; })
+    (import <nixpkgs> {
+      inherit config overlays;
+    })
+    (import <nixpkgs> {
+      inherit config;
+      overlays = overlays ++ [(import ../overlay.nix)];
+    })
   ];
   test = pkgs: let
     arc = import ../default.nix { inherit pkgs; };
   in {
     packages = import ./packages.nix { inherit arc; };
+    shells = import ./shells.nix {
+      pkgs = import ../overlays/include.nix { inherit pkgs; };
+      inherit arc;
+    };
     tests = import ./tests.nix {
-      pkgs = import ../overlays/include.nix pkgs;
+      pkgs = import ../overlays/include.nix { inherit pkgs; };
       inherit arc;
     };
   };
@@ -20,6 +31,6 @@ let
   tests = lib.foldAttrs (n: a: n ++ a) [] tests';
   modules = map module pkgss;
 in {
-  inherit (tests) packages tests;
+  inherit (tests) packages tests shells;
   inherit modules;
 }
