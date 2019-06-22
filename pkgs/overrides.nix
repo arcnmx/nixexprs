@@ -74,14 +74,15 @@
         sha256 = "0rvj0aw9m44z457qnjmsp72bvflc0zvlmd3z98mpgli93pvf6cz9";
       };
     })).override { inherit libusbmuxd; };
-    flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: rec {
+    flashplayer-standalone = { flashplayer-standalone }: flashplayer-standalone;
+    /*flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: rec {
       name = "flashplayer-standalone-${version}";
-      version = "32.0.0.192";
+      version = "32.0.0.207";
       src = fetchurl {
         url = "https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flash_player_sa_linux.x86_64.tar.gz";
-        sha256 = "0qnz383aggm07hbvyrnqphwhd5wp9xbairf908nk4i6ad8wg1x3r";
+        sha256 = "0d2pxggrzamrg143bvic0qa2v70jpplnahihfa4q2rbvy0l3i2pq";
       };
-    });
+    });*/
   };
   overrides = callPackage packages { };
 in {
