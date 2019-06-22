@@ -17,4 +17,15 @@ in {
     python = self.python3.withPackages(ps: with ps; [ pynvim ]);
     wrapPythonDrv = true;
   };
+
+  rxvt_unicode-with-plugins = super.rxvt_unicode-with-plugins.override {
+    plugins = with self; [
+      urxvt_perl
+      urxvt_perls
+      #urxvt_font_size ?
+      urxvt_theme_switch
+      urxvt_vtwheel
+      urxvt_osc_52
+    ];
+  };
 }
