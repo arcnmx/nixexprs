@@ -9,11 +9,6 @@
   tridactyl = callPackage ./tridactyl.nix {};
   base16-shell = callPackage ./base16-shell.nix {};
   urxvt_osc_52 = callPackage ./urxvt-osc-52.nix {};
-  yarn2nix = let
-    yarn2nix = ../../yarn2nix/default.nix;
-  in if builtins.pathExists yarn2nix
-  then callPackageOnce yarn2nix {}
-  else callPackageOnce ({ yarn2nix }: yarn2nix) {};
 } // (import ./nixos.nix { inherit callPackage; })
 // (import ./droid.nix { inherit callPackage; })
 // (import ./crates { inherit callPackage; })

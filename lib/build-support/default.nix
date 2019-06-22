@@ -13,5 +13,10 @@ let
     (callLibs ./kakoune.nix) //
     {
       inherit sourceBashArray;
+      yarn2nix = let
+        yarn2nix = ../../yarn2nix/default.nix;
+      in if builtins.pathExists yarn2nix
+      then callPackage yarn2nix {}
+      else super.yarn2nix;
     };
 in build-support
