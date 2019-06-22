@@ -5,8 +5,8 @@
 }: let
   rustTools = [ cargo-download cargo-expand cargo-outdated cargo-release cargo-bloat rust-analyzer ];
   channels' = {
-    nightly = rustChannelOf { date = "2019-05-16"; channel = "nightly"; };
-    stable = rustChannelOf { channel = "1.34.2"; };
+    nightly = rustChannelOf { date = "2019-05-22"; channel = "nightly"; };
+    stable = rustChannelOf { channel = "1.35.0"; };
   };
   extensions = [
     "clippy-preview" "rustfmt-preview"
