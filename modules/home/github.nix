@@ -24,6 +24,11 @@ in {
           description = "git commit email address";
           default = null;
         };
+        signingKey = mkOption {
+          type = types.nullOr types.str;
+          description = "GPG signing key";
+          default = null;
+        };
         oauth2Token = mkOption {
           type = types.nullOr types.str;
           description = "GitHub OAuth2 token";
@@ -78,6 +83,7 @@ in {
     programs.git.configEmail = mapAttrs (name: user: {
       name = if user.name != null then user.name else name;
       email = if user.email != null then user.email else "${name}@users.noreply.github.com";
+      signingKey = user.signingKey;
     }) cfg.users;
     programs.git.extraConfig.url = foldl pkgs.arc.lib.update {} urls;
     programs.ssh.matchBlocks = mapAttrs' (name: user:

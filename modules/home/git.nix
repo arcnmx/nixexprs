@@ -3,6 +3,9 @@
   git-config-email-apply = name: user: ''
     git config user.name "${user.name}"
     git config user.email "${user.email}"
+  '' + optionalString (user.signingKey != null) ''
+    git config user.signingkey "${user.signingKey}"
+    git config tag.forceSignAnnotated true
   '';
   git-config-email-url-match = name: user: ''
     github-${name}:*)
@@ -59,6 +62,11 @@
       email = mkOption {
         type = types.str;
         description = "git commit email address";
+      };
+      signingKey = mkOption {
+        type = types.nullOr types.str;
+        description = "git-config-email GPG signing key";
+        default = null;
       };
       aliases = mkOption {
         type = types.listOf types.str;
