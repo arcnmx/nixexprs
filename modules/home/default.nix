@@ -12,6 +12,7 @@
     ./i3gopher.nix
     ./lorri.nix
     ./shell.nix
+    ./less.nix
     (import ../nixos/keychain.nix false)
   ];
 }
