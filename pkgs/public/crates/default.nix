@@ -4,7 +4,7 @@
     version = "bebc5c71664a144b9addd357eb503f776f2cf416";
     src = fetchFromGitHub {
       owner = "rust-analyzer";
-      repo = "rust-analyzer";
+      repo = pname;
       rev = version;
       sha256 = "0aj5lzilayxjrhmnswciki37inn07p1z6ksf3kr65icqvs7b6w0s";
     };
