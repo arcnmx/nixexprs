@@ -10,6 +10,7 @@ let
     (callLibs ./overrides.nix) //
     (callLibs ./curl.nix) //
     (callLibs ./linux.nix) //
+    (callLibs ./kakoune.nix) //
     {
       inherit sourceBashArray;
     };

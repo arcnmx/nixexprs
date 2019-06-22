@@ -4,14 +4,15 @@ let
   public = import ./public { inherit callPackage callPackageOnce; };
   overrides = import ./overrides.nix { inherit callPackage; };
   vimPlugins = import ./vimPlugins.nix { inherit callPackage; };
+  kakPlugins = import ./kakPlugins.nix { inherit callPackage; };
   gitAndTools = import ./git { inherit callPackage; };
   select = {
     all = personal // public;
-    derivations = personal // public // vimPlugins // gitAndTools // overrides.overrides;
+    derivations = personal // public // vimPlugins // kakPlugins // gitAndTools // overrides.overrides;
     overrides = overrides.overrides // {
       inherit (overrides) override;
     };
-    inherit personal public vimPlugins gitAndTools;
+    inherit personal public vimPlugins kakPlugins gitAndTools;
   };
   packages = {
     inherit select;

@@ -5,6 +5,7 @@
     ./sshd.nix
     ./konawall.nix
     ./task.nix
+    ./kakoune.nix
     ./symlink.nix
     ./filebin.nix
     ./i3.nix

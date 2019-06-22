@@ -9,6 +9,7 @@ self: super: let
       // { __overlaid = true; };
     lib = (super.lib or {}) // arc.lib;
     vimPlugins = super.vimPlugins // arc.packages.select.vimPlugins;
+    kakPlugins = (super.kakPlugins or {}) // arc.packages.select.kakPlugins;
     gitAndTools = super.gitAndTools // arc.packages.select.gitAndTools;
     linuxPackagesFor = kernel: (super.linuxPackagesFor kernel).extend (super.lib.const (ksuper: {
       ax88179_178a = arc.ax88179_178a.override { linux = ksuper.kernel; };
