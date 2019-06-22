@@ -6,6 +6,7 @@
     ./konawall.nix
     ./task.nix
     ./kakoune.nix
+    ./base16-shell.nix
     ./symlink.nix
     ./filebin.nix
     ./i3.nix

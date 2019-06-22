@@ -7,6 +7,7 @@
   paswitch = callPackage ./paswitch.nix {};
   LanguageClient-neovim = callPackage ./language-client-neovim.nix {};
   tridactyl = callPackage ./tridactyl.nix {};
+  base16-shell = callPackage ./base16-shell.nix {};
   yarn2nix = let
     yarn2nix = ../../yarn2nix/default.nix;
   in if builtins.pathExists yarn2nix
