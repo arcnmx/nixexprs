@@ -14,7 +14,7 @@
   activationScript = concatStringsSep "\n" (mapAttrsToList activationScript' cfg);
   activationScript' = name: link: ''
     $DRY_RUN_CMD mkdir -p $(dirname ~/${name})
-    $DRY_RUN_CMD ln -sf ${link.target} ~/${name}
+    $DRY_RUN_CMD ln -nsf ${link.target} ~/${name}
     ${if link.create then activationMkdir name link else ""}
   '';
   activationMkdir = name: link: ''
