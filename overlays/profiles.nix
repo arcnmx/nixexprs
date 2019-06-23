@@ -7,6 +7,9 @@ in {
   flashplayer-standalone = super.callPackage overrides.override.flashplayer-standalone { inherit (super) flashplayer-standalone; };
   passff-host = super.callPackage overrides.override.passff-host { inherit (super) passff-host; };
 
+  # upstream broken packages
+  acpilight = super.callPackage overrides.override.acpilight { inherit (super) acpilight; };
+
   # fix broken usbmuxd
   usbmuxd = super.callPackage overrides.override.usbmuxd { inherit (super) usbmuxd; };
   libusbmuxd = super.callPackage overrides.override.libusbmuxd { inherit (super) libusbmuxd; };

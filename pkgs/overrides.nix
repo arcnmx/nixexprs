@@ -45,6 +45,12 @@
         done
       '';
     });
+    acpilight = { acpilight }: acpilight.overrideAttrs (old: {
+      postConfigure = ''
+        ${old.postConfigure}
+        substituteInPlace Makefile --replace udevadm true
+      '';
+    });
 
     # usbmuxd is old/broken
     usbmuxd = { fetchFromGitHub, usbmuxd, libimobiledevice }: (usbmuxd.overrideAttrs (old: rec {
