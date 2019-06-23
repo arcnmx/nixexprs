@@ -23,5 +23,7 @@ let
     passthru = {
       exec = "${package}/bin/i3gopher";
     };
+
+    meta.broken = !hostPlatform.isLinux;
   };
 in package

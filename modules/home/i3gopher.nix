@@ -9,6 +9,11 @@ in {
       example = "killall -USR1 i3status";
       default = null;
     };
+    package = mkOption {
+      type = types.package;
+      default = pkgs.arc.i3gopher.override { i3 = cfg.i3.package; };
+      defaultText = "pkgs.i3gopher";
+    };
   };
 
   config.systemd.user.services = mkIf cfg.enable {
@@ -24,8 +29,8 @@ in {
         # TODO: systemd/shell string escapes
         ${if cfg.exec != null then "Environment" else null} = ["I3GOPHER_EXEC=\"${cfg.exec}\""];
         ExecStart = if cfg.exec != null
-          then "${pkgs.arc.i3gopher.exec} -exec \${I3GOPHER_EXEC}"
-          else pkgs.arc.i3gopher.exec;
+          then "${cfg.package.exec} -exec \${I3GOPHER_EXEC}"
+          else cfg.package.exec;
       };
       Install.WantedBy = ["graphical-session-i3.target"];
     };
