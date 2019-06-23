@@ -39,7 +39,7 @@
       sha256 = "10gkjhwv2nvhh2ci89z51daskiaz0nvy25v1nwpzvhqm14d8jd81";
     };
   };
-  kak-tree = { fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
+  kak-tree = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
     kakrc = "share/kak/autoload/tree.kak";
     pname = "kak-tree";
     version = "6d32dda895fbfcbb772ab234ffa04dd257b9309d";
@@ -51,7 +51,9 @@
       fetchSubmodules = true;
     };
 
-    cargoSha256 = "05fd53l4i94857z66byy2fc481g10sg07aysgjj6kllkmlsb3wix";
+    cargoSha256 = if lib.versionOlder lib.version "19.09pre"
+      then "15rc6p437vxmz3ng5gk060qpdh120r6p10jd9z8w31cdpa82pc4n"
+      else "05fd53l4i94857z66byy2fc481g10sg07aysgjj6kllkmlsb3wix";
 
     preBuild = ''
       sed -e "s,\"kak-tree\",\"$out/bin/kak-tree\"," -i rc/tree.kak
@@ -61,7 +63,7 @@
       install -Dm0644 rc/tree.kak $out/$kakrc
     '';
   };
-  kak-lsp = { fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
+  kak-lsp = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
     pname = "kak-lsp";
     version = "6.2.0";
     src = fetchFromGitHub {
@@ -71,7 +73,9 @@
       sha256 = "0gv7acx2vy2n9wbgays0s3ag43sqqx9pqyr90ffglli0rsm0m1p6";
     };
 
-    cargoSha256 = "0w0mnh8fnl8zi9n0fxzqaqbvmfagf3ay5v2na3laxb72jm76hrwa";
+    cargoSha256 = if lib.versionOlder lib.version "19.09pre"
+      then "0bzb3i9cq1p5s2nxlq1z2rhc3f70rakgrd9xyvw7b2sk7zx2yh5c"
+      else "0w0mnh8fnl8zi9n0fxzqaqbvmfagf3ay5v2na3laxb72jm76hrwa";
 
     defaultConfig = "share/kak/kak-lsp.toml";
     kakrc = "share/kak/autoload/kak-lsp.kak";

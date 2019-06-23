@@ -1,5 +1,5 @@
 { callPackage }: callPackage {
-  rust-analyzer = { fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
+  rust-analyzer = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
     pname = "rust-analyzer";
     version = "bebc5c71664a144b9addd357eb503f776f2cf416";
     src = fetchFromGitHub {
@@ -11,6 +11,7 @@
     cargoBuildFlags = ["--features" "jemalloc" "-p" "ra_lsp_server"];
 
     cargoSha256 = "11h60kcf2g050w97lkc7dwdinrbay459q2ccyw3cxl8620p95a8v";
+    meta.broken = lib.versionOlder lib.version "19.09pre";
 
     doCheck = false;
   };

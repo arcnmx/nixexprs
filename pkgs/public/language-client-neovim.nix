@@ -8,7 +8,9 @@
 in rustPlatform.buildRustPackage {
   inherit pname src version;
 
-  cargoSha256 = "0dixvmwq611wg2g3rp1n1gqali46904fnhb90gcpl9a1diqb34sh";
+  cargoSha256 = if stdenv.lib.versionOlder stdenv.lib.version "19.09pre"
+    then "0qz7d31j7kvynswcg5j2sksn8zp654qzy1x6kjy3c13c7g9731cl"
+    else "0dixvmwq611wg2g3rp1n1gqali46904fnhb90gcpl9a1diqb34sh";
   buildInputs = stdenv.lib.optionals stdenv.isDarwin [ CoreServices ];
 
   # FIXME: Use impure version of CoreFoundation because of missing symbols.
