@@ -11,7 +11,7 @@ in {
     };
     package = mkOption {
       type = types.package;
-      default = pkgs.arc.i3gopher.override { i3 = cfg.i3.package; };
+      default = pkgs.arc.i3gopher.override { i3 = config.xsession.windowManager.i3.package; };
       defaultText = "pkgs.i3gopher";
     };
   };
