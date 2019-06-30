@@ -1,6 +1,8 @@
 { callPackage }: let
   packages = {
-    pass-otp = { pass }: pass.withExtensions (ext: [ext.pass-otp]);
+    pass-otp = { pass, hostPlatform }: (pass.withExtensions (ext: [ext.pass-otp])).overrideAttrs (old: {
+      doInstallCheck = !hostPlatform.isDarwin;
+    });
     xdg_utils-mimi = { xdg_utils }: xdg_utils.override { mimiSupport = true; };
     luakit-develop = { fetchFromGitHub, luakit }: luakit.overrideAttrs (old: rec {
       name = "luakit-${version}";

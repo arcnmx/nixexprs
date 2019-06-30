@@ -10,6 +10,10 @@
       sha256 = "0403rl2wpyymbxzvqj2r00sb3q4j63rhchsa1x6dkyvmdkg1xahr";
     };
 
+    configurePhase = ''
+      substituteInPlace Makefile --replace gcc '$(CC)'
+    '';
+
     installPhase = ''
       install -Dm0755 $pname $out/bin/$pname
     '';

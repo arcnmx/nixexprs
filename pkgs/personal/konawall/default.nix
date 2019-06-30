@@ -1,8 +1,9 @@
 {
   package, wrapShellScriptBin,
   coreutils, inetutils, curl, jq, xrandr ? null, feh ? null, xsetroot ? null, sway ? null,
-  swaySupport ? true,
-  xorgSupport ? true
+  hostPlatform,
+  swaySupport ? hostPlatform.isLinux,
+  xorgSupport ? hostPlatform.isLinux
 }:
 
 assert swaySupport -> sway != null;
