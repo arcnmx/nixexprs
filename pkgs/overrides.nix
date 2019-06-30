@@ -14,14 +14,17 @@
         sha256 = "0pyyy7ibd5csxvbkf2q4dripykd0xqgsricslafgv13j4fvm0zm7";
       };
     });
-    electrum-cli = { electrum, lib }: electrum.overrideAttrs (old: {
+    electrum-cli = { electrum }: electrum.overrideAttrs (old: {
       propagatedBuildInputs = builtins.filter (p: (p.pname or null) != "PyQt" && (p.pname or null) != "qdarkstyle") old.propagatedBuildInputs;
       postPatch = ''
         sed -i -e '/qdarkstyle/d' contrib/requirements/requirements.txt
       '';
       installCheckPhase = "true";
       doCheck = false;
-      meta.broken = lib.versionAtLeast lib.version "19.09pre";
+      meta = with electrum.stdenv.lib; electrum.meta // {
+        broken = versionAtLeast version "19.09pre"; # TODO: remove once upstream deps fixed
+        platforms = platforms.linux; # TODO: allow darwin on unstable once the channel updates
+      };
     });
     passff-host = { fetchFromGitHub, passff-host, pass }: (passff-host.override { inherit pass; }).overrideAttrs (old: rec {
       pname = "passff-host";
