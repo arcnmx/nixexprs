@@ -96,6 +96,7 @@
         dontStrip = true;
 
         enableParallelBuilding = true;
+        meta.platforms = stdenv.lib.platforms.linux;
       };
   };
 in (callPackage packages { })

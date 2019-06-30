@@ -12,6 +12,8 @@
         --prefix PATH : $wrapperPath \
         --set-default NIX_PATH nixpkgs=${path}
     '';
+
+    meta.platforms = lib.platforms.linux;
   };
   nixos' = callPackage ({ nixos }: nixos { }) { };
   /*config = { lib, nix }: {

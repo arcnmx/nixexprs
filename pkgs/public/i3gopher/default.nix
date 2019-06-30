@@ -24,6 +24,8 @@ let
       exec = "${package}/bin/i3gopher";
     };
 
-    meta.broken = !hostPlatform.isLinux;
+    meta = {
+      platforms = i3.meta.platforms;
+    };
   };
 in package
