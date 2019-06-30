@@ -12,6 +12,7 @@
     name = "${pname}-modules-${version}";
     packageJSON = src + "/package.json";
     yarnLock = src + "/yarn.lock";
+    yarnNix = ./yarn.nix;
   };
 in vimUtils.buildVimPluginFrom2Nix {
   inherit version pname src;
