@@ -41,7 +41,10 @@
     mingw32 = "i686-pc-windows-gnu";
     win64 = "x86_64-pc-windows-msvc";
     win32 = "i686-pc-windows-msvc";
+    macos64 = "x86_64-apple-darwin";
+    macos32 = "i686-apple-darwin";
     host = if hostPlatform.isLinux then linux64
+    else if hostPlatform.isDarwin then macos64
     else throw "unknown host platform";
   };
   shell = { channel, target ? targets.host }: let
