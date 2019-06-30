@@ -3,7 +3,7 @@
 #, cargo-llvm-lines, cargo-deps, cargo-with, cargo-readme
 , rust-analyzer
 }: let
-  rustTools = [ cargo-download cargo-expand cargo-outdated cargo-release cargo-bloat rust-analyzer ];
+  rustTools = builtins.filter (pkg: pkg.meta.available or true) [ cargo-download cargo-expand cargo-outdated cargo-release cargo-bloat rust-analyzer ];
   channels' = {
     nightly = rustChannelOf { date = "2019-05-22"; channel = "nightly"; };
     stable = rustChannelOf { channel = "1.35.0"; };
