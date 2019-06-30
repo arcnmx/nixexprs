@@ -1,11 +1,14 @@
-{ lib, mkShell, writeShellScriptBin, rustChannelOf, makeRustPlatform, pkgsCross, hostPlatform, gcc
+{ lib, mkShell, writeShellScriptBin
+, rustChannelOf ? (import <mozilla/package-set.nix> { inherit pkgs; }).rustChannelOf, pkgs ? null
+#, stdenvNoCC
+, makeRustPlatform, pkgsCross, hostPlatform, gcc
 , cargo-download, cargo-expand ? null, cargo-outdated ? null, cargo-release, cargo-bloat ? null
-#, cargo-llvm-lines, cargo-deps, cargo-with, cargo-readme
+, cargo-llvm-lines ? null, cargo-deps ? null, cargo-with ? null, cargo-readme ? null
 , rust-analyzer
 }: let
-  rustTools = builtins.filter (pkg: pkg.meta.available or true) [ cargo-download cargo-expand cargo-outdated cargo-release cargo-bloat rust-analyzer ];
+  rustTools = builtins.filter (pkg: pkg.meta.available or true) [ cargo-download cargo-expand /*cargo-outdated*/ cargo-release cargo-bloat cargo-llvm-lines cargo-deps cargo-with cargo-readme rust-analyzer ];
   channels' = {
-    nightly = rustChannelOf { date = "2019-05-22"; channel = "nightly"; };
+    nightly = rustChannelOf { date = "2019-06-28"; channel = "nightly"; };
     stable = rustChannelOf { channel = "1.35.0"; };
   };
   extensions = [
@@ -14,10 +17,12 @@
   ];
   channels = lib.mapAttrs (_: ch: let
     rust = ch.rust.override { inherit extensions; };
-  in makeRustPlatform {
+  in (makeRustPlatform {
     rustc = rust;
     cargo = rust;
-  }) channels';
+  } // {
+    rustcSrc = rust;
+  })) channels';
   rustGccGold = "${writeShellScriptBin "rust-gcc-gold" ''
     exec ${gcc}/bin/gcc -fuse-ld=gold "$@"
   ''}/bin/rust-gcc-gold";
@@ -61,7 +66,7 @@ in {
   shell = {
     stable = shell { channel = channels.stable; };
     nightly = shell { channel = channels.nightly; };
-
-    __functor = shell;
   };
+
+  mkShell = shell;
 }
