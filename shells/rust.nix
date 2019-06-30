@@ -52,6 +52,7 @@
     environment' = environment.${target} or { };
   in mkShell {
     nativeBuildInputs = [ rust ] ++ rustTools;
+    CARGO_BUILD_TARGET = target;
   } // environment';
 in {
   inherit (channels) nightly stable;
