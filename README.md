@@ -1,4 +1,4 @@
-[![travis-badge][]][travis]
+[![ci-badge][]][ci]
 
 A collection of packages and modules for Nix, NixOS, and home-manager.
 
@@ -7,5 +7,5 @@ nix run nixpkgs.cachix -c cachix use arc
 ```
 
 
-[travis-badge]: https://travis-ci.org/arcnmx/nixexprs.svg
-[travis]: https://travis-ci.org/arcnmx/nixexprs
+[ci-badge]: https://dev.azure.com/arcnmx/nixexprs/_apis/build/status/arc?branchName=master
+[ci]: https://dev.azure.com/arcnmx/nixexprs/_build/latest?definitionId=2
