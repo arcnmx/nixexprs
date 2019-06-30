@@ -1,5 +1,5 @@
 let
-  config = { allowUnfree = true; doCheckByDefault = false; };
+  config = { allowUnfree = true; doCheckByDefault = false; checkMetaRecursively = true; };
   overlays = let
     mozilla = builtins.tryEval (import <mozilla/rust-overlay.nix>);
   in if mozilla.success then [mozilla.value] else [];
