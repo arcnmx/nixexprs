@@ -15,6 +15,7 @@ let
     goDeps = ./deps.nix;
 
     nativeBuildInputs = [ makeWrapper ];
+    buildInputs = [ i3 ];
     i3Path = lib.makeBinPath [ i3 ];
     preFixup = ''
       wrapProgram $bin/bin/i3gopher --prefix PATH : $i3Path
