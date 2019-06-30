@@ -1,5 +1,5 @@
-{ lib, mkShell, writeShellScript, rustChannelOf, makeRustPlatform, pkgsCross, hostPlatform, gcc
-, cargo-download, cargo-expand, cargo-outdated, cargo-release, cargo-bloat
+{ lib, mkShell, writeShellScriptBin, rustChannelOf, makeRustPlatform, pkgsCross, hostPlatform, gcc
+, cargo-download, cargo-expand ? null, cargo-outdated ? null, cargo-release, cargo-bloat ? null
 #, cargo-llvm-lines, cargo-deps, cargo-with, cargo-readme
 , rust-analyzer
 }: let
@@ -18,9 +18,9 @@
     rustc = rust;
     cargo = rust;
   }) channels';
-  rustGccGold = writeShellScript "rust-gcc-gold" ''
+  rustGccGold = "${writeShellScriptBin "rust-gcc-gold" ''
     exec ${gcc}/bin/gcc -fuse-ld=gold "$@"
-  '';
+  ''}/bin/rust-gcc-gold";
   environment = {
     x86_64-unknown-linux-gnu = {
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "${rustGccGold}";
