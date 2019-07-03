@@ -35,6 +35,7 @@ let
     });
 
     electrum-cli = { electrum }: electrum.overrideAttrs (old: {
+      pname = "electrum-cli";
       propagatedBuildInputs = builtins.filter (p: (p.pname or null) != "PyQt" && (p.pname or null) != "qdarkstyle") old.propagatedBuildInputs;
       postPatch = ''
         sed -i -e '/qdarkstyle/d' contrib/requirements/requirements.txt
@@ -45,6 +46,9 @@ let
         broken = electrum.stdenv.isDarwin && versionOlder version "19.09pre";
         platforms = platforms.all; # TODO: allow darwin on unstable once the channel updates
       };
+
+      # darwin doesn't have to worry about share/applications/electrum.desktop silliness
+      ${if electrum.stdenv.isLinux then null else "postInstall"} = "true";
     });
 
     passff-host = { fetchFromGitHub, passff-host, pass }: (passff-host.override { inherit pass; }).overrideAttrs (old: rec {
