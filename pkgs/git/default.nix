@@ -1,4 +1,3 @@
-{ callPackage }:
 {
-  hook-chain = callPackage ./hook-chain.nix { };
+  hook-chain = import ./hook-chain.nix;
 }

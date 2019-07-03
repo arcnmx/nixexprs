@@ -1,4 +1,4 @@
-{ callPackage }: let
+let
   version = "1.00";
   fn = variant: sha256: { stdenvNoCC, fetchzip, lib }: stdenvNoCC.mkDerivation {
     name = "droid-sans-mono-${lib.toLower variant}-${version}";
@@ -13,6 +13,6 @@
     '';
   };
 in {
-  droid-sans-mono-dotted = callPackage (fn "Dotted" "0l8icqrx6hxqrlz8kbwcynma2nrbcay8gpn1myfhr2hwc1zlp92x") { };
-  droid-sans-mono-slashed = callPackage (fn "Slashed" "1vs81lrfzd7wfhs5mp976h06nfl4ym6kl4n6pzzsp0d769891x4d") { };
+  droid-sans-mono-dotted = (fn "Dotted" "0l8icqrx6hxqrlz8kbwcynma2nrbcay8gpn1myfhr2hwc1zlp92x");
+  droid-sans-mono-slashed = (fn "Slashed" "1vs81lrfzd7wfhs5mp976h06nfl4ym6kl4n6pzzsp0d769891x4d");
 }

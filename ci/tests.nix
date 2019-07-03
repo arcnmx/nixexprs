@@ -1,8 +1,7 @@
-{ pkgs, arc }:
+{ arc }:
 let
-  callPackage = pkgs.callPackage;
   tests = {
-    githubTest = callPackage arc.fetchGitHubApi {
+    githubTest = arc.build.fetchGitHubApi {
       gitHubEndpoint = "users/octocat";
       jqFilter = "{ login, type }";
       sha256 = "1i5x5blswd3245zz1qkc1mhyk8dhmzyqbxvrk7nlxqdhh3a00743";

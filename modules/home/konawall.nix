@@ -25,7 +25,7 @@ in with lib; {
       Service = {
         Environment = ["KONATAGS=${concatStringsSep "+" cfg.tags}"];
         Type = "oneshot";
-        ExecStart = pkgs.arc.konawall.exec;
+        ExecStart = pkgs.arc'private.konawall.exec;
         IOSchedulingClass = "idle";
       };
       Install.WantedBy = ["graphical-session.target"];

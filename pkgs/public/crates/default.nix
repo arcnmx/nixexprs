@@ -1,4 +1,4 @@
-{ callPackage }: callPackage {
+{
   rust-analyzer = { fetchFromGitHub, rustPlatform, lib, darwin, hostPlatform }: rustPlatform.buildRustPackage rec {
     pname = "rust-analyzer";
     version = "bebc5c71664a144b9addd357eb503f776f2cf416";
@@ -17,4 +17,4 @@
 
     doCheck = false;
   };
-} { }
+}

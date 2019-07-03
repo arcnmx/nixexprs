@@ -1,44 +1,20 @@
-{ lib, mkShell, writeShellScriptBin
-, rustChannelOf ? (import <mozilla/package-set.nix> { inherit pkgs; }).rustChannelOf, pkgs ? null
-#, stdenvNoCC
-, makeRustPlatform, pkgsCross, hostPlatform, gcc
+{ mkShell
+, rustChannel, rustChannelPlatform
+, stdenv
 , cargo-download, cargo-expand ? null, cargo-outdated ? null, cargo-release, cargo-bloat ? null
 , cargo-llvm-lines ? null, cargo-deps ? null, cargo-with ? null, cargo-readme ? null
 , rust-analyzer
-}: let
-  rustTools = builtins.filter (pkg: pkg.meta.available or true) [ cargo-download cargo-expand /*cargo-outdated*/ cargo-release cargo-bloat cargo-llvm-lines cargo-deps cargo-with cargo-readme rust-analyzer ];
-  channels' = {
-    nightly = rustChannelOf { date = "2019-06-28"; channel = "nightly"; };
-    stable = rustChannelOf { channel = "1.35.0"; };
-  };
+}: with stdenv.lib; let
+  rustTools' = [ cargo-download cargo-expand cargo-outdated cargo-release cargo-bloat cargo-llvm-lines cargo-deps cargo-with cargo-readme rust-analyzer ];
+  rustTools = builtins.filter (pkg: pkg.meta.available or true) rustTools';
   extensions = [
     "clippy-preview" "rustfmt-preview"
     "rust-analysis" "rls-preview" "rust-src"
   ];
-  channels = lib.mapAttrs (_: ch: let
-    rust = ch.rust.override { inherit extensions; };
-  in (makeRustPlatform {
-    rustc = rust;
-    cargo = rust;
-  } // {
-    rustcSrc = rust;
-  })) channels';
-  rustGccGold = "${writeShellScriptBin "rust-gcc-gold" ''
-    exec ${gcc}/bin/gcc -fuse-ld=gold "$@"
-  ''}/bin/rust-gcc-gold";
-  environment = {
-    x86_64-unknown-linux-gnu = {
-      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "${rustGccGold}";
-    };
-    x86_64-pc-windows-gnu ={
-      CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER = "${pkgsCross.mingwW64.buildPackages.gcc}/bin/x86_64-pc-mingw32-gcc";
-      CARGO_TARGET_X86_64_PC_WINDOWS_GNU_AR = "${pkgsCross.mingwW64.buildPackages.binutils.bintools}/bin/x86_64-pc-mingw32-ar";
-    };
-    i686-pc-windows-gnu ={
-      CARGO_TARGET_I686_PC_WINDOWS_GNU_LINKER = "${pkgsCross.mingw32.buildPackages.gcc}/bin/i686-pc-mingw32-gcc";
-      CARGO_TARGET_I686_PC_WINDOWS_GNU_AR = "${pkgsCross.mingw32.buildPackages.binutils.bintools}/bin/i686-pc-mingw32-ar";
-    };
-    # TODO: MSVC wine targets
+  channels = builtins.mapAttrs (_: rustChannelPlatform) { inherit (rustChannel) stable nightly; };
+  targetCompat = {
+    i686-pc-mingw32 = "i686-pc-windows-gnu";
+    x86_64-pc-mingw32 = "x86_64-pc-windows-gnu";
   };
   targets = rec {
     linux64 = "x86_64-unknown-linux-gnu";
@@ -48,25 +24,22 @@
     win32 = "i686-pc-windows-msvc";
     macos64 = "x86_64-apple-darwin";
     macos32 = "i686-apple-darwin";
-    host = if hostPlatform.isLinux then linux64
-    else if hostPlatform.isDarwin then macos64
-    else throw "unknown host platform";
+    host = targetCompat.${stdenv.hostPlatform.config} or stdenv.hostPlatform.config;
   };
   shell = { channel, target ? targets.host }: let
-    rust = channel.rust.rustc;
-    environment' = environment.${target} or { };
+    rust = builtins.attrValues channel.rust;
+    cargoEnvVar = n: replaceStrings [ "-" ] [ "_" ] (toUpper n);
   in mkShell {
-    nativeBuildInputs = [ rust ] ++ rustTools;
+    nativeBuildInputs = rust ++ rustTools;
     CARGO_BUILD_TARGET = target;
-  } // environment';
-in {
-  inherit (channels) nightly stable;
-  inherit targets;
-
-  shell = {
-    stable = shell { channel = channels.stable; };
-    nightly = shell { channel = channels.nightly; };
+    "CARGO_TARGET_${cargoEnvVar target}_LINKER" = "${stdenv.cc}/bin/${stdenv.cc.targetPrefix}cc";
+    "CARGO_TARGET_${cargoEnvVar target}_AR" = "${stdenv.cc}/bin/${stdenv.cc.targetPrefix}ar";
+    # TODO: NIX_LDFLAGS = "-fuse-ld=gold" or something
   };
-
+in {
+  inherit channels targets rustTools;
   mkShell = shell;
+
+  stable = shell { channel = channels.stable; };
+  nightly = shell { channel = channels.nightly; };
 }

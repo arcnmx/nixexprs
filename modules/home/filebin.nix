@@ -15,7 +15,7 @@ in {
     };
   };
 
-  config.home.packages = mkIf cfg.enable [pkgs.arc.filebin];
+  config.home.packages = mkIf cfg.enable [pkgs.arc'private.filebin];
   config.xdg.configFile."filebin/config".text = ''
     ${concatStringsSep "\n" (mapAttrsToList (k: v: "${k}=${v}") cfg.config)}
     ${cfg.extraConfig}

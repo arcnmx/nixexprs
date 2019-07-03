@@ -26,7 +26,7 @@ in {
       after = ["network.target"];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart= "${pkgs.arc.filebin.exec} ${if cfg.notify then "-n" else ""} -d ${cfg.path}";
+        ExecStart= "${pkgs.arc'private.filebin.exec} ${if cfg.notify then "-n" else ""} -d ${cfg.path}";
         User = mkIf (cfg.user != null) cfg.user;
       };
     };

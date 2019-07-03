@@ -1,7 +1,6 @@
-{ buildGoPackage, fetchFromGitHub }:
 let
   version = "0.3.5";
-  buildPackage = pname: let package = buildGoPackage {
+  buildPackage = pname: { buildGoPackage, fetchFromGitHub, lib }: lib.drvExec "bin/${pname}" (buildGoPackage {
     inherit pname version;
     goPackagePath = "github.com/yggdrasil-network/yggdrasil-go";
     subPackages = ["cmd/${pname}"];
@@ -13,11 +12,7 @@ let
     };
 
     goDeps = ./deps.nix;
-
-    passthru = {
-      exec = "${package}/bin/${pname}";
-    };
-  }; in package;
+  });
 in {
   yggdrasil = buildPackage "yggdrasil";
   yggdrasilctl = buildPackage "yggdrasilctl";

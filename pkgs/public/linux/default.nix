@@ -1,17 +1,16 @@
-{ callPackage }: let
-  mergeLinuxConfig = { arc, fetchurl, stdenvNoCC, makeWrapper, bash, lib, coreutils, gnused, gnugrep, gnumake, flex ? null, bison ? null }: let
+let
+  mergeLinuxConfig = { wrapShellScriptBin, fetchurl, stdenvNoCC, makeWrapper, bash, lib, coreutils, gnused, gnugrep, gnumake, flex ? null, bison ? null }: let
     src = fetchurl {
       url = https://github.com/torvalds/linux/raw/v5.0/scripts/kconfig/merge_config.sh;
       sha256 = "063v44ffcs24x0ywj4xklglkvm62n2m690gd9pdj00wpbz7z3hni";
     };
-  in arc.lib.build-support.wrapShellScriptBin "merge_config.sh" src {
-    inherit stdenvNoCC makeWrapper bash lib;
+  in wrapShellScriptBin "merge_config.sh" src {
     depsRuntimePath = [
       coreutils gnused gnugrep gnumake flex bison
     ];
   };
-  generateLinuxConfig = { stdenv, pkgs, perl, gmp, libmpc, mpfr, flex ? null, bison ? null }: let
-    drv = stdenv.mkDerivation {
+  generateLinuxConfig = { stdenv, pkgs, perl, gmp, libmpc, mpfr, flex ? null, bison ? null }:
+    pkgs.lib.drvExec "" (stdenv.mkDerivation {
       name = "generate-config.pl";
       src = pkgs.path + "/pkgs/os-specific/linux/kernel/generate-config.pl";
       patches = [ ./generate-config.patch ];
@@ -25,7 +24,6 @@
         install -Dm0755 generate-config.pl $out/bin/$name
       '';
       passthru = {
-        exec = drv.outPath;
         phase = {
           # TODO: a setup hook instead of this
           patch = ''
@@ -47,8 +45,7 @@
           '';
         };
       };
-    };
-  in drv;
+    });
   packages = {
     inherit mergeLinuxConfig generateLinuxConfig;
     ax88179_178a = { stdenv, fetchurl, fetchgit, linux }: let
@@ -99,4 +96,5 @@
         meta.platforms = stdenv.lib.platforms.linux;
       };
   };
-in (callPackage packages { })
+#in (callPackage packages { })
+in packages

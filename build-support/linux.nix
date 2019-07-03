@@ -1,4 +1,5 @@
-{ lib, self, super, callPackage, ... }: let
+{ self, super, ... }: let
+  inherit (self) lib;
   withVersion = version: import (super.path + "/lib/kernel.nix") { inherit lib version; };
   config = {
     inherit (withVersion null) option yes no module freeform;
@@ -175,7 +176,7 @@
       passthru = passthru';
     };
 
-    linuxPackages = super.callPackage ({ linuxPackagesFor }: linuxPackagesFor kernel) { };
+    linuxPackages = self.callPackage ({ linuxPackagesFor }: linuxPackagesFor kernel) { };
   };
 
   customize = lib.makeOverridable ({ stdenv, linux,
@@ -192,13 +193,17 @@
     patches = linux.kernelPatches ++ patches;
   } // (removeAttrs args [ "linux" "patches" "features" ])));
 
-  presets' = { stdenv, linux, linux_latest, linux_5_0 ? null, linux_4_19 ? null, linux_4_4 ? null }: {
+  presets' = { stdenv, linux, linux_latest, linux_5_1 ? null, linux_5_0 ? null, linux_4_19 ? null, linux_4_4 ? null }: {
     linux = customize {
       inherit stdenv linux;
     };
     latest = customize {
       inherit stdenv;
       linux = linux_latest;
+    };
+    linux_5_1 = customize {
+      inherit stdenv;
+      linux = linux_5_1;
     };
     linux_5_0 = customize {
       inherit stdenv;
@@ -213,8 +218,8 @@
       linux = linux_4_4;
     };
   };
-  packages = (lib.mapAttrs (_: pkg: callPackage pkg { }) packages');
-  presets = super.callPackage presets' { };
+  packages = (lib.mapAttrs (_: pkg: self.callPackage pkg { }) packages');
+  presets = self.callPackage presets' { };
 in {
   linuxBuild = {
     inherit config;
@@ -222,6 +227,10 @@ in {
 
     __functor = self: lib.makeOverridable linuxBuild;
   } // packages // {
-    inherit (presets) linux latest linux_5_0 linux_4_19 linux_4_4;
+    inherit (presets) linux latest linux_5_1 linux_5_0 linux_4_19 linux_4_4;
   };
+
+  linuxPackagesFor = kernel: (super.linuxPackagesFor kernel).extend (_: ksuper: {
+    ax88179_178a = self.ax88179_178a.override { linux = ksuper.kernel; };
+  });
 }

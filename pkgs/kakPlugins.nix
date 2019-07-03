@@ -1,4 +1,4 @@
-{ callPackage }: callPackage {
+{
   kak-crosshairs = { fetchFromGitHub, buildKakPlugin }: buildKakPlugin rec {
     pname = "kak-crosshairs";
     version = "e191f6a4905ba29b1af76d96e4cf38127f93eebb";
@@ -93,4 +93,4 @@
       install -Dm0644 kakrc $out/$kakrc
     '';
   };
-} { }
+}

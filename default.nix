@@ -1,5 +1,2 @@
 { pkgs ? import <nixpkgs> {} }:
-let
-  pkgs' = import ./overlays/include.nix { inherit pkgs; };
-in
-pkgs'.arc
+pkgs.arc or (pkgs.extend (import ./top-level.nix)).arc

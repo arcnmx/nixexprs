@@ -1,5 +1,5 @@
-{ self, lib, callPackage, ... }: let
-  buildKakPlugin = callPackage ({ stdenvNoCC }: {
+{ self, ... }: let
+  buildKakPlugin = self.callPackage ({ stdenvNoCC }: {
     src, sources ? null,
     name ? "${pname}-${attrs.version}",
     pname ? (builtins.parseDrvName name).name,

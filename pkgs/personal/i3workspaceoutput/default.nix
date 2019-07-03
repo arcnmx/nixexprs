@@ -1,6 +1,5 @@
-{ package, wrapShellScriptBin, i3, jq }:
-package (wrapShellScriptBin "i3workspaceoutput" ./i3workspaceoutput.sh) rec {
-  buildInputs = depsRuntimePath;
+{ wrapShellScriptBin, i3, jq }:
+wrapShellScriptBin "i3workspaceoutput" ./i3workspaceoutput.sh rec {
   depsRuntimePath = [ i3 jq ];
 
   meta = {

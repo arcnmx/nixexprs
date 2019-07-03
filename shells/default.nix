@@ -1,3 +1,3 @@
-{ callPackage, callPackageOnce }: {
-  rust = callPackageOnce ./rust.nix { };
+{
+  rust = import ./rust.nix;
 }

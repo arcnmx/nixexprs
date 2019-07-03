@@ -1,9 +1,9 @@
-{ arc, pkgs }:
+{ arc }:
 let
-  mkShell = attrs: pkgs.mkShell (attrs // {
+  mkShell = attrs: arc.pkgs.mkShell (attrs // {
     nobuildPhase = "echo $buildInputs $nativeBuildInputs > $out";
   });
   rust = arc.shells.rust.override { inherit mkShell; };
-  shells = pkgs.lib.optionals (pkgs ? rustChannelOf) [ rust.shell.stable rust.shell.nightly ];
+  shells = arc.pkgs.lib.optionals (arc.pkgs ? rustChannelOf) [ rust.stable rust.nightly ];
 in
 shells

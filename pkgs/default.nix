@@ -1,12 +1,13 @@
-{ callPackage, callPackageOnce }:
-let
-  personal = import ./personal { inherit callPackage; };
-  public = import ./public { inherit callPackage callPackageOnce; };
-  overrides = import ./overrides.nix { inherit callPackage; };
-  vimPlugins = import ./vimPlugins.nix { inherit callPackage; };
-  kakPlugins = import ./kakPlugins.nix { inherit callPackage; };
-  gitAndTools = import ./git { inherit callPackage; };
-  select = {
+{
+  personal = import ./personal;
+  public = import ./public;
+  overrides = import ./overrides.nix;
+  vimPlugins = import ./vimPlugins.nix;
+  kakPlugins = import ./kakPlugins.nix;
+  gitAndTools = import ./git;
+  shells = import ../shells;
+}
+  /*select = {
     all = personal // public;
     derivations = personal // public // vimPlugins // kakPlugins // gitAndTools // overrides.overrides;
     overrides = overrides.overrides // {
@@ -16,6 +17,4 @@ let
   };
   packages = {
     inherit select;
-  } // select.all;
-in
-packages
+  } // select.all;*/

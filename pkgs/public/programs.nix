@@ -1,4 +1,4 @@
-{ callPackage }: let
+let
   defaultChannel = "unstable/nixos-19.09pre173349.07b42ccf2de";
   defaultSha256 = "0lkv2957by2jnszl1l1nzns0a9j1hq73y0s5jjzs0x2k88qyrcwk";
   packages = {
@@ -27,4 +27,4 @@
         [ perlPackages.DBI perlPackages.DBDSQLite perlPackages.StringShellQuote ]);
     };
   };
-in callPackage packages { }
+in packages

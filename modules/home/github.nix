@@ -85,17 +85,17 @@ in {
       email = if user.email != null then user.email else "${name}@users.noreply.github.com";
       signingKey = user.signingKey;
     }) cfg.users;
-    programs.git.extraConfig.url = foldl pkgs.arc.lib.update {} urls;
+    programs.git.extraConfig.url = foldl update {} urls;
     programs.ssh.matchBlocks = mapAttrs' (name: user:
       nameValuePair "github-${name}" (let
-        publicKeys = (pkgs.callPackage pkgs.arc.fetchGitHubApi {
+        publicKeys = (pkgs.fetchGitHubApi {
           name = "github-getkeys-${name}";
           gitHubEndpoint = if user.oauth2Token != null then "user/keys" else "users/${name}/keys";
           gitHubOAuth2Token = user.oauth2Token;
           jqFilter = "[.[] | { id, key, title }]";
           sha256 = user.keysHash;
         }).json;
-        uploadKey = (title: publicKey: pkgs.callPackage pkgs.arc.fetchGitHubApi {
+        uploadKey = (title: publicKey: pkgs.fetchGitHubApi {
           gitHubEndpoint = "user/keys";
           gitHubOAuth2Token = user.oauth2Token;
           gitHubPostData = { title = "${name}@${hostname}"; key = publicKey; };

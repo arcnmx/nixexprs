@@ -1,5 +1,8 @@
-{ callPackage }: let
-  wrapScript = { lib, path, stdenvNoCC, makeWrapper, name, source, paths }: stdenvNoCC.mkDerivation {
+let
+  wrapScript = nixos: f: let
+    nixos' = nixos { };
+  in wrapScript' (f nixos');
+  wrapScript' = { lib, path, stdenvNoCC, makeWrapper, name, source, paths }: stdenvNoCC.mkDerivation {
     inherit source name;
     nativeBuildInputs = [makeWrapper];
     wrapperPath = lib.makeBinPath paths;
@@ -15,7 +18,6 @@
 
     meta.platforms = lib.platforms.linux;
   };
-  nixos' = callPackage ({ nixos }: nixos { }) { };
   /*config = { lib, nix }: {
     nix.package.out = nix;
     system.nixos = {
@@ -31,18 +33,18 @@
     };
   };*/
   packages = {
-    nixos-enter = { lib, path, stdenvNoCC, makeWrapper, man, utillinux, coreutils }: wrapScript {
+    nixos-enter = { nixos, lib, path, stdenvNoCC, makeWrapper, man, utillinux, coreutils }: wrapScript nixos (nixos': {
         inherit lib path stdenvNoCC makeWrapper;
         name = "nixos-enter";
         source = nixos'.nixos-enter;
         paths = [nixos'.manual.manpages man utillinux coreutils];
-      };
+      });
     /*nixos-generate-config = { man }: let
       nixos' = nixos {};
     in nixos'.nixos-generate-config.overrideAttrs (old: {
       path = old.path ++ [nixos.manual.manpages man];
     });*/
-    nixos-generate-config = { lib, path, stdenvNoCC, makeWrapper, man, coreutils, btrfs-progs, nixos }: wrapScript {
+    nixos-generate-config = { lib, path, stdenvNoCC, makeWrapper, man, coreutils, btrfs-progs, nixos }: wrapScript nixos (nixos': {
         inherit lib path stdenvNoCC makeWrapper;
         name = "nixos-generate-config";
         source = nixos'.nixos-generate-config;
@@ -50,27 +52,27 @@
           paths = lib.makeBinPath [tools.nixos-enter];
         });*/
         paths = [nixos'.manual.manpages man coreutils btrfs-progs];
-      };
-    nixos-install = { lib, path, stdenvNoCC, makeWrapper, man, coreutils, nix }: wrapScript {
+      });
+    nixos-install = { nixos, lib, path, stdenvNoCC, makeWrapper, man, coreutils, nix, nixos-enter }: wrapScript nixos (nixos': {
         inherit lib path stdenvNoCC makeWrapper;
         name = "nixos-install";
         source = nixos'.nixos-install.overrideAttrs (_: {
-          paths = lib.makeBinPath [tools.nixos-enter];
+          paths = lib.makeBinPath [nixos-enter];
         });
         paths = [nixos'.manual.manpages man coreutils nix];
-      };
-    nixos-option = { lib, path, stdenvNoCC, makeWrapper, man, coreutils, gnused, nix }: wrapScript {
+      });
+    nixos-option = { nixos, lib, path, stdenvNoCC, makeWrapper, man, coreutils, gnused, nix }: wrapScript nixos (nixos': {
         inherit lib path stdenvNoCC makeWrapper;
         name = "nixos-option";
         source = nixos'.nixos-option;
         paths = [nixos'.manual.manpages man coreutils gnused nix];
-      };
-    nixos-rebuild = { lib, path, stdenvNoCC, makeWrapper, man, coreutils, openssh, nix }: wrapScript {
+      });
+    nixos-rebuild = { nixos, lib, path, stdenvNoCC, makeWrapper, man, coreutils, openssh, nix }: wrapScript nixos (nixos': {
         inherit lib path stdenvNoCC makeWrapper;
         name = "nixos-rebuild";
         source = nixos'.nixos-rebuild.overrideAttrs (_: { inherit nix; });
         paths = [nixos'.manual.manpages man coreutils openssh];
-      };
+      });
   };
-  tools = callPackage packages { };
-in tools
+  #tools = callPackage packages { };
+in packages#tools

@@ -15,7 +15,7 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
       };
       sourceFile = mkOption {
         type = types.path;
-        default = pkgs.arc.lib.asStoreFile "data" config.source;
+        default = asStoreFile "data" config.source;
       };
       owner = mkOption {
         type = types.str;
@@ -60,8 +60,8 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
     };
 
     config.path = {
-      public = pkgs.arc.lib.asStoreFile "id_rsa.pub" config.public;
-      private = pkgs.arc.lib.asFile "id_rsa" config.private;
+      public = asStoreFile "id_rsa.pub" config.public;
+      private = asFile "id_rsa" config.private;
     };
   });
 in {

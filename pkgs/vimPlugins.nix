@@ -1,4 +1,4 @@
-{ callPackage }: callPackage {
+{
   kotlin-vim = { fetchFromGitHub, vimUtils }: vimUtils.buildVimPlugin {
     name = "kotlin-vim";
     src = fetchFromGitHub {
@@ -64,4 +64,4 @@
     '';
   };
   coc-nvim = import public/coc-nvim;
-} { }
+}

@@ -1,11 +1,10 @@
-{ callPackage }:
 {
-  i3workspaceoutput = callPackage ./i3workspaceoutput { };
-  getquote-alphavantage = callPackage ./getquote-alphavantage.nix { };
-  konawall = callPackage ./konawall { };
-  benc = callPackage ./benc { };
-  qemucomm = callPackage ./qemucomm.nix { };
-  filebin = callPackage ./filebin { };
-  winpath = callPackage ./winpath.nix { };
-  task-blocks = callPackage ./task-blocks.nix { };
-} // (import ./yggdrasil-7n/default.nix { inherit callPackage; })
+  i3workspaceoutput = import ./i3workspaceoutput;
+  getquote-alphavantage = import ./getquote-alphavantage.nix;
+  konawall = import ./konawall;
+  benc = import ./benc;
+  qemucomm = import ./qemucomm.nix;
+  filebin = import ./filebin;
+  winpath = import ./winpath.nix;
+  task-blocks = import ./task-blocks.nix;
+} // (import ./yggdrasil-7n/default.nix)

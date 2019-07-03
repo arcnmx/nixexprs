@@ -17,18 +17,16 @@ let
   in {
     packages = import ./packages.nix { inherit arc; };
     shells = import ./shells.nix {
-      pkgs = import ../overlays/include.nix { inherit pkgs; };
       inherit arc;
     };
     tests = import ./tests.nix {
-      pkgs = import ../overlays/include.nix { inherit pkgs; };
       inherit arc;
     };
   };
   module = import ./modules.nix;
   tests' = map test pkgss;
   lib = (import <nixpkgs> {}).lib;
-  tests = lib.foldAttrs (n: a: n ++ a) [] tests';
+  tests = lib.foldAttrs lib.concat [] tests';
   modules = map module pkgss;
 in {
   inherit (tests) packages tests shells;
