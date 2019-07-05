@@ -85,7 +85,7 @@ in {
       email = if user.email != null then user.email else "${name}@users.noreply.github.com";
       signingKey = user.signingKey;
     }) cfg.users;
-    programs.git.extraConfig.url = foldl update {} urls;
+    programs.git.extraConfig.url = pkgs.lib.foldAttrList urls;
     programs.ssh.matchBlocks = mapAttrs' (name: user:
       nameValuePair "github-${name}" (let
         publicKeys = (pkgs.fetchGitHubApi {

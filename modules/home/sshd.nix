@@ -2,7 +2,7 @@
 with lib; let
   cfg = config.services.sshd;
   authorizedKeysFile = { runCommand }: runCommand "authorized_keys" {
-    source = map (asFile "authorized_key") cfg.authorizedKeys;
+    source = map (pkgs.lib.asFile "authorized_key") cfg.authorizedKeys;
   } ''
     sed -s '$G' $source > $out
   '';
