@@ -10,7 +10,17 @@ let
       wrapPythonDrv = true;
     };
 
-    rxvt_unicode-arc = { rxvt_unicode-with-plugins, pkgs }: rxvt_unicode-with-plugins.override {
+    rxvt_unicode-cvs = { rxvt_unicode, fetchcvs }: rxvt_unicode.overrideAttrs (old: {
+      enableParallelBuilding = true;
+      src = fetchcvs {
+        cvsRoot = ":pserver:anonymous@cvs.schmorp.de:/schmorpforge";
+        module = "rxvt-unicode";
+        date = "2019-07-01";
+        sha256 = "04vgrri1zm5kgjdd4swfi4khjbbp8a3s5c46by7lqg417xqh2a5m";
+      };
+    });
+    rxvt_unicode-arc = { rxvt_unicode-with-plugins, rxvt_unicode-cvs, pkgs }: rxvt_unicode-with-plugins.override {
+      rxvt_unicode = rxvt_unicode-cvs; # current release is years old, doesn't include 24bit colour changes
       plugins = with pkgs; [
         urxvt_perl
         urxvt_perls
