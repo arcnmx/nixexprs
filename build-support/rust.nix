@@ -16,7 +16,7 @@
         else throw "rust-src extension required";
     };
     rustChannel = { rustChannelPlatform, rustChannelOf ? (mozilla pkgs).rustChannelOf, pkgs ? null }: {
-      stable = rustChannelOf { channel = "1.35.0"; };
+      stable = rustChannelOf { channel = "1.36.0"; };
       # TODO: beta
       nightly = rustChannelOf { date = "2019-06-28"; channel = "nightly"; };
     };
