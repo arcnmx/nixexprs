@@ -1,4 +1,4 @@
-{ cipkgs, ... } @ ci: let
+{ ci }: let
   pkgs = import <nixpkgs> { };
 in {
   # https://github.com/arcnmx/ci
