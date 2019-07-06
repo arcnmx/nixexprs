@@ -8,6 +8,11 @@ let
       # vim with python3
       python = python3.withPackages(ps: with ps; [ pynvim ]);
       wrapPythonDrv = true;
+      guiSupport = "no";
+      luaSupport = false;
+      multibyteSupport = true;
+      ftNixSupport = false; # provided by "vim-nix" plugin
+      # TODO: fully disable X11?
     };
 
     rxvt_unicode-cvs = { rxvt_unicode, fetchcvs }: rxvt_unicode.overrideAttrs (old: {
