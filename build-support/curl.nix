@@ -40,7 +40,7 @@
     } // env);
   in package;
   fetchGitHubApi = { fetchCurlJson, lib }: { gitHubEndpoint, gitHubOAuth2Token ? null, gitHubPostData ? null, sha256, jqFilter ? null, name ? "fetch-github-json" }: with lib; let
-    curlHeaders = optionalAttrs (gitHubOAuth2Token != null) { Authorization = "token $gitHubOAuth2Token"; };
+    curlHeaders = optionalAttrs (gitHubOAuth2Token != null) { Authorization = "token ${gitHubOAuth2Token}"; };
     curlUrl = "https://api.github.com/${gitHubEndpoint}";
     curlOptions = if gitHubPostData != null then ["-d" (builtins.toJSON gitHubPostData)] else [];
     env = {
