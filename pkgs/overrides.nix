@@ -65,6 +65,9 @@ let
       # darwin doesn't have to worry about share/applications/electrum.desktop silliness
       ${if electrum.stdenv.isLinux then null else "postInstall"} = "true";
     });
+    duc-cli = { duc }: (duc.override { pango = null; cairo = null; }).overrideAttrs (old: {
+      configureFlags = ["--disable-x11" "--disable-cairo"];
+    });
 
     passff-host = { fetchFromGitHub, passff-host, pass }: (passff-host.override { inherit pass; }).overrideAttrs (old: rec {
       pname = "passff-host";
