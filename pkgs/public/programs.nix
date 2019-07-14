@@ -25,6 +25,8 @@ let
       dbPath = programsDatabase;
       perlFlags = lib.concatStrings (map (path: "-I ${path}/lib/perl5/site_perl ")
         [ perlPackages.DBI perlPackages.DBDSQLite perlPackages.StringShellQuote ]);
+
+      meta.broken = perl.stdenv.isDarwin; # https://github.com/NixOS/nixpkgs/pull/64157 seems to have broken string shellquote
     };
   };
 in packages
