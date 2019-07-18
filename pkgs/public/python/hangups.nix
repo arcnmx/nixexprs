@@ -52,4 +52,6 @@ buildPythonPackage rec {
     pytest-mock
     pytest-asyncio
   ];
+
+  meta.broken = lib.versionOlder lib.version "19.09pre";
 }
