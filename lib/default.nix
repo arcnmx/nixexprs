@@ -106,4 +106,25 @@ in with self; {
       if relPath == "" then "${drv}"
       else "${drv}/${relPath}${drv.stdenv.hostPlatform.extensions.executable}";
   });
+
+  # getEnv or default fallback
+  getEnvOr = env: fallback: let
+    val = builtins.getEnv env;
+  in if val != "" then val else fallback;
+
+  # map environment variable, or fallback (already mapped)
+  mapEnv = fn: fallback: env: let
+    val = builtins.getEnv env;
+  in if val != "" then fn val else fallback;
+
+  # create a url and omit explicit ports if default
+  genUrl = protocol: domain: port: let
+    portDefaults = {
+      http = 80;
+      https = 443;
+    };
+    portStr = if port == null || (portDefaults.${protocol} or 0) == port
+      then ""
+      else ":${toString port}";
+  in "${protocol}://${domain}${portStr}";
 }
