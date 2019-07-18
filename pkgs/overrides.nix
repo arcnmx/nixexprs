@@ -36,6 +36,13 @@ let
       ];
     };
 
+    pidgin-arc = { pkgs, pidgin, pidgin-skypeweb, pidgin-otr, purple-discord, purple-hangouts, purple-facebook, telegram-purple, purple-matrix, purple-plugin-pack, purple-lurch }:
+      pidgin.override {
+        plugins = [
+          pidgin-skypeweb pidgin-otr purple-discord purple-hangouts purple-facebook telegram-purple purple-matrix purple-plugin-pack purple-lurch
+        ];
+      };
+
     xdg_utils-mimi = { xdg_utils }: xdg_utils.override { mimiSupport = true; };
 
     luakit-develop = { fetchFromGitHub, luakit }: luakit.overrideAttrs (old: rec {
