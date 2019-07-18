@@ -96,7 +96,9 @@ in with self; {
       overrideDerivation = f: drvPassthru fn (drv.overrideDerivation f);
       overrideAttrs = f: drvPassthru fn (drv.overrideAttrs f);
     } // (fn drv);
-  in extendDerivation true passthru drv;
+  in if isFunction drv # allow chaining with mkDerivation
+    then attrs: drvPassthru fn (drv attrs)
+    else self.extendDerivation true passthru drv;
 
   # add a .exec attribute to a derivation with the absolute path of its main binary
   drvExec = relPath: drvPassthru (drv: {
