@@ -1,13 +1,19 @@
 { self, ... }: let
-  buildKakPlugin = self.callPackage ({ stdenvNoCC }: {
-    src, sources ? null,
+  buildKakPlugin = self.callPackage ({ lib, stdenvNoCC }: {
+    src, sources ? [ ],
+    mkDerivation ? stdenvNoCC.mkDerivation,
     name ? "${pname}-${attrs.version}",
     pname ? (builtins.parseDrvName name).name,
+    kakrc ? "share/kak/autoload/${pname}.kak",
     ...
   } @ attrs: let
-    drv = stdenvNoCC.mkDerivation ({
-      kakrc = "share/kak/autoload/${pname}.kak";
-
+    attrs' = builtins.removeAttrs attrs [ "mkDerivation" ];
+    buildKakrc = drv: {
+      kakrc = "${drv}/${kakrc}";
+    };
+    drv = mkDerivation ({
+      inherit kakrc;
+    } // lib.optionalAttrs (src != null) {
       installPhase = ''
         runHook preInstall
 
@@ -31,8 +37,11 @@
 
         runHook postInstall
       '';
-    } // attrs);
-  in drv) { };
+    } // attrs');
+  in lib.drvPassthru buildKakrc drv) { };
+  buildKakPluginFrom2Nix = self.callPackage ({ buildKakPlugin }: attrs: buildKakPlugin ({
+    src = null;
+  } // attrs)) { };
 in {
-  inherit buildKakPlugin;
+  inherit buildKakPlugin buildKakPluginFrom2Nix;
 }

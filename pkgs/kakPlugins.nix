@@ -39,7 +39,9 @@
       sha256 = "10gkjhwv2nvhh2ci89z51daskiaz0nvy25v1nwpzvhqm14d8jd81";
     };
   };
-  kak-tree = { fetchFromGitHub, rustPlatform, lib, darwin, hostPlatform }: rustPlatform.buildRustPackage rec {
+  kak-tree = { fetchFromGitHub, rustPlatform, buildKakPluginFrom2Nix, lib, darwin, hostPlatform }: buildKakPluginFrom2Nix rec {
+    mkDerivation = rustPlatform.buildRustPackage;
+
     kakrc = "share/kak/autoload/tree.kak";
     pname = "kak-tree";
     version = "6d32dda895fbfcbb772ab234ffa04dd257b9309d";
@@ -65,7 +67,9 @@
       install -Dm0644 rc/tree.kak $out/$kakrc
     '';
   };
-  kak-lsp = { fetchFromGitHub, rustPlatform, lib, darwin, hostPlatform }: rustPlatform.buildRustPackage rec {
+  kak-lsp = { fetchFromGitHub, rustPlatform, buildKakPluginFrom2Nix, lib, darwin, hostPlatform }: buildKakPluginFrom2Nix rec {
+    mkDerivation = rustPlatform.buildRustPackage;
+
     pname = "kak-lsp";
     version = "6.2.0";
     src = fetchFromGitHub {
