@@ -22,6 +22,7 @@
   '';
   drv = yarn2nix.mkYarnPackage {
     inherit version pname src packageJSON;
+    name = "matrix-appservice-purple-${version}";
     yarnLock = ./yarn.lock;
     yarnNix = ./yarn.nix;
     doDist = false;
