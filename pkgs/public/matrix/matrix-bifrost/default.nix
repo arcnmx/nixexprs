@@ -73,6 +73,9 @@
       chmod +x $out/bin/$pname
     '';
 
-    meta.broken = !(builtins.tryEval yarn2nix).success;
+    meta = {
+      broken = !(builtins.tryEval yarn2nix).success;
+      skip.ci = true; # derivation name depends on the package json...
+    };
   };
 in lib.drvExec "bin/${drv.pname}" drv
