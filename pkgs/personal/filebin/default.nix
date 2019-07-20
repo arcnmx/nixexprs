@@ -4,4 +4,5 @@
 }:
 substituteShellScriptBin "filebin" ./filebin.sh {
   depsRuntimePath = [coreutils awscli curl];
+  meta.broken = true;
 }
