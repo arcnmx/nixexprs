@@ -68,7 +68,7 @@ let
       installCheckPhase = "true";
       doCheck = false;
       meta = with electrum.stdenv.lib; electrum.meta // {
-        broken = electrum.stdenv.isDarwin && versionOlder version "19.09pre";
+        broken = electrum.stdenv.isDarwin;
         platforms = platforms.all; # TODO: allow darwin on unstable once the channel updates
       };
 
