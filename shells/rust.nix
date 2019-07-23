@@ -16,14 +16,15 @@
   channels = { inherit (rustChannel) stable nightly; };
   pkgs' = pkgs;
   fillTarget = {
-    triple,
-    pkgs ? pkgs',
-    stdenv ? pkgs.stdenv,
-    cc ? stdenv.cc,
-    linker ? "${cc}/bin/${cc.targetPrefix}cc",
-    ar ? "${cc}/bin/${cc.targetPrefix}ar"
+    triple
+  , pkgs ? pkgs'
+  , stdenv ? pkgs.stdenv
+  , cc ? stdenv.cc
+  , ar ? "${cc}/bin/${cc.targetPrefix}ar"
+  , linker ? "${cc}/bin/${cc.targetPrefix}cc"
+  , linkerFlavor ? "gcc" # em gcc ld msvc ptx-linker wasm-ld ld64.lld ld.lld lld-link
   }: {
-    inherit triple pkgs stdenv cc linker ar;
+    inherit triple pkgs stdenv cc ar linker linkerFlavor;
   };
   targetCompat = {
     i686-pc-mingw32 = {
@@ -105,7 +106,7 @@
     });
   };
   targets' = targets;
-  shell = { channel, target ? targets'.host, targets ? [], extensions ? rustExtensions } @ args: let
+  shell = makeOverridable ({ channel, target ? targets'.host, targets ? [], extensions ? rustExtensions } @ args: let
     args' = builtins.removeAttrs args [ "channel" "target" "targets" "extensions" ];
     target' = fillTarget (if isString target then { triple = target; } else target);
     isCross = target'.stdenv.hostPlatform != pkgs.hostPlatform;
@@ -122,8 +123,9 @@
     rust = [ ch.rust ];
     cargoEnvVar = n: replaceStrings [ "-" ] [ "_" ] (toUpper n);
     envForTarget = target: {
-      "CARGO_TARGET_${cargoEnvVar target.triple}_LINKER" = target.linker;
       "CARGO_TARGET_${cargoEnvVar target.triple}_AR" = target.ar;
+      "CARGO_TARGET_${cargoEnvVar target.triple}_LINKER" = target.linker;
+      "CARGO_TARGET_${cargoEnvVar target.triple}_RUSTFLAGS" = [ "-C" "linker-flavor=${target.linkerFlavor}" ];
       # TODO: LDFLAGS = "-fuse-ld=gold" or something?
     };
   in target.pkgs.mkShell ({
@@ -131,7 +133,7 @@
   } // foldAttrList (map envForTarget allTargets)
   // optionalAttrs (isCross || args ? target) {
     CARGO_BUILD_TARGET = target'.triple;
-  } // args');
+  } // args'));
 in {
   inherit channels targets rustTools rustExtensions;
   mkShell = shell;
