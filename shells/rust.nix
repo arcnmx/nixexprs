@@ -1,43 +1,139 @@
 { mkShell
 , rustChannel, rustChannelPlatform
+, pkgs
 , stdenv
+, pkgsCross
 , cargo-download, cargo-expand ? null, cargo-outdated ? null, cargo-release, cargo-bloat ? null
 , cargo-llvm-lines ? null, cargo-deps ? null, cargo-with ? null, cargo-readme ? null
 , rust-analyzer
-}: with stdenv.lib; let
+}: with pkgs.lib; let
   rustTools' = [ cargo-download cargo-expand cargo-outdated cargo-release cargo-bloat cargo-llvm-lines cargo-deps cargo-with cargo-readme rust-analyzer ];
   rustTools = builtins.filter (pkg: pkg.meta.available or true) rustTools';
-  extensions = [
-    "clippy-preview" "rustfmt-preview"
+  rustExtensions = [
+    "clippy-preview" "rustfmt-preview" # "llvm-tools-preview" broken? :(
     "rust-analysis" "rls-preview" "rust-src"
   ];
-  channels = builtins.mapAttrs (_: rustChannelPlatform) { inherit (rustChannel) stable nightly; };
+  channels = { inherit (rustChannel) stable nightly; };
+  pkgs' = pkgs;
+  fillTarget = {
+    triple,
+    pkgs ? pkgs',
+    stdenv ? pkgs.stdenv,
+    cc ? stdenv.cc,
+    linker ? "${cc}/bin/${cc.targetPrefix}cc",
+    ar ? "${cc}/bin/${cc.targetPrefix}ar"
+  }: {
+    inherit triple pkgs stdenv cc linker ar;
+  };
   targetCompat = {
-    i686-pc-mingw32 = "i686-pc-windows-gnu";
-    x86_64-pc-mingw32 = "x86_64-pc-windows-gnu";
+    i686-pc-mingw32 = {
+      inherit (targets.mingw32) triple;
+    };
+    x86_64-pc-mingw32 = {
+      inherit (targets.mingwW64) triple;
+    };
+  };
+  targetFor = pkgs: {
+    inherit (pkgs);
+    triple = pkgs.hostPlatform.config;
   };
   targets = rec {
-    linux64 = "x86_64-unknown-linux-gnu";
-    mingwW64 = "x86_64-pc-windows-gnu";
-    mingw32 = "i686-pc-windows-gnu";
-    win64 = "x86_64-pc-windows-msvc";
-    win32 = "i686-pc-windows-msvc";
-    macos64 = "x86_64-apple-darwin";
-    macos32 = "i686-apple-darwin";
-    host = targetCompat.${stdenv.hostPlatform.config} or stdenv.hostPlatform.config;
+    armv6m = {
+      triple = "thumbv6m-none-eabi";
+      pkgs = pkgsCross.arm-embedded;
+    };
+    armv7m = {
+      triple = "thumbv7m-none-eabi";
+      pkgs = pkgsCross.arm-embedded;
+    };
+    armv7me = {
+      triple = "thumbv7me-none-eabi";
+      pkgs = pkgsCross.arm-embedded;
+    };
+    armv7mef = {
+      triple = "thumbv7me-none-eabihf";
+      pkgs = pkgsCross.armhf-embedded;
+    };
+    mingwW64 = {
+      triple = "x86_64-pc-windows-gnu";
+      pkgs = pkgsCross.mingwW64;
+    };
+    mingw32 = {
+      triple = "i686-pc-windows-gnu";
+      pkgs = pkgsCross.mingw32;
+    };
+    win64 = {
+      triple = "x86_64-pc-windows-msvc";
+      # TODO: wine link.exe stdenv
+    };
+    win32 = {
+      triple = "i686-pc-windows-msvc";
+    };
+    macos64 = {
+      triple = "x86_64-apple-darwin";
+    };
+    macos32 = {
+      triple = "i686-apple-darwin";
+    };
+    linux32 = targetFor pkgsCross.gnu32;
+    linux64 = targetFor pkgsCross.gnu64;
+    musl32 = targetFor pkgsCross.musl32;
+    musl64 = targetFor pkgsCross.musl64;
+    wasi32 = {
+      triple = "wasm32-wasi";
+      pkgs = pkgsCross.wasi32;
+    };
+    aarch64 = targetFor pkgsCross.aarch64-multiplatform;
+    iphone32 = {
+      triple = "armv7-apple-ios";
+      pkgs = pkgsCross.iphone32;
+    };
+    iphone32-simulator = {
+      triple = "i386-iphone-ios";
+      pkgs = pkgsCross.iphone32-simulator;
+    };
+    iphone64 = targetFor pkgsCross.iphone64;
+    iphone64-simulator = targetFor pkgsCross.iphone64-simulator;
+    android-armv7a = {
+      triple = "armv7-linux-androideabi";
+      pkgs = pkgsCross.armv7a-android-prebuilt;
+    };
+    host = fillTarget ((targetCompat.${stdenv.hostPlatform.config} or {
+      triple = stdenv.hostPlatform.config;
+    }) // {
+      inherit pkgs stdenv;
+    });
   };
-  shell = { channel, target ? targets.host }: let
-    rust = builtins.attrValues channel.rust;
+  targets' = targets;
+  shell = { channel, target ? targets'.host, targets ? [], extensions ? rustExtensions } @ args: let
+    args' = builtins.removeAttrs args [ "channel" "target" "targets" "extensions" ];
+    target' = fillTarget (if isString target then { triple = target; } else target);
+    isCross = target'.stdenv.hostPlatform != pkgs.hostPlatform;
+    targets' = map (triple: if isString triple then { inherit triple; } else triple) targets;
+    allTargets = map fillTarget targets' ++ [ target' ];
+    ch = channel.override {
+      inherit extensions;
+      targets = map ({ triple, ... }: triple) (
+        if isCross
+        then allTargets
+        else filter (target: target != target') allTargets
+      );
+    };
+    rust = [ ch.rust ];
     cargoEnvVar = n: replaceStrings [ "-" ] [ "_" ] (toUpper n);
-  in mkShell {
+    envForTarget = target: {
+      "CARGO_TARGET_${cargoEnvVar target.triple}_LINKER" = target.linker;
+      "CARGO_TARGET_${cargoEnvVar target.triple}_AR" = target.ar;
+      # TODO: LDFLAGS = "-fuse-ld=gold" or something?
+    };
+  in target.pkgs.mkShell ({
     nativeBuildInputs = rust ++ rustTools;
-    CARGO_BUILD_TARGET = target;
-    "CARGO_TARGET_${cargoEnvVar target}_LINKER" = "${stdenv.cc}/bin/${stdenv.cc.targetPrefix}cc";
-    "CARGO_TARGET_${cargoEnvVar target}_AR" = "${stdenv.cc}/bin/${stdenv.cc.targetPrefix}ar";
-    # TODO: NIX_LDFLAGS = "-fuse-ld=gold" or something
-  };
+  } // foldAttrList (map envForTarget allTargets)
+  // optionalAttrs (isCross || args ? target) {
+    CARGO_BUILD_TARGET = target'.triple;
+  } // args');
 in {
-  inherit channels targets rustTools;
+  inherit channels targets rustTools rustExtensions;
   mkShell = shell;
 
   stable = shell { channel = channels.stable; };
