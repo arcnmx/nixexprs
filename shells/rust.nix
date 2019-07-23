@@ -110,6 +110,7 @@
     args' = builtins.removeAttrs args [ "channel" "target" "targets" "extensions" ];
     target' = fillTarget (if isString target then { triple = target; } else target);
     isCross = target'.stdenv.hostPlatform != pkgs.hostPlatform;
+    mkShell' = if isCross then target'.pkgs.mkShell else mkShell;
     targets' = map (triple: if isString triple then { inherit triple; } else triple) targets;
     allTargets = map fillTarget targets' ++ [ target' ];
     ch = channel.override {
@@ -128,7 +129,7 @@
       "CARGO_TARGET_${cargoEnvVar target.triple}_RUSTFLAGS" = [ "-C" "linker-flavor=${target.linkerFlavor}" ];
       # TODO: LDFLAGS = "-fuse-ld=gold" or something?
     };
-  in target.pkgs.mkShell ({
+  in mkShell' ({
     nativeBuildInputs = rust ++ rustTools;
   } // foldAttrList (map envForTarget allTargets)
   // optionalAttrs (isCross || args ? target) {
