@@ -53,5 +53,5 @@ buildPythonPackage rec {
     pytest-asyncio
   ];
 
-  meta.broken = lib.versionOlder lib.version "19.09pre";
+  meta.broken = lib.isNixpkgsStable;
 }

@@ -127,4 +127,9 @@ in with self; {
       then ""
       else ":${toString port}";
   in "${protocol}://${domain}${portStr}";
+
+  nixpkgsVersionStable = "19.03";
+  nixpkgsVersionUnstable = "19.09";
+  isNixpkgsStable = versionOlder version "${nixpkgsVersionUnstable}pre";
+  isNixpkgsUnstable = !isNixpkgsStable;
 }

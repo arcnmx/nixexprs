@@ -1,18 +1,19 @@
-{ lib, stdenv, fetchFromGitHub, makeWrapper, rustPlatform, coreutils, nix, direnv, which, darwin }: rustPlatform.buildRustPackage rec {
+{ lib, callPackage, stdenv, fetchFromGitHub, makeWrapper, rustPlatform, coreutils, nix, direnv, which, darwin }: rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "target";
     repo = "lorri";
     #branch = "rolling-release";
-    rev = "094a903d19eb652a79ad6e7db6ad1ee9ad78d26c";
-    sha256 = "0y9y7r16ki74fn0xavjva129vwdhqi3djnqbqjwjkn045i4z78c8";
+    rev = "d3e452ebc2b24ab86aec18af44c8217b2e469b2a";
+    sha256 = "07yf3gl9sixh7acxayq4q8h7z4q8a66412z0r49sr69yxb7b4q89";
   };
   pname = "lorri";
   version = "rolling-release";
-  cargoSha256 = if lib.versionOlder lib.version "19.09pre"
-    then "04v9k81rvnv3n3n5s1jwqxgq1sw83iim322ki28q1qp5m5z7canv"
-    else "0lx4r05hf3snby5mky7drbnp006dzsg9ypsi4ni5wfl0hffx3a8g";
+  cargoSha256 = if lib.isNixpkgsStable
+    then lib.fakeSha256
+    else "094w2lp6jvxs8j59cjqp6b3kg4y4crlnqka5v2wmq4j0mn6hvhsj";
   COREUTILS = coreutils;
   BUILD_REV_COUNT = 1;
+  RUN_TIME_CLOSURE = callPackage "${src}/nix/runtime.nix" { };
 
   buildInputs = [ nix direnv which ] ++
     lib.optionals stdenv.isDarwin [

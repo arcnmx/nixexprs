@@ -55,7 +55,7 @@
 
     buildInputs = lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
 
-    cargoSha256 = if lib.versionOlder lib.version "19.09pre"
+    cargoSha256 = if lib.isNixpkgsStable
       then "15rc6p437vxmz3ng5gk060qpdh120r6p10jd9z8w31cdpa82pc4n"
       else "05fd53l4i94857z66byy2fc481g10sg07aysgjj6kllkmlsb3wix";
 
@@ -81,7 +81,7 @@
 
     buildInputs = lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
 
-    cargoSha256 = if lib.versionOlder lib.version "19.09pre"
+    cargoSha256 = if lib.isNixpkgsStable
       then "0bzb3i9cq1p5s2nxlq1z2rhc3f70rakgrd9xyvw7b2sk7zx2yh5c"
       else "0w0mnh8fnl8zi9n0fxzqaqbvmfagf3ay5v2na3laxb72jm76hrwa";
 
