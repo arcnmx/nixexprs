@@ -5,7 +5,6 @@
   lorri = import ./lorri.nix;
   paswitch = import ./paswitch.nix;
   LanguageClient-neovim = import ./language-client-neovim.nix;
-  tridactyl = import ./tridactyl.nix;
   base16-shell = import ./base16-shell.nix;
   urxvt_osc_52 = import ./urxvt-osc-52.nix;
   vit2 = import ./vit2.nix;
