@@ -59,22 +59,8 @@ let
       };
     });
 
-    electrum-cli = { electrum }: electrum.overrideAttrs (old: {
-      pname = "electrum-cli";
-      propagatedBuildInputs = builtins.filter (p: (p.pname or null) != "PyQt" && (p.pname or null) != "qdarkstyle") old.propagatedBuildInputs;
-      postPatch = ''
-        sed -i -e '/qdarkstyle/d' contrib/requirements/requirements.txt
-      '';
-      installCheckPhase = "true";
-      doCheck = false;
-      meta = with electrum.stdenv.lib; electrum.meta // {
-        broken = electrum.stdenv.isDarwin;
-        platforms = platforms.all; # TODO: allow darwin on unstable once the channel updates
-      };
+    electrum-cli = { electrum }: electrum.override { enableQt = false; };
 
-      # darwin doesn't have to worry about share/applications/electrum.desktop silliness
-      ${if electrum.stdenv.isLinux then null else "postInstall"} = "true";
-    });
     duc-cli = { duc }: (duc.override { pango = null; cairo = null; }).overrideAttrs (old: {
       configureFlags = ["--disable-x11" "--disable-cairo"];
     });
@@ -104,43 +90,6 @@ let
         done
       '';
     });
-
-    # usbmuxd is old/broken
-    usbmuxd = { fetchFromGitHub, usbmuxd }: usbmuxd.overrideAttrs (old: rec {
-      version = "git";
-      src = fetchFromGitHub {
-        owner = "libimobiledevice";
-        repo = "usbmuxd";
-        rev = "b1b0bf390363fa36aff1bc09443ff751943b9c34";
-        sha256 = "176hapckx98h4x0ni947qpkv2s95f8xfwz00wi2w7rgbr6cviwjq";
-      };
-    });
-    libusbmuxd = { fetchFromGitHub, libusbmuxd }: libusbmuxd.overrideAttrs (old: rec {
-      version = "git";
-      src = fetchFromGitHub {
-        owner = "libimobiledevice";
-        repo = "libusbmuxd";
-        rev = "c75605d862cd1c312494f6c715246febc26b2e05";
-        sha256 = "0467a045k4znmaz61i7a2s7yywj67q830ja6zn7z39k5pqcl2z4p";
-      };
-    });
-    libimobiledevice = { fetchFromGitHub, libimobiledevice }: libimobiledevice.overrideAttrs (old: rec {
-      version = "git";
-      src = fetchFromGitHub {
-        owner = "libimobiledevice";
-        repo = "libimobiledevice";
-        rev = "0584aa90c93ff6ce46927b8d67887cb987ab9545";
-        sha256 = "0rvj0aw9m44z457qnjmsp72bvflc0zvlmd3z98mpgli93pvf6cz9";
-      };
-    });
-    /*flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: rec {
-      name = "flashplayer-standalone-${version}";
-      version = "32.0.0.207";
-      src = fetchurl {
-        url = "https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flash_player_sa_linux.x86_64.tar.gz";
-        sha256 = "0d2pxggrzamrg143bvic0qa2v70jpplnahihfa4q2rbvy0l3i2pq";
-      };
-    });*/
   };
 in packages // {
   instantiate = { self, super, ... }: let
