@@ -72,4 +72,6 @@ in rustPlatform.buildRustPackage rec {
   '';
 
   doCheck = false;
+
+  meta.broken = lib.versionAtLeast "1.34" rustPlatform.rust.rustc.version;
 }
