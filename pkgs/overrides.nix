@@ -59,9 +59,15 @@ let
       };
     });
 
-    electrum-cli = { lib, electrum }: if lib.isNixpkgsStable
-    then electrum.overrideAttrs (old: { meta = old.meta // { broken = true; }; })
-    else electrum.override { enableQt = false; };
+    electrum-cli = { lib, electrum }: let
+      electrum-cli = if lib.isNixpkgsUnstable
+        then electrum.override { enableQt = false; }
+        else electrum;
+    in electrum-cli.overrideAttrs (old: {
+      meta = old.meta // {
+        broken = old.meta.broken or false || lib.isNixpkgsStable || electrum.stdenv.isDarwin;
+      };
+    });
 
     duc-cli = { duc }: (duc.override { pango = null; cairo = null; }).overrideAttrs (old: {
       configureFlags = ["--disable-x11" "--disable-cairo"];
