@@ -8,7 +8,7 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
     '') config.keychain.files)
     }
   '';
-  fileType = types.submodule ({ config, ... }: {
+  fileType = types.submodule ({ name, config, ... }: {
     options = {
       source = mkOption {
         type = types.either types.path types.str;
@@ -23,11 +23,15 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
       };
       group = mkOption {
         type = types.str;
-        default = if isNixos then "root" else "users";
+        default = cfg.group;
       };
       mode = mkOption {
         type = types.str;
         default = "0400";
+      };
+      fileName = mkOption {
+        type = types.str;
+        default = name;
       };
 
       path = mkOption {
@@ -36,15 +40,19 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
       };
     };
 
-    config.path = "${cfg.root}/" + (last (splitString "/" config.sourceFile));
+    config.path = "${cfg.root}/${config.fileName}";
   });
-  keyType = types.submodule ({ config, ... }: {
+  keyType = types.submodule ({ name, config, ... }: {
     options = {
       public = mkOption {
         type = types.either types.path types.str;
       };
       private = mkOption {
         type = types.either types.path types.str;
+      };
+      fileName = mkOption {
+        type = types.str;
+        default = name;
       };
 
       path = {
@@ -57,11 +65,20 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
           internal = true;
         };
       };
+      content = {
+        public = mkOption {
+          type = types.str;
+          internal = true;
+        };
+      };
     };
 
-    config.path = {
-      public = pkgs.lib.asPath "id_rsa.pub" config.public;
-      private = pkgs.lib.asFile "id_rsa" config.private;
+    config = {
+      path = {
+        public = pkgs.lib.asPath "id_rsa.pub" config.public;
+        private = config_.keychain.files."key-${config.fileName}".path;
+      };
+      content.public = if pkgs.lib.isPath then builtins.readFile config.public else config.public;
     };
   });
 in {
@@ -70,12 +87,16 @@ in {
       type = types.bool;
       default = cfg.files != { };
     };
+    group = mkOption {
+      type = types.nullOr types.str;
+      default = if isNixos then "keys" else "users";
+    };
     files = mkOption {
-      type = types.attrsOf fileType;
+      type = types.loaOf fileType;
       default = { };
     };
     keys = mkOption {
-      type = types.attrsOf keyType;
+      type = types.loaOf keyType;
       default = { };
     };
     root = mkOption {
@@ -86,12 +107,21 @@ in {
     };
   };
 
-  config = if isNixos then mkIf cfg.enable {
-    system.activationScripts.arc_keychain = {
-      text = activationScript;
-      deps = [ ];
+  config = let
+    keyConfig = {
+      keychain.files = mapAttrs' (name: key: nameValuePair "key-${name}" {
+        source = key.private;
+      }) cfg.keys;
     };
-  } else mkIf cfg.enable {
-    home.activation.arc_keychain = config.lib.dag.entryAfter ["writeBoundary"] activationScript;
-  };
+    activation = if isNixos then mkIf cfg.enable {
+      system.activationScripts.arc_keychain = {
+        text = activationScript;
+        deps = [ "etc" ]; # must be done after passwd/etc are ready
+      };
+
+      users.groups.${cfg.group}.members = [ ];
+    } else mkIf cfg.enable {
+      home.activation.arc_keychain = config.lib.dag.entryAfter ["writeBoundary"] activationScript;
+    };
+  in mkMerge [ keyConfig activation ];
 }
