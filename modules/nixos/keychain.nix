@@ -48,7 +48,8 @@ isNixos: { pkgs, config, lib, ... }: with lib; let
         type = types.either types.path types.str;
       };
       private = mkOption {
-        type = types.either types.path types.str;
+        type = types.nullOr (types.either types.path types.str);
+        default = null;
       };
       fileName = mkOption {
         type = types.str;
@@ -111,7 +112,7 @@ in {
     keyConfig = {
       keychain.files = mapAttrs' (name: key: nameValuePair "key-${name}" {
         source = key.private;
-      }) cfg.keys;
+      }) (filterAttrs (_: k: k.private != null) cfg.keys);
     };
     activation = if isNixos then mkIf cfg.enable {
       system.activationScripts.arc_keychain = {
