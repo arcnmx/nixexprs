@@ -14,6 +14,7 @@
     ./lorri.nix
     ./shell.nix
     ./less.nix
+    ./tridactyl.nix
     (import ../nixos/keychain.nix false)
   ];
 }
