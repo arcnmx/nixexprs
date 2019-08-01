@@ -18,6 +18,8 @@
     autocmds = name: list: concatStringsSep "\n" (map (value:
       "autocmd ${configStrs.autocmdName name} ${configStrs.urlPattern value.urlPattern} ${configStrs.cmd value.cmd}"
     ) list);
+    autocontain = { urlPattern, container, ... }:
+      "autocontain ${urlPattern} ${container}";
     keyseq = mods: key: let
       modStr = concatStrings (map (mod: {
         alt = "A";
@@ -100,7 +102,7 @@ in {
 
     urlSettings = mkOption {
       default = { };
-      type = types.attrsOf (types.loaOf (types.submodule ({ config, name, ... }: {
+      type = types.attrsOf (types.loaOf (types.submodule ({ name, ... }: {
         options = {
           urlPattern = mkOption {
             type = types.str;
@@ -134,6 +136,23 @@ in {
           (optionalString cfg.sanitise.sync "tridactylsync")
         ] + optionalString (cfg.settings ? storageloc) "\n${configStrs.setting "storageloc" cfg.settings.storageloc}"; # TODO: don't re-emit this while expanding cfg.settings, or move it out of cfg.settings?
       };
+    };
+
+    autocontain = mkOption {
+      description = "Automatically open a domain in a specified container";
+      default = { };
+      type = types.loaOf (types.submodule ({ name, ... }: {
+        options = {
+          urlPattern = mkOption {
+            type = types.str;
+            default = name;
+          };
+
+          container = mkOption {
+            type = types.str;
+          };
+        };
+      }));
     };
 
     autocmd = let
@@ -211,6 +230,7 @@ in {
       (mkIf (cfg.sanitise.local || cfg.sanitise.sync) (mkBefore cfg.sanitise.excmd))
       (mkIf (cfg.exalias != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.alias cfg.exalias)))
       (mkIf (cfg.autocmd != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.autocmds cfg.autocmd)))
+      (mkIf (cfg.autocontain != { }) (concatStringsSep "\n" (mapAttrsToList (_ configStrs.autocontain) cfg.autocontain)))
       (mkIf (cfg.settings != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.setting cfg.settings)))
       (mkIf (cfg.urlSettings != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.urlSettings cfg.urlSettings)))
       (mkIf (cfg.bindings != { }) (concatStringsSep "\n" (mapAttrsToList (_: configStrs.binding) cfg.bindings)))
