@@ -36,11 +36,11 @@ let
       ];
     };
 
-    pidgin-arc = { pidgin, pidgin-skypeweb, pidgin-otr, purple-discord, purple-hangouts, purple-facebook, telegram-purple, purple-matrix, purple-plugin-pack, purple-lurch }: let
+    bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
+
+    pidgin-arc = { pidgin, purple-plugins-arc }: let
       wrapped = pidgin.override {
-        plugins = [
-          pidgin-skypeweb pidgin-otr purple-discord purple-hangouts purple-facebook telegram-purple purple-matrix purple-plugin-pack purple-lurch
-        ];
+        plugins = purple-plugins-arc;
       };
     in wrapped.overrideAttrs (old: {
       meta.broken = pidgin.stdenv.isDarwin;

@@ -13,6 +13,7 @@
     (call ./linux.nix) //
     (call ./kakoune.nix) //
     (call ./rust.nix) //
+    (call ./misc.nix) //
     {
       inherit sourceBashArray;
       yarn2nix = let

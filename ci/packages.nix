@@ -1,7 +1,7 @@
 { arc }:
 with arc.pkgs.lib; let
   packages = filterAttrs filter arc.packages;
-  packages' = mapAttrs (_: p: if !isDerivation p
+  packages' = mapAttrs (_: p: if !isDerivation p && isAttrs p
     then filterAttrs filter p
     else p
   ) packages;
