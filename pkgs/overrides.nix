@@ -46,6 +46,18 @@ let
       meta.broken = pidgin.stdenv.isDarwin;
     });
 
+    weechat-arc = { wrapWeechat, weechat-unwrapped, weechatScripts, pkgs }: with pkgs.lib; wrapWeechat weechat-unwrapped {
+      configure = { availablePlugins, ... }: {
+        plugins = with availablePlugins; [
+          (python.withPackages (ps: with ps; [
+          ] ++ optional (pkgs ? nur) pkgs.nur.repos.tilpner.weechat-matrix.weechat-matrix))
+        ];
+        scripts = with weechatScripts; [
+          go auto_away autosort colorize_nicks unread_buffer urlgrab vimode
+        ] ++ optional (pkgs ? nur) pkgs.nur.repos.tilpner.weechat-matrix.weechat-matrix;
+      };
+    };
+
     xdg_utils-mimi = { xdg_utils }: xdg_utils.override { mimiSupport = true; };
 
     luakit-develop = { fetchFromGitHub, luakit }: luakit.overrideAttrs (old: rec {

@@ -12,6 +12,7 @@
     (call ./curl.nix) //
     (call ./linux.nix) //
     (call ./kakoune.nix) //
+    (call ./weechat.nix) //
     (call ./rust.nix) //
     (call ./misc.nix) //
     {
