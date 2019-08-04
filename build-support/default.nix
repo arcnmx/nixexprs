@@ -17,7 +17,19 @@
     (call ./misc.nix) //
     {
       inherit sourceBashArray;
-    } // lib.optionalAttrs (builtins.pathExists ../yarn2nix/default.nix) {
-      yarn2nix = self.callPackage ../yarn2nix { };
+      yarn2nix = if builtins.pathExists ../yarn2nix/default.nix
+        then self.callPackage ../yarn2nix { }
+        else if super ? yarn2nix-moretea then self.yarn2nix-moretea
+        else if !(builtins.tryEval super.yarn2nix or throw "yarn2nix").success then {
+          mkYarnPackage = args: self.stdenvNoCC.mkDerivation {
+            name = args.name or args.pname or "yarn2nix";
+            meta.broken = true;
+          };
+          mkYarnModules = args: self.stdenvNoCC.mkDerivation {
+            name = args.name or args.pname or "yarn2nix";
+            meta.broken = true;
+          };
+        }
+        else super.yarn2nix;
     };
 in build-support
