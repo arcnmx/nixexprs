@@ -17,10 +17,7 @@
     (call ./misc.nix) //
     {
       inherit sourceBashArray;
-      yarn2nix = let
-        yarn2nix = ../yarn2nix/default.nix;
-      in if builtins.pathExists yarn2nix
-      then self.callPackage yarn2nix {}
-      else super.yarn2nix;
+    } // lib.optionalAttrs (builtins.pathExists ../yarn2nix/default.nix) {
+      yarn2nix = self.callPackage ../yarn2nix { };
     };
 in build-support
