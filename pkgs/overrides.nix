@@ -105,13 +105,19 @@ let
       };
     });
 
-    pythonInterpreters = { lib, pythonInterpreters, python-olm, python-matrix-nio, weechat-matrix }: builtins.mapAttrs (_: py: if py.pkgs or null != null then py.override (old: {
-      packageOverrides = pself: psuper: {
-        olm = python-olm.override { inherit (pself) pythonPackages; };
-        matrix-nio = python-matrix-nio.override { inherit (pself) pythonPackages; };
-        weechat-matrix = weechat-matrix.override { inherit (pself) pythonPackages; };
-      };
-    }) else py) pythonInterpreters;
+    pythonInterpreters = { lib, pythonInterpreters, callPackage }: builtins.mapAttrs (_: py: let
+        pythonOverrides = import ./python;
+        packageOverrides = pself: psuper:
+          builtins.mapAttrs (_: drv: callPackage drv { inherit (pself) pythonPackages; }) pythonOverrides;
+      in if py.pkgs or null != null
+        then py.override (old: {
+          packageOverrides =
+            pself: psuper: let
+              psuper' = ((old.packageOverrides or (_: _: {})) pself psuper);
+            in psuper' // packageOverrides pself psuper';
+        })
+        else py
+    ) pythonInterpreters;
   };
 in packages // {
   instantiate = { self, super, ... }: let

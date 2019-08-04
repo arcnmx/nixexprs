@@ -1,5 +1,5 @@
-{ fetchFromGitHub, lib, python3, mautrix-python, hangups }: with python3.pkgs; let
-drv = buildPythonApplication rec {
+{ fetchFromGitHub, lib, python3Packages }: with python3Packages; let
+  drv = buildPythonApplication rec {
     pname = "mautrix-hangouts";
     version = "54de7f94750ee217907c3ce427430043fec27514";
 
@@ -26,10 +26,10 @@ drv = buildPythonApplication rec {
     doCheck = false;
   };
 in lib.drvPassthru (drv: {
-    # `alembic` (a database migration tool) is only needed for the initial setup,
-    # and not needed during the actual runtime. However `alembic` requires `mautrix-telegram`
-    # in its environment to create a database schema from all models.
-    alembic = alembic.overrideAttrs (old: {
-      propagatedBuildInputs = old.propagatedBuildInputs ++ [ drv ];
-    });
+  # `alembic` (a database migration tool) is only needed for the initial setup,
+  # and not needed during the actual runtime. However `alembic` requires `mautrix-telegram`
+  # in its environment to create a database schema from all models.
+  alembic = alembic.overrideAttrs (old: {
+    propagatedBuildInputs = old.propagatedBuildInputs ++ [ drv ];
+  });
 }) drv

@@ -1,4 +1,6 @@
-{ fetchFromGitHub, python3 }: with python3.pkgs;
+{ lib, fetchFromGitHub, pythonPackages }:
+
+with pythonPackages;
 
 buildPythonPackage rec {
   pname = "mautrix-python";
@@ -25,4 +27,6 @@ buildPythonPackage rec {
     pytest-mock
     pytest-asyncio
   ];
+
+  meta.broken = lib.versionOlder python.version "3.6";
 }

@@ -1,6 +1,6 @@
-{ lib, fetchFromGitHub, fetchzip, python3, readlike, reparser }:
+{ lib, fetchFromGitHub, fetchzip, pythonPackages }:
 
-with python3.pkgs;
+with pythonPackages;
 
 buildPythonPackage rec {
   pname = "hangups";
@@ -53,5 +53,5 @@ buildPythonPackage rec {
     pytest-asyncio
   ];
 
-  meta.broken = lib.isNixpkgsStable;
+  meta.broken = lib.isNixpkgsStable || pythonPackages.python.isPy2;
 }

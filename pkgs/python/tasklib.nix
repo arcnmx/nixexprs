@@ -1,6 +1,6 @@
-{ lib, python3, taskwarrior, writeShellScriptBin }:
+{ lib, pythonPackages, taskwarrior, writeShellScriptBin }:
 
-with python3.pkgs;
+with pythonPackages;
 
 let
 

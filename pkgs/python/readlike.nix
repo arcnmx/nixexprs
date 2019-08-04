@@ -1,6 +1,6 @@
-{ lib, python3 }:
+{ lib, pythonPackages }:
 
-with python3.pkgs;
+with pythonPackages;
 
 buildPythonPackage rec {
   pname = "readlike";

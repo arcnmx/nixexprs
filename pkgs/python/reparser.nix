@@ -1,6 +1,6 @@
-{ lib, python3, readlike }:
+{ pythonPackages }:
 
-with python3.pkgs;
+with pythonPackages;
 
 buildPythonPackage rec {
   pname = "ReParser";
@@ -11,9 +11,7 @@ buildPythonPackage rec {
     sha256 = "0nniqb69xr0fv7ydlmrr877wyyjb61nlayka7xr08vlxl9caz776";
   };
 
-  propagatedBuildInputs = [
-    #enum34 if python version < 3.4?
-  ];
+  propagatedBuildInputs = [ enum34 ];
 
   checkInputs = [
     pytest
@@ -21,4 +19,6 @@ buildPythonPackage rec {
     pytest-mock
     pytest-asyncio
   ];
+
+  meta.broken = pythonPackages.python.isPy2;
 }
