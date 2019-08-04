@@ -106,7 +106,7 @@ let
         sha256 = "1zr6bi9kk1410mbawyvsbl1bnzw86wzwmgc7i5ap6i9l96mb1zqh";
       };
 
-      meta.platforms = olm.stdenv.lib.platforms.all;
+      meta.broken = olm.stdenv.isDarwin;
     });
 
     pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (_: py: let
