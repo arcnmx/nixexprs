@@ -1,6 +1,8 @@
-{ pythonPackages, fetchFromGitHub, weechat-matrix-contrib }:
+{ lib, pythonPackages, fetchFromGitHub, weechat-matrix-contrib }:
 
-pythonPackages.buildPythonPackage rec {
+with pythonPackages;
+
+buildPythonPackage rec {
   pname = "weechat-matrix";
   version = "2019-07-16";
 
@@ -11,7 +13,7 @@ pythonPackages.buildPythonPackage rec {
     sha256 = "19294nzvk4vxj8zna9vrqbyg2swyighqvfja4kknj3i1d9szdy3p";
   };
 
-  propagatedBuildInputs = with pythonPackages; [
+  propagatedBuildInputs = [
     pyopenssl
     webcolors
     future
@@ -43,5 +45,8 @@ pythonPackages.buildPythonPackage rec {
     substituteInPlace matrix/uploads.py \
       --replace matrix_upload $weechatMatrixContrib/bin/matrix_upload
     substituteAll $setupPath setup.py
+  '' + lib.optionalString (!matrix-nio.enableOlm) ''
+    substituteInPlace requirements.txt \
+      --replace "[e2e]" ""
   '';
 }

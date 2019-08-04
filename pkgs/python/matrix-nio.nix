@@ -1,5 +1,5 @@
 { lib, pythonPackages, fetchFromGitHub, git
-, enableOlm ? !pythonPackages.python.stdenv.isDarwin
+, enableOlm ? !pythonPackages.python.stdenv.isDarwin && !lib.isNixpkgsStable
 }:
 
 with pythonPackages;
@@ -36,4 +36,8 @@ buildPythonPackage rec {
     unpaddedbase64
   ] ++ lib.optional (!pythonPackages.python.isPy2) aiohttp
     ++ lib.optional enableOlm olm;
+
+  passthru = {
+    inherit enableOlm;
+  };
 }
