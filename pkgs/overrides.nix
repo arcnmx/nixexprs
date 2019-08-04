@@ -95,6 +95,8 @@ let
       };
     });
 
+    vit2 = { python3Packages }: with python3Packages; toPythonApplication vit;
+
     olm = { olm, fetchurl }: olm.overrideAttrs (old: rec {
       pname = "olm";
       version = "3.1.3";

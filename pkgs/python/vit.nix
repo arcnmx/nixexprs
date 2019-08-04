@@ -1,10 +1,8 @@
 { fetchFromGitHub
-, python3
-, tasklib
-, makeWrapper
+, pythonPackages
 , taskwarrior }:
 
-with python3.pkgs;
+with pythonPackages;
 
 buildPythonPackage rec {
   pname = "vit";
@@ -25,14 +23,11 @@ buildPythonPackage rec {
     urwid
   ];
 
-  nativeBuildInputs = [ makeWrapper ];
-
-  inherit taskwarrior;
-  postInstall = ''
-    wrapProgram $out/bin/vit --prefix PATH : $taskwarrior/bin
-  '';
+  makeWrapperArgs = [ "--prefix" "PATH" ":" "${taskwarrior}/bin" ];
 
   preCheck = ''
     export TERM=linux
   '';
+
+  meta.broken = python.isPy2;
 }
