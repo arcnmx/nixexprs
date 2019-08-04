@@ -10,6 +10,7 @@
   vit2 = import ./vit2.nix;
 } // (import ./nixos.nix)
 // (import ./droid.nix)
+// (import ./weechat.nix)
 // (import ./crates)
 // (import ./programs.nix)
 // (import ./linux)

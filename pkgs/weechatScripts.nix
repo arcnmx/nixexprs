@@ -34,4 +34,20 @@
     version = "0.7";
     sha256 = "1ypn5hkz9n7qjmk22h86lz8sikf7a4wql08cc0540a5lwd4m2qgz";
   };
+
+  weechat-matrix = { stdenvNoCC, weechat-matrix-contrib }: stdenvNoCC.mkDerivation {
+    pname = "weechat-matrix";
+    inherit (weechat-matrix-contrib) version src;
+
+    weechatMatrixContrib = weechat-matrix-contrib;
+    buildPhase = "true";
+    installPhase = ''
+      install -D main.py $out/share/matrix.py
+
+      install -d $out/bin
+      ln -s $weechatMatrixContrib/bin/matrix_{upload,decrypt} $out/bin/
+    '';
+
+    passthru.scripts = [ "matrix.py" ];
+  };
 }

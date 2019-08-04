@@ -46,15 +46,19 @@ let
       meta.broken = pidgin.stdenv.isDarwin;
     });
 
-    weechat-arc = { wrapWeechat, weechat-unwrapped, weechatScripts, pkgs }: with pkgs.lib; wrapWeechat weechat-unwrapped {
+    weechat-arc = { wrapWeechat, weechat-unwrapped, weechatScripts, pythonPackages }: let
+      wrapWeechat' = wrapWeechat.override { inherit pythonPackages; };
+      weechat-unwrapped' = weechat-unwrapped.override { inherit pythonPackages; };
+    in wrapWeechat' weechat-unwrapped' {
       configure = { availablePlugins, ... }: {
         plugins = with availablePlugins; [
           (python.withPackages (ps: with ps; [
-          ] ++ optional (pkgs ? nur) pkgs.nur.repos.tilpner.weechat-matrix.weechat-matrix))
+            weechat-matrix
+          ]))
         ];
         scripts = with weechatScripts; [
-          go auto_away autosort colorize_nicks unread_buffer urlgrab vimode
-        ] ++ optional (pkgs ? nur) pkgs.nur.repos.tilpner.weechat-matrix.weechat-matrix;
+          go auto_away autosort colorize_nicks unread_buffer urlgrab vimode weechat-matrix
+        ];
       };
     };
 
@@ -90,6 +94,24 @@ let
         broken = old.meta.broken or false || lib.isNixpkgsStable;
       };
     });
+
+    olm = { olm, fetchurl }: olm.overrideAttrs (old: rec {
+      pname = "olm";
+      version = "3.1.3";
+      name = "${pname}-${version}";
+      src = fetchurl {
+        url = "https://gitlab.matrix.org/matrix-org/olm/-/archive/${version}/${name}.tar.gz";
+        sha256 = "1zr6bi9kk1410mbawyvsbl1bnzw86wzwmgc7i5ap6i9l96mb1zqh";
+      };
+    });
+
+    pythonInterpreters = { lib, pythonInterpreters, python-olm, python-matrix-nio, weechat-matrix }: builtins.mapAttrs (_: py: if py.pkgs or null != null then py.override (old: {
+      packageOverrides = pself: psuper: {
+        olm = python-olm.override { inherit (pself) pythonPackages; };
+        matrix-nio = python-matrix-nio.override { inherit (pself) pythonPackages; };
+        weechat-matrix = weechat-matrix.override { inherit (pself) pythonPackages; };
+      };
+    }) else py) pythonInterpreters;
   };
 in packages // {
   instantiate = { self, super, ... }: let
