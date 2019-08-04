@@ -107,10 +107,10 @@ let
       };
     });
 
-    pythonInterpreters = { lib, pythonInterpreters, callPackage }: builtins.mapAttrs (_: py: let
+    pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (_: py: let
         pythonOverrides = import ./python;
         packageOverrides = pself: psuper:
-          builtins.mapAttrs (_: drv: callPackage drv { inherit (pself) pythonPackages; }) pythonOverrides;
+          builtins.mapAttrs (_: drv: pkgs.callPackage drv { pythonPackages = pself; }) pythonOverrides;
       in if py.pkgs or null != null
         then py.override (old: {
           packageOverrides =

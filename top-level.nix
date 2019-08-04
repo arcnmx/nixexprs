@@ -22,7 +22,7 @@ self: super: with super.lib; let
     overlays = import ./overlays;
     overlay = import ./overlay.nix;
     pkgs = self;
-    packages = builtins.removeAttrs packages'' [ "shells" ];
+    packages = builtins.removeAttrs packages'' [ "shells" "pythonInterpreters" ];
     build = filtered filterBuildSupportKeys self;
     lib = filtered filterLibKeys self.lib;
     inherit (packages'') shells;

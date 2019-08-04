@@ -8,6 +8,6 @@
   overrides = packages.overrides.instantiate { inherit self super; };
   merge = mapListToAttrs (key: nameValuePair key ((super.${key} or {}) // flat.${key}))
     [ "gitAndTools" "kakPlugins" "vimPlugins" "weechatScripts" "shells" ];
-in  flat.public // merge // overrides // {
+in flat.public // merge // overrides // {
   arc'private = flat.personal;
 }
