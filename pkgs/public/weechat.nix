@@ -17,5 +17,4 @@
       install -Dm0755 -t $out/bin contrib/matrix_{upload,decrypt}
     '';
   };
-
 }

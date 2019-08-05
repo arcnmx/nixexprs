@@ -57,7 +57,7 @@ let
           ]))
         ];
         scripts = with weechatScripts; [
-          go auto_away autosort colorize_nicks unread_buffer urlgrab vimode weechat-matrix
+          go auto_away autoconf autosort colorize_nicks unread_buffer urlgrab vimode-git weechat-matrix
         ];
       };
     };

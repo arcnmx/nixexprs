@@ -15,6 +15,7 @@
     ./shell.nix
     ./less.nix
     ./tridactyl.nix
+    ./weechat.nix
     (import ../nixos/keychain.nix false)
   ];
 }
