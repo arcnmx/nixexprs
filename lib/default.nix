@@ -49,6 +49,10 @@ in with self; {
 
   moduleValue = config: builtins.removeAttrs config ["_module"]; # wh-what was this for..?
 
+  # NOTE: a very basic/incomplete parser
+  fromYAML = import ./from-yaml.nix self;
+  importYAML = path: fromYAML (builtins.readFile path);
+
   # copy function signature
   copyFunctionArgs = src: dst: setFunctionArgs dst (functionArgs src);
 
