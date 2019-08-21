@@ -118,11 +118,6 @@ let
       };
     });
 
-    nodeEnv = { pkgs, stdenv, python2, utillinux, runCommand, writeTextFile, nodejs, darwin }: import (pkgs.path + "/pkgs/development/node-packages/node-env.nix") {
-      inherit stdenv python2 utillinux runCommand writeTextFile nodejs;
-      libtool = if stdenv.isDarwin then darwin.cctools else null;
-    };
-
     mustache = { nodeEnv, fetchurl }: nodeEnv.buildNodePackage rec {
       name = "mustache";
       packageName = "mustache";
