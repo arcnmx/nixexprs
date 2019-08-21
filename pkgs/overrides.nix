@@ -40,6 +40,7 @@ let
         urxvt_theme_switch
         urxvt_vtwheel
         urxvt_osc_52
+        urxvt_xresources_256
       ];
     };
 
