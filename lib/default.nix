@@ -51,6 +51,9 @@ in with self; {
   in optionalString (int > 16) (toHexLower (int / 16)) + elemAt hexChars (mod int 16);
   toHexUpper = int: toUpper (toHexLower int);
 
+  concatImap0Strings = f: list: concatStrings (imap0 f list);
+  concatImap1Strings = concatImapStrings;
+
   # attrset to list of { name, value } pairs
   attrNameValues = mapAttrsToList nameValuePair;
 
@@ -61,6 +64,13 @@ in with self; {
 
   # recursive attrset merge
   foldAttrListRecursive = foldl recursiveUpdate {};
+
+  # turns { a.z = 1; b.z = 2; } into { z = { a = 1; b = 2; }; }
+  # only goes one level deep, and strips out all non-attrset values
+  invertAttrs = attrs: foldAttrListRecursive (mapAttrsToList (k: v:
+    if isAttrs v then mapAttrs (_: v: { ${k} = v; }) v
+    else { }
+  ) attrs);
 
   moduleValue = config: builtins.removeAttrs config ["_module"]; # wh-what was this for..?
 
