@@ -45,7 +45,7 @@ in with self; {
   foldAttrList = foldl update {};
 
   # recursive attrset merge
-  foldAttrListRecursive = foldl updateRecursive {};
+  foldAttrListRecursive = foldl recursiveUpdate {};
 
   moduleValue = config: builtins.removeAttrs config ["_module"]; # wh-what was this for..?
 
