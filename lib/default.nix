@@ -36,6 +36,21 @@ in with self; {
     if sh == 0 then v
     else bitShr (sh - 1) (v / 2);
 
+  # hexadecimal
+  hexChars = [ "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f" ];
+  hexCharToInt = char: let
+    pairs = imap0 (flip nameValuePair) hexChars;
+    idx = listToAttrs pairs;
+  in idx.${toLower char};
+  hexToInt = str:
+    foldr (chr: value: value * 16 + hexCharToInt chr) 0 (stringToCharacters str);
+  toHex = toHexLower;
+  toHexLower = int: let
+    shit = mod int 16;
+    rest = int / 16;
+  in optionalString (int > 16) (toHexLower (int / 16)) + elemAt hexChars (mod int 16);
+  toHexUpper = int: toUpper (toHexLower int);
+
   # attrset to list of { name, value } pairs
   attrNameValues = mapAttrsToList nameValuePair;
 
