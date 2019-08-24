@@ -18,7 +18,7 @@
     doCheck = false;
   };
   cargo-binutils-unwrapped = {
-    fetchFromGitHub, rustPlatform
+    lib, fetchFromGitHub, rustPlatform
   }: rustPlatform.buildRustPackage rec {
     pname = "cargo-binutils";
     version = "3d1d4a83a49f890a604c1c75d712402e6f457bff";
@@ -31,7 +31,9 @@
     cargoPatches = [ ./cargo-binutils-lock.patch ];
     patches = [ ./cargo-binutils-path.patch ];
 
-    cargoSha256 = "1wr27w3ff7zwknb8mipg27frhdxakpyci760gpd9hyf9bwhm6b8m";
+    cargoSha256 = if lib.isNixpkgsStable
+      then "1lqdcjwfndak59i89rzb1bfyc4p0644ahyyi6mvbll3p5h6h47gj"
+      else "1wr27w3ff7zwknb8mipg27frhdxakpyci760gpd9hyf9bwhm6b8m";
 
     doCheck = false;
 
