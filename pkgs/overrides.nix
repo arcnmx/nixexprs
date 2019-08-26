@@ -160,14 +160,6 @@ let
       });
     });
 
-    flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: {
-      version = "32.0.0.238";
-      src = fetchurl {
-        url = "https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flash_player_sa_linux.x86_64.tar.gz";
-        sha256 = "0am95xi2jasvxj5b2i12wzpvl3bvxli537k1i04698cg0na6x0y0";
-      };
-    });
-
     mustache = { nodeEnv, fetchurl }: nodeEnv.buildNodePackage rec {
       name = "mustache";
       packageName = "mustache";
