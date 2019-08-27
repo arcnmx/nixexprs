@@ -81,6 +81,7 @@
     };
 
     cargoPatches = [ ./cargo-call-stack-lock.patch ];
+    patches = [ ./cargo-call-stack-intrinsics.patch ];
     cargoSha256 = if lib.isNixpkgsStable
       then lib.fakeSha256
       else "0v2zgbzx3sxmwn6axiv1nz59y62sfzdkfbs90ly63zcbjf801qm9";
@@ -100,8 +101,11 @@
     };
 
     cargoPatches = [ ./cargo-stack-sizes-lock.patch ];
+    patches = [ ./cargo-stack-sizes-warn.patch ./cargo-stack-sizes-features.patch ];
     cargoSha256 = if lib.isNixpkgsStable
       then lib.fakeSha256
       else "11snk7mah1kvvxjlvcx8xz2h1f4ficyd8czh43whhn0y1lsb0k57";
+
+    doCheck = false; # there are no tests
   };
 }
