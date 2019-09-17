@@ -63,5 +63,4 @@
         --replace "let l:path = s:root . '/bin/'" "let l:path = '${LanguageClient-neovim}' . '/bin/'"
     '';
   };
-  coc-nvim = import public/coc-nvim;
-}
+} // import public/coc-nvim
