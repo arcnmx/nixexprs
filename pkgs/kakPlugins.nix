@@ -56,7 +56,7 @@
     buildInputs = lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
 
     cargoSha256 = if lib.isNixpkgsStable
-      then lib.fakeSha256
+      then "1dhwvvdzq2i27k8il20zgs0p10kbxwhrak3zc6h6qnz0wc84dxwb"
       else "1hqnxjn898kpi850m3qz361hkkhjkhr5j4gk828isqlwl8q75dpr";
 
     preBuild = ''
@@ -82,7 +82,7 @@
     buildInputs = lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
 
     cargoSha256 = if lib.isNixpkgsStable
-      then lib.fakeSha256
+      then "0bzb3i9cq1p5s2nxlq1z2rhc3f70rakgrd9xyvw7b2sk7zx2yh5c"
       else "0w0mnh8fnl8zi9n0fxzqaqbvmfagf3ay5v2na3laxb72jm76hrwa";
 
     defaultConfig = "share/kak/kak-lsp.toml";
