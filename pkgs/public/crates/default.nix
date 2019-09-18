@@ -19,7 +19,7 @@
   };
 
   rnix-lsp = {
-    lib, fetchFromGitHub, rustPlatform
+    lib, fetchFromGitHub, rustPlatform, hostPlatform, darwin
   }: rustPlatform.buildRustPackage rec {
     pname = "rnix-lsp";
     version = "2019-04-06";
@@ -34,6 +34,8 @@
     RUSTC_BOOTSTRAP = true; # whee unstable features
     cargoSha256 = "0j9swbh9iig9mimsy8kskzxqpwppp7jikd4cz2lz16jg7irvjq0w";
 
+    buildInputs = lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
+
     meta.broken = !lib.rustVersionAtLeast rustPlatform "1.36";
   };
 
@@ -45,7 +47,7 @@
       sha256 = "00l7la23mmlh7kq603lnn5qv5pr4lr6y018ddnrvxgbxdgvvxg94";
     };
   in rustPlatform.buildRustPackage rec {
-    inherit (rnix-lsp) pname version src RUSTC_BOOTSTRAP meta;
+    inherit (rnix-lsp) pname version src buildInputs RUSTC_BOOTSTRAP meta;
 
     cargoPatches = rnix-lsp.cargoPatches or [] ++ [ patch ];
     cargoSha256 = "1fk11q6pf31c5ri5zkarc3iqyc7jf3xyfvr8f6xxwqcn3h6kz4iw";
