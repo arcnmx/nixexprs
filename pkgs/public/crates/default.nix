@@ -31,7 +31,9 @@
     RUSTC_BOOTSTRAP = true;
 
     patches = [ ./xargo-stable.patch ];
-    cargoSha256 = "0cmdi9dcdn2nzk1h5n764305h9nzk5qzzjwgq1k86mxsn49i5w8c";
+    cargoSha256 = if lib.isNixpkgsStable
+      then "07s2md5k9k0cgl3badhljmdd17151ysgcg5d8dm5a7p48yz2v2vm"
+      else "0cmdi9dcdn2nzk1h5n764305h9nzk5qzzjwgq1k86mxsn49i5w8c";
 
     doCheck = false;
   };
