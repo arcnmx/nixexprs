@@ -34,6 +34,27 @@
       else "1a9svdw1cgk6s7gqpsq3r25wxa2gr2xddqkc1cjk7hf6sk327cpv";
   };
 
+  cargo-download = {
+    fetchFromGitHub, rustPlatform, lib
+  , openssl, pkgconfig, hostPlatform, darwin
+  }: rustPlatform.buildRustPackage rec {
+    pname = "cargo-download";
+    version = "0.1.2";
+    src = fetchFromGitHub {
+      owner = "Xion";
+      repo = pname;
+      rev = "b73f6ced56799757945d5bdf2e03df32e9b9ed39";
+      sha256 = "1knwxx9d9vnkxib44xircgw1zhwjnf6mlpkcq81dixp3f070yabl";
+    };
+
+    nativeBuildInputs = lib.optional hostPlatform.isLinux pkgconfig;
+    buildInputs = lib.optional hostPlatform.isLinux openssl
+      ++ lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
+    cargoSha256 = if lib.isNixpkgsStable
+      then "00j3gkqzcnj4qlpxw0l276djgjfalq849i4vhjaiga80d2lkms29"
+      else "00sja62fykd3x1lq48as30xss301m04r0qj8c9rlv297yxnlz1vx";
+  };
+
   cargo-with = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
     pname = "cargo-with";
     version = "0.3.2";
