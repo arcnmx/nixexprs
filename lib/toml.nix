@@ -13,7 +13,7 @@ self: with self; let
     else ''"${k}"'';
   toTomlKeyValue = k: v: "${toTomlKey k} = ${toTomlValue v}";
   toTomlString = s: # TODO: https://github.com/toml-lang/toml#string escapes
-    replaceStrings [''"'' ''\''] [''\"'' ''\\''] ''"${s}"'';
+    ''"${replaceStrings [''"'' ''\''] [''\"'' ''\\''] s}"'';
   toTomlValue = v:
     if isInt v || isFloat v then "${toString v}"
     else if v == true then "true"
