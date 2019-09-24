@@ -1,4 +1,4 @@
-pkgs: let
+{ pkgs }: let
   home = ../modules/home;
   nixos = ../modules/nixos;
   system = pkgs.nixos {
@@ -8,4 +8,4 @@ pkgs: let
       imports = [home];
     };
   };
-in [system]
+in [system.toplevel]
