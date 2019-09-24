@@ -8,4 +8,5 @@
       imports = [home];
     };
   };
-in [system.toplevel]
+  # TODO: support nix-darwin
+in pkgs.lib.optional pkgs.hostPlatform.isLinux system.toplevel
