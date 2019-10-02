@@ -5,7 +5,7 @@
   nixPaths' = mapAttrsToList (k: v: "${k}=${v}") nixPaths;
   nixPath = [
     config.home.nix.nixPathDirectory
-  ] ++ nixPaths;
+  ] ++ nixPaths';
   sessionVariables = {
     NIX_PATH = concatStringsSep ":" nixPath;
   };
@@ -14,7 +14,7 @@ in {
     enable = mkEnableOption "nix configuration";
     nixPathDirectory = mkOption {
       type = types.path;
-      default = config.home.configDir + "/nix/path";
+      default = config.xdg.configHome + "/nix/path";
     };
     nixPath = let
       pathType = types.submodule ({ name, config, ... }: {
@@ -28,12 +28,15 @@ in {
             default = if hasPrefix "/" config.path then "path" else "url";
           };
           path = mkOption {
-            type = types.attrsOf types.str;
+            type = types.str;
           };
         };
       });
+      fudge = types.coercedTo types.str (path: {
+        inherit path;
+      }) pathType;
     in mkOption {
-      type = types.attrsOf pathType;
+      type = types.attrsOf fudge;
       default = { };
     };
   };
@@ -42,7 +45,7 @@ in {
     # TODO: bash, zsh, systemd.user?
     # TODO: also set nixos settings?
     symlink = mapAttrs' (k: v: nameValuePair ".config/nix/path/${k}" {
-      target = v;
+      target = v.path;
       create = false;
     }) nixPathDirs;
   };
