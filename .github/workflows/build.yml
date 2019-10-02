@@ -1,0 +1,289 @@
+jobs:
+  beta:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: beta
+    runs-on: ubuntu-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: beta
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: beta
+  beta-mac:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: beta-mac
+    runs-on: macOS-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: beta-mac
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: beta-mac
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-action-build
+      name: nix build ci.gh-actions.configFile
+      uses: arcnmx/ci/actions/nix/build@modules
+      with:
+        attrs: ci.gh-actions.configFile
+        options: --arg config ./ci/config.nix
+        out-link: .ci/workflow.yml
+    - id: ci-action-compare
+      name: gh-actions compare
+      uses: arcnmx/ci/actions/nix/run@modules
+      with:
+        args: -u .github/workflows/build.yml .ci/workflow.yml
+        attrs: nixpkgs.diffutils
+        command: diff
+  stable:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: stable
+    runs-on: ubuntu-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: stable
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: stable
+  stable-mac:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: stable-mac
+    runs-on: macOS-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: stable-mac
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: stable-mac
+  unstable:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: unstable
+    runs-on: ubuntu-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable
+  unstable-mac:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: unstable-mac
+    runs-on: macOS-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable-mac
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable-mac
+  unstable-nixpkgs:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: unstable-nixpkgs
+    runs-on: ubuntu-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable-nixpkgs
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable-nixpkgs
+  unstable-small:
+    env:
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+      CI_ALLOW_ROOT: '1'
+      CI_CLOSE_STDIN: '1'
+      CI_PLATFORM: gh-actions
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    name: unstable-small
+    runs-on: ubuntu-latest
+    steps:
+    - id: ci-clone
+      name: git clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - id: ci-nix-install
+      name: nix install
+      uses: arcnmx/ci/actions/nix/install@modules
+    - id: ci-setup
+      name: nix build ci-env
+      uses: arcnmx/ci/actions/internal/ci-setup@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable-small
+    - id: ci-build
+      name: nix test
+      uses: arcnmx/ci/actions/internal/ci-build@modules
+      with:
+        configPath: ./ci/config.nix
+        prefix: ci
+        stage: unstable-small
+name: arc-nixexprs
+'on':
+  pull_request: {}
+  push: {}
+  schedule:
+  - cron: 30 3-7/2,13-21/4 * * *
