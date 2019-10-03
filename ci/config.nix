@@ -66,7 +66,7 @@
         tests = {
           inputs = import ./tests.nix { inherit arc; };
         };
-        modules = {
+        /*modules = {
           name = "nix test modules";
           inputs = import ./modules.nix { inherit (arc) pkgs; };
           # TODO: depends = [ config.ci.project.tasks.eval ];
@@ -74,7 +74,7 @@
           skip = if builtins.getEnv "GITHUB_EVENT_NAME" == "schedule" then "scheduled build"
             else if config.ci.env.channels.home-manager.version != "master" then "home-manager release channel"
             else false;
-        };
+        };*/
       };
       stages = {
         stable = {
