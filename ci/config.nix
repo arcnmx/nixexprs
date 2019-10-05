@@ -1,11 +1,26 @@
-{ lib, config, pkgs, import, ... }: with lib; {
+{ lib, config, pkgs, channels, env, import, ... }: with lib; let
+  skipModules = if env.gh-event-name or null == "schedule" then "scheduled build"
+    else if config.channels.home-manager.version != "master" then "home-manager release channel"
+    else false;
+  arc = import ../. { inherit pkgs; };
+  channel = channels.cipkgs.nix-gitignore.gitignoreSourcePure [ ../.gitignore ''
+    /ci/
+    /README.md
+    /.gitmodules
+    /.github
+    /.azure
+  '' ] ../.;
+in {
   # https://github.com/arcnmx/ci
-  gh-actions = {
-    jobs = optionalAttrs config.ci.gh-actions.emit {
-      ${config.ci.gh-actions.id}.env = {
-        GITHUB_EVENT_NAME = "\${{ github.event_name }}";
-      };
+  name = "arc-nixexprs";
+  ci = {
+    configPath = "./ci/config.nix";
+    gh-actions = {
+      path = ".github/workflows/build.yml";
+      enable = true;
     };
+  };
+  gh-actions = {
     on = {
       push = {};
       pull_request = {};
@@ -14,113 +29,95 @@
       } ];
     };
   };
-  ci = {
-    configPath = "./ci/config.nix";
-    gh-actions = {
-      path = ".github/workflows/build.yml";
-      enable = true;
+  channels = {
+    nixpkgs = {
+      version = mkDefault "unstable";
+      nixPathImport = skipModules == false;
     };
-    env = {
+    home-manager = mkDefault "master";
+  };
+  cache.cachix.arc = {
+    enable = true;
+    publicKey = "arc.cachix.org-1:DZmhclLkB6UO0rc0rBzNpwFbbaeLfyn+fYccuAy7YVY=";
+  };
+
+  tasks = {
+    eval = {
+      inputs = with channels.cipkgs; let
+        eval = attr: ci.command {
+          name = "eval-${attr}";
+          displayName = "nix eval ${attr}";
+          timeout = 60;
+          src = channel;
+
+          nativeBuildInputs = [ nix ];
+          command = "nix eval -f $src/default.nix ${attr}";
+          impure = true; # nix doesn't work inside builders ("recursive nix")
+        };
+      in [ (eval "lib") (eval "modules") (eval "overlays") ];
+    };
+    build = {
+      inputs = builtins.attrValues arc.packages;
+      timeoutSeconds = 60 * 180; # max 360 on azure
+    };
+    shells = {
+      inputs = with arc.shells.rust; [ stable nightly ];
+      timeoutSeconds = 60 * 90;
+    };
+    tests = {
+      inputs = import ./tests.nix { inherit arc; };
+    };
+    modules = {
+      name = "nix test modules";
+      inputs = import ./modules.nix { inherit (arc) pkgs; };
+      # TODO: depends = [ config.tasks.eval.drv ];
+      cache = { wrap = true; };
+      skip = skipModules;
+    };
+  };
+  jobs = {
+    stable = {
+      system = "x86_64-linux";
       channels = {
-        nixpkgs = mkDefault "unstable";
-        home-manager = mkDefault "master";
+        nixpkgs.version = "19.03";
+        home-manager = "release-19.03";
       };
-      cache.cachix.arc.enable = true;
     };
-
-    project = {
-      name = "arc-nixexprs";
-      tasks = let
-        arc = import ../. { inherit pkgs; };
-        cipkgs = config.ci.env.bootstrap.pkgs;
-        channel = cipkgs.nix-gitignore.gitignoreSourcePure [ ../.gitignore ''
-          /ci/
-          /README.md
-          /.gitmodules
-          /.github
-          /.azure
-        '' ] ../.;
-      in {
-        eval = {
-          inputs = with cipkgs; let
-            eval = attr: cipkgs.mkCiCommand {
-              pname = "eval-${attr}";
-              displayName = "nix eval ${attr}";
-              timeout = 60;
-              src = channel;
-
-              nativeBuildInputs = [ nix ];
-              command = "nix eval -f $src/default.nix ${attr}";
-              hostExec = true; # nix doesn't work inside builders ("recursive nix")
-            };
-          in [ (eval "lib") (eval "modules") (eval "overlays") ];
-        };
-        build = {
-          inputs = builtins.attrValues arc.packages;
-          timeoutSeconds = 60 * 180; # max 360 on azure
-        };
-        shells = {
-          inputs = with arc.shells.rust; [ stable nightly ];
-          timeoutSeconds = 60 * 90;
-        };
-        tests = {
-          inputs = import ./tests.nix { inherit arc; };
-        };
-        /*modules = {
-          name = "nix test modules";
-          inputs = import ./modules.nix { inherit (arc) pkgs; };
-          # TODO: depends = [ config.ci.project.tasks.eval ];
-          cache = { wrap = true; };
-          skip = if builtins.getEnv "GITHUB_EVENT_NAME" == "schedule" then "scheduled build"
-            else if config.ci.env.channels.home-manager.version != "master" then "home-manager release channel"
-            else false;
-        };*/
+    beta = {
+      system = "x86_64-linux";
+      channels.nixpkgs.version = "19.09";
+    };
+    unstable = {
+      system = "x86_64-linux";
+      channels.nixpkgs.version = "unstable";
+    };
+    unstable-small = {
+      system = "x86_64-linux";
+      channels.nixpkgs.version = "unstable-small";
+      warn = true;
+    };
+    unstable-nixpkgs = {
+      system = "x86_64-linux";
+      channels.nixpkgs.version = "nixpkgs-unstable";
+      warn = true;
+    };
+    stable-mac = {
+      system = "x86_64-darwin";
+      channels = {
+        nixpkgs.version = "19.03";
+        home-manager = "release-19.03";
       };
-      stages = {
-        stable = {
-          ci.pkgs.system = "x86_64-linux";
-          ci.env.channels = {
-            nixpkgs = "19.03";
-            home-manager = "release-19.03";
-          };
-        };
-        beta = {
-          ci.pkgs.system = "x86_64-linux";
-          ci.env.channels.nixpkgs = "19.09";
-        };
-        unstable = {
-          ci.pkgs.system = "x86_64-linux";
-          ci.env.channels.nixpkgs = "unstable";
-        };
-        unstable-small = {
-          ci.pkgs.system = "x86_64-linux";
-          ci.env.channels.nixpkgs = "unstable-small";
-          ci.warn = true;
-        };
-        unstable-nixpkgs = {
-          ci.pkgs.system = "x86_64-linux";
-          ci.env.channels.nixpkgs = "nixpkgs-unstable";
-          ci.warn = true;
-        };
-        stable-mac = {
-          ci.pkgs.system = "x86_64-darwin";
-          ci.env.channels = {
-            nixpkgs = "19.03";
-            home-manager = "release-19.03";
-          };
-          ci.warn = true;
-        };
-        beta-mac = {
-          ci.pkgs.system = "x86_64-darwin";
-          ci.env.channels.nixpkgs = "19.09";
-          ci.warn = true;
-        };
-        unstable-mac = {
-          ci.pkgs.system = "x86_64-darwin";
-          ci.env.channels.nixpkgs = "unstable";
-          ci.warn = true;
-        };
-      };
+      warn = true;
+    };
+    beta-mac = {
+      system = "x86_64-darwin";
+      channels.nixpkgs.version = "19.09";
+      warn = true;
+    };
+    unstable-mac = {
+      system = "x86_64-darwin";
+      channels.nixpkgs.version = "unstable";
+      warn = true;
     };
   };
 }
