@@ -70,7 +70,7 @@ in {
     };
     modules = {
       name = "nix test modules";
-      inputs = import ./modules.nix { inherit (arc) pkgs; };
+      inputs = optionals (skipModules == false) (import ./modules.nix { inherit (arc) pkgs; });
       # TODO: depends = [ config.tasks.eval.drv ];
       cache = { wrap = true; };
       skip = skipModules;
