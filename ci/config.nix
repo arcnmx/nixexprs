@@ -6,9 +6,10 @@
   channel = channels.cipkgs.nix-gitignore.gitignoreSourcePure [ ../.gitignore ''
     /ci/
     /README.md
-    /.gitmodules
-    /.github
     /.azure
+    .gitmodules
+    .github
+    .git
   '' ] ../.;
 in {
   # https://github.com/arcnmx/ci
