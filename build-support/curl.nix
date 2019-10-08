@@ -44,7 +44,7 @@
     curlHeaders = optionalAttrs (gitHubOAuth2Token != null) { Authorization = "token ${gitHubOAuth2Token}"; };
     curlUrl = "https://api.github.com/${gitHubEndpoint}";
     curlOptions = if gitHubPostData != null then ["-d" (builtins.toJSON gitHubPostData)] else [];
-    env = args.env // {
+    env = args.env or {} // {
       inherit gitHubOAuth2Token;
       impureEnvVars = ["GITHUB_TOKEN"];
       configurePhase = ''
