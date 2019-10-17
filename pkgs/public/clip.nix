@@ -1,6 +1,6 @@
 let
-  rev = "ea337e9a0884a47c7a303d63b42652c11dfe6aa2";
-  sha256 = "1904fzbvqqb7vmp48x1nw0j2kb0bvc8q9bc30p6pwm42llq0nhix";
+  rev = "f5d3a1204c7e314802c1d00c7c596fdf5b8229a8";
+  sha256 = "17i9vrfgd7zw0ycsmw651zrjfy6kyif9bvlykrkd87m75d64cb2m";
   clip = builtins.fetchTarball {
     url = "https://github.com/arcnmx/clip/archive/${rev}.tar.gz";
     inherit sha256;
