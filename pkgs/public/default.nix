@@ -10,6 +10,7 @@
   urxvt_xresources_256 = import ./urxvt-xresources-256.nix;
   efm-langserver = import ./efm-langserver;
   markdownlint-cli = import ./markdownlint-cli;
+  clip = import ./clip.nix;
 } // (import ./nixos.nix)
 // (import ./droid.nix)
 // (import ./weechat.nix)
