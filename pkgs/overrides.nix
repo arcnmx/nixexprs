@@ -116,6 +116,9 @@ let
 
     vit2 = { python3Packages }: with python3Packages; toPythonApplication vit;
     yamllint = { python3Packages }: with python3Packages; toPythonApplication yamllint;
+    cargo-download = { hostPlatform, cargo-download, cargo-download-arc }: let
+      isBroken = hostPlatform.isDarwin || cargo-download.meta.broken or false == true;
+    in if isBroken then cargo-download-arc else cargo-download;
 
     libjaylink = { stdenv, fetchgit, autoreconfHook, pkgconfig, libusb1 }: stdenv.mkDerivation {
       pname = "libjaylink";

@@ -31,9 +31,9 @@
     cargoSha256 = "1a9svdw1cgk6s7gqpsq3r25wxa2gr2xddqkc1cjk7hf6sk327cpv";
   };
 
-  cargo-download = {
+  cargo-download-arc = {
     fetchFromGitHub, rustPlatform, lib
-  , openssl, pkgconfig, hostPlatform, darwin
+  , openssl, pkgconfig, hostPlatform, darwin,
   }: rustPlatform.buildRustPackage rec {
     pname = "cargo-download";
     version = "0.1.2";
