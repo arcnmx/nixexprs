@@ -200,7 +200,7 @@
       mkdir -p $out
       for binary in $cargoBinutils/bin/cargo-*; do
         makeWrapper $binary $out/bin/$(basename $binary) \
-          --run '[[ -z $CARGO_BUILD_TARGET ]] || extraFlagsArray+=(--target $CARGO_BUILD_TARGET)' \
+          --run '[[ -z $CARGO_BUILD_TARGET ]] || set -- --target "$CARGO_BUILD_TARGET" "$@"' \
           --prefix PATH : $bintools/bin
       done
       if [[ -e $bintools/bin/readelf && ! -e $bintools/bin/readobj ]]; then
