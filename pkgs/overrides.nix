@@ -59,6 +59,10 @@ let
       meta.broken = pidgin.stdenv.isDarwin;
     });
 
+    buku = { buku }: buku.overrideAttrs (_: {
+      doInstallCheck = false;
+    });
+
     weechat-arc = { lib, wrapWeechat, weechat-unwrapped, weechatScripts, pythonPackages, python3Packages }: let
       wrapWeechat' = wrapWeechat.override { inherit python3Packages; };
       weechat-unwrapped' = weechat-unwrapped.override { inherit python3Packages; };
