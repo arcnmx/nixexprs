@@ -131,7 +131,8 @@ let
       buildInputs = [ libusb1 ];
 
       src = fetchgit {
-        url = "git://git.zapb.de/libjaylink.git";
+        #url = "git://git.zapb.de/libjaylink.git"; # appears to be down?
+        url = "git://repo.or.cz/libjaylink.git";
         rev = "c2c4bb025f3f02336ea88f57f59e204a1303da9b";
         sha256 = "1qsw1wlkjiqnhqxgddh7l8vawy8170ll6lqrxq7viq91wi9fggsl";
       };
