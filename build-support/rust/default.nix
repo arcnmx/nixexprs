@@ -16,20 +16,20 @@
     check = pkgs: pkgs.rustChannel or null;
     imp = channel: pkgs: import (channel + "/default.nix") { inherit pkgs; };
     url = "https://github.com/arcnmx/nixexprs-rust/archive/${rustOverlayRev}.tar.gz";
-    sha256 = "0n71yzxq0ww53r9h3s78dlawn18gd9rngbwvymm0xjkvcl4gbfk9";
+    sha256 = "0ilxbcnclqmncblrshd6k1pcbxkvvhqvdwilbnfc0slj4p3z78zb";
   };
-  rustOverlayRev = "9a630deb8192472ad08bde6388fbdbfa1a257d77";
+  rustOverlayRev = "dea8ec5abc6b02addb8432feb75778aa7595f901";
   rustPlatformFor = { rustPlatform, ... }: rustPlatform;
 
   builders = {
     rustPlatforms = { rustChannel ? rust pkgs, pkgs ? null }: with lib;
       mapAttrs (_: rustPlatformFor) rustChannel.releases // {
-        stable = rustPlatformFor rustChannel.releases."1.38.0";
+        stable = rustPlatformFor rustChannel.releases."1.39.0";
         # An occasionally pinned unstable release
         # Check https://rust-lang.github.io/rustup-components-history/ before updating this to avoid breaking things
         nightly = rustPlatformFor (rustChannel.nightly.override {
-          date = "2019-09-13";
-          sha256 = "06881g7ba2hzmfq5vaz888d2q762zf4bxjc621rw3g8z702ps7w9";
+          date = "2019-11-06";
+          sha256 = "04qrnxyqh22y0xplzhiqvgn74qcg79rm42gz3i0cy2k7z75cp12n";
           manifestPath = ./channel-rust-nightly.toml;
         });
         impure = mapAttrs (_: rustPlatformFor) {
