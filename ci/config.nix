@@ -100,6 +100,7 @@ in {
     };
     stable-mac = {
       system = "x86_64-darwin";
+      ci.gh-actions.enable = mkForce false;
       channels = {
         nixpkgs.version = "19.09";
         home-manager = "release-19.09";
@@ -108,6 +109,7 @@ in {
     };
     unstable-mac = {
       system = "x86_64-darwin";
+      ci.gh-actions.enable = mkForce false;
       channels.nixpkgs.version = "unstable";
       warn = true;
     };
