@@ -202,18 +202,6 @@ let
       };
     });
 
-    facetimehd-firmware = { lib, facetimehd-firmware, fetchurl }:
-      if lib.versionAtLeast facetimehd-firmware.version "1.43_5"
-      then builtins.trace "WARN: facetimehd-firmware updated upstream" facetimehd-firmware
-      else facetimehd-firmware.overrideAttrs (old: {
-        version = "1.43_5";
-        src = fetchurl {
-          url = "https://updates.cdn-apple.com/2019/cert/041-88431-20191011-e7ee7d98-2878-4cd9-bc0a-d98b3a1e24b1/OSXUpd10.11.5.dmg";
-          sha256 = "0s8crlh8rvpanzk1w4z3hich0a3mw0m5xhpcg07bxy02calhpdk1";
-          curlOpts = "-r 204909802-207733123";
-        };
-      });
-
     flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: {
       version = "32.0.0.270";
       src = fetchurl {
