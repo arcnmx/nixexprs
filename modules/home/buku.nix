@@ -3,9 +3,8 @@
   database = pkgs.stdenvNoCC.mkDerivation {
     name = "bookmarks.db";
     nativeBuildInputs = [ cfg.package ];
-    passAsFile = [ "buildCommand" "bookmarks" ];
+    passAsFile = [ "buildCommand" ];
     buildCommand = ''
-      ln -s $bookmarksPath bookmarks.json
       unset HOME
       ${concatMapStringsSep "\n" (bookmark: escapeShellArgs ([
         "buku"
