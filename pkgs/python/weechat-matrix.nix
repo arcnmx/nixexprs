@@ -21,6 +21,8 @@ buildPythonPackage rec {
     attrs
     Logbook
     pygments
+    requests
+    python_magic
     matrix-nio
   ];
 

@@ -3,7 +3,7 @@
     pname = "weechat-matrix-contrib";
     inherit (python3Packages.weechat-matrix) version src;
 
-    propagatedBuildInputs = with python3Packages; [ magic requests matrix-nio ];
+    propagatedBuildInputs = with python3Packages; [ python_magic requests matrix-nio ];
 
     format = "other";
 
