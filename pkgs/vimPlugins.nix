@@ -8,7 +8,7 @@
       sha256 = "1nbkszhqnb1mycp07wfl49gwz3rsg7jnfnb315f7mb2b8b74rjfl";
     };
   };
-  notmuch-vim = { fetchFromGitHub, vimUtils }: vimUtils.buildVimPlugin {
+  notmuch-vim = { fetchFromGitHub, vimUtils, notmuch, ruby, buildEnv }: vimUtils.buildVimPlugin {
     name = "notmuch-vim";
     src = fetchFromGitHub {
       owner = "arcnmx";
@@ -16,6 +16,16 @@
       rev = "9bbadc567841ce32e399d7dab6ab037d18c74170";
       sha256 = "1mvdi6gm6khpk3nd863gcibw39xv8c2m2ri886dgw6gs8j4dn117";
     };
+    buildPhase = let
+      gemEnv = buildEnv {
+        name = "notmuch-vim-gems";
+        paths = [ notmuch ruby.gems.mail ];
+        pathsToLink = [ "/lib" "/nix-support" ];
+      };
+    in ''
+      echo 'let $GEM_PATH=$GEM_PATH . ":${gemEnv}/${ruby.gemPath}"' >> plugin/notmuch.vim
+      echo 'let $RUBYLIB=$RUBYLIB . ":${gemEnv}/${ruby.libPath}/${ruby.system}"' >> plugin/notmuch.vim
+    '';
   };
   vim-cool = { fetchFromGitHub, vimUtils }: vimUtils.buildVimPlugin {
     name = "vim-cool";
