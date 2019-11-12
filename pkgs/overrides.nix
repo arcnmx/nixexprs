@@ -16,6 +16,24 @@ let
       doInstallCheck = old.doInstallCheck or false && !nix.stdenv.isDarwin;
     });
 
+    notmuch = { notmuch, coreutils }: let
+      drv = notmuch.override { emacs = coreutils; };
+    in drv.overrideAttrs (old: {
+      configureFlags = old.configureFlags or [] ++ [ "--without-emacs" ];
+
+      doCheck = false;
+
+      postInstall = ''
+        ${old.postInstall or ""}
+        make -C bindings/ruby exec_prefix=$out \
+          SHELL=$SHELL \
+          $makeFlags ''${makeFlagsArray+"''${makeFlagsArray[@]}"} \
+          $installFlags ''${installFlagsArray+"''${installFlagsArray[@]}"} \
+          install
+        mv $out/lib/ruby/vendor_ruby/* $out/lib/ruby/
+        rmdir $out/lib/ruby/vendor_ruby
+      '';
+    });
     vim_configurable-pynvim = { vim_configurable, python3 }: vim_configurable.override {
       # vim with python3
       python = python3.withPackages(ps: with ps; [ pynvim ]);
