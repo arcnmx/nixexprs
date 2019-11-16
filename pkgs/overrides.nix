@@ -212,8 +212,8 @@ let
       pname = "${mpd.pname}-youtube-dl";
       patches = old.patches or [] ++ [ (fetchpatch {
         name = "mpd-youtube-dl.diff";
-        url = "https://github.com/MusicPlayerDaemon/MPD/compare/v${old.version}...arcnmx:ytdl.diff";
-        sha256 = mpd.stdenv.lib.fakeSha256;
+        url = "https://github.com/MusicPlayerDaemon/MPD/compare/v${old.version}...arcnmx:ytdl-${old.version}.diff";
+        sha256 = "1hmchq2wyjpwsry1jb33j3zd1ar7gf57b2vyirgfv15zl5wxvi59";
       }) ];
       meta = old.meta or {} // {
         broken = old.meta.broken or false || lib.versionOlder old.version "0.21";
