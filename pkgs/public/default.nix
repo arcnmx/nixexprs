@@ -2,7 +2,6 @@
   i3gopher = import ./i3gopher;
   inherit (import ./yggdrasil) yggdrasil yggdrasilctl;
   tamzen = import ./tamzen.nix;
-  lorri = import ./lorri.nix;
   paswitch = import ./paswitch.nix;
   LanguageClient-neovim = import ./language-client-neovim.nix;
   base16-shell = import ./base16-shell.nix;
