@@ -53,6 +53,9 @@ let
         date = "2019-07-01";
         sha256 = "04vgrri1zm5kgjdd4swfi4khjbbp8a3s5c46by7lqg417xqh2a5m";
       };
+      meta = old.meta or {} // {
+        broken = old.meta.broken or false || !rxvt_unicode.stdenv.isLinux;
+      };
     });
     rxvt_unicode-arc = { rxvt_unicode-with-plugins, rxvt_unicode-cvs, pkgs }: rxvt_unicode-with-plugins.override {
       rxvt_unicode = rxvt_unicode-cvs; # current release is years old, doesn't include 24bit colour changes
@@ -74,7 +77,9 @@ let
         plugins = purple-plugins-arc;
       };
     in wrapped.overrideAttrs (old: {
-      meta.broken = pidgin.stdenv.isDarwin;
+      meta = old.meta or {} // {
+        broken = pidgin.stdenv.isDarwin;
+      };
     });
 
     buku = { buku }: buku.overrideAttrs (_: {
@@ -214,7 +219,7 @@ let
         sha256 = "1hmchq2wyjpwsry1jb33j3zd1ar7gf57b2vyirgfv15zl5wxvi59";
       }) ];
       meta = old.meta or {} // {
-        broken = old.meta.broken or false || lib.versionOlder old.version "0.21";
+        broken = old.meta.broken or false || lib.versionOlder old.version "0.21" || mpd.stdenv.isDarwin;
       };
     });
 
@@ -235,7 +240,9 @@ let
         sha256 = "1zr6bi9kk1410mbawyvsbl1bnzw86wzwmgc7i5ap6i9l96mb1zqh";
       };
 
-      meta.broken = olm.stdenv.isDarwin;
+      meta = old.meta or {} // {
+        broken = olm.stdenv.isDarwin;
+      };
     });
 
     pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (pyname: py: let
