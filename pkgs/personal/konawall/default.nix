@@ -2,7 +2,7 @@
   wrapShellScriptBin,
   coreutils, inetutils, curl, jq, gnugrep ? null, xrandr ? null, feh ? null, xsetroot ? null, sway ? null,
   hostPlatform, lib,
-  swaySupport ? hostPlatform.isLinux,
+  swaySupport ? false,
   xorgSupport ? hostPlatform.isLinux
 }:
 
