@@ -238,12 +238,13 @@ let
       meta.broken = olm.stdenv.isDarwin;
     });
 
-    pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (_: py: let
+    pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (pyname: py: let
         pythonOverrides = import ./python;
         packageOverrides = pself: psuper:
           builtins.mapAttrs (_: drv: pkgs.callPackage drv { pythonPackages = pself; }) (pythonOverrides psuper);
       in if py.pkgs or null != null
         then py.override (old: {
+          self = pkgs.pythonInterpreters.${pyname};
           packageOverrides =
             pself: psuper: let
               psuper' = ((old.packageOverrides or (_: _: {})) pself psuper);
