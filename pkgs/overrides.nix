@@ -57,7 +57,7 @@ let
         broken = old.meta.broken or false || !rxvt_unicode.stdenv.isLinux;
       };
     });
-    rxvt_unicode-arc = { rxvt_unicode-with-plugins, rxvt_unicode-cvs, pkgs }: rxvt_unicode-with-plugins.override {
+    rxvt_unicode-arc = { rxvt_unicode-with-plugins, rxvt_unicode-cvs, pkgs }: (rxvt_unicode-with-plugins.override {
       rxvt_unicode = rxvt_unicode-cvs; # current release is years old, doesn't include 24bit colour changes
       plugins = with pkgs; [
         urxvt_perl
@@ -68,7 +68,11 @@ let
         urxvt_osc_52
         urxvt_xresources_256
       ];
-    };
+    }).overrideAttrs (old: {
+      meta = old.meta or {} // {
+        broken = rxvt_unicode-cvs.meta.broken or false;
+      };
+    });
 
     bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
 
