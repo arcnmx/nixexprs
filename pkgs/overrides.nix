@@ -81,10 +81,8 @@ let
       doInstallCheck = false;
     });
 
-    weechat-arc = { lib, wrapWeechat, weechat-unwrapped, weechatScripts, pythonPackages, python3Packages }: let
-      wrapWeechat' = wrapWeechat.override { inherit python3Packages; };
-      weechat-unwrapped' = weechat-unwrapped.override { inherit python3Packages; };
-      weechat-wrapped = wrapWeechat' weechat-unwrapped' {
+    weechat-arc = { lib, wrapWeechat, weechat-unwrapped, weechatScripts, python3Packages }: let
+      weechat-wrapped = wrapWeechat weechat-unwrapped {
         configure = { availablePlugins, ... }: {
           plugins = with availablePlugins; [
             (python.withPackages (ps: with ps; [
