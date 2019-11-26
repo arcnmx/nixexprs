@@ -1,6 +1,7 @@
 {
   git = ./git.nix;
   github = ./github.nix;
+  bitbucket = ./bitbucket.nix;
   sshd = ./sshd.nix;
   konawall = ./konawall.nix;
   task = ./task.nix;
@@ -24,7 +25,7 @@
   __functionArgs = { };
   __functor = self: { ... }: {
     imports = with self; [
-      git github
+      git github bitbucket
       sshd
       konawall
       task
