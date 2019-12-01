@@ -227,6 +227,12 @@ let
       };
     });
 
+    awscli = { awscli, hostPlatform, lib }: awscli.overrideAttrs (old: {
+      meta = old.meta // {
+        broken = old.broken or false || (hostPlatform.isDarwin && lib.isNixpkgsStable);
+      };
+    });
+
     flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: {
       version = "32.0.0.293";
       src = fetchurl {
