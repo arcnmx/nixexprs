@@ -3,6 +3,7 @@
   github = ./github.nix;
   bitbucket = ./bitbucket.nix;
   sshd = ./sshd.nix;
+  ssh = ./ssh.nix;
   konawall = ./konawall.nix;
   task = ./task.nix;
   kakoune = ./kakoune.nix;
@@ -26,7 +27,7 @@
   __functor = self: { ... }: {
     imports = with self; [
       git github bitbucket
-      sshd
+      sshd ssh
       konawall
       task
       kakoune
