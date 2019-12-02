@@ -16,6 +16,9 @@
       rev = "624c1d8619290193e33898036e830c8331855770";
       sha256 = "09gy6anknphj6q3amvxynx4djbvw5blb0v851sfwjrfl9m3qi67d";
     };
+    patches = [
+      ./notmuch-vim-part.patch
+    ];
     buildPhase = let
       mail-gpg = buildRubyGem {
         inherit ruby;
