@@ -20,6 +20,7 @@
   less = ./less.nix;
   tridactyl = ./tridactyl.nix;
   nix-path = ./nix-path.nix;
+  offlineimap = ./offlineimap.nix;
   weechat = ./weechat.nix;
   keychain = import ../nixos/keychain.nix false;
 
@@ -42,6 +43,7 @@
       less
       tridactyl
       nix-path
+      offlineimap
       weechat
       keychain
     ];
