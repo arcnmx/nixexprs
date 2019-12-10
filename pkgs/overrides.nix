@@ -234,10 +234,10 @@ let
     });
 
     flashplayer-standalone = { flashplayer-standalone, fetchurl }: flashplayer-standalone.overrideAttrs (old: {
-      version = "32.0.0.293";
+      version = "32.0.0.303";
       src = fetchurl {
         url = "https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flash_player_sa_linux.x86_64.tar.gz";
-        sha256 = "0isvmzyi4isxvxxc5ksplcqc5cafpvbrln3dddpms8zps2dxpyzi";
+        sha256 = "0mi3ggv6zhzmdd1h68cgl87n6izhp0pbkhnidd2gl2cp95f23c2d";
       };
     });
 
