@@ -8,7 +8,7 @@
       sha256 = "1nbkszhqnb1mycp07wfl49gwz3rsg7jnfnb315f7mb2b8b74rjfl";
     };
   };
-  notmuch-vim = { fetchFromGitHub, vimUtils, notmuch, ruby, buildRubyGem, buildEnv }: vimUtils.buildVimPlugin {
+  notmuch-vim = { fetchFromGitHub, fetchurl, vimUtils, notmuch, ruby, buildRubyGem, buildEnv }: vimUtils.buildVimPlugin {
     name = "notmuch-vim";
     src = fetchFromGitHub {
       owner = "mashedcode";
@@ -17,7 +17,13 @@
       sha256 = "09gy6anknphj6q3amvxynx4djbvw5blb0v851sfwjrfl9m3qi67d";
     };
     patches = [
-      ./notmuch-vim-part.patch
+      (let
+        rev = "929c8a083292ecdba3bea63dc8ce27ef7c8158e9";
+      in fetchurl {
+        name = "notmuch-vim.patch";
+        url = "https://github.com/mashedcode/notmuch-vim/compare/master...arcnmx:${rev}.patch";
+        sha256 = "0vx24g97ij76b6a4a5l9zchpvscgy5cljydq3xnc16ramhpwk9v5";
+      })
     ];
     buildPhase = let
       mail-gpg = buildRubyGem {
@@ -30,7 +36,7 @@
       };
       gemEnv = buildEnv {
         name = "notmuch-vim-gems";
-        paths = [ notmuch ruby.gems.mail ruby.gems.gpgme ruby.gems.rack mail-gpg ];
+        paths = with ruby.gems; [ notmuch mail gpgme rack mail-gpg ];
         pathsToLink = [ "/lib" "/nix-support" ];
       };
     in ''
