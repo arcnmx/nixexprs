@@ -1,5 +1,10 @@
 { config, pkgs, lib, ... }: with lib; let
   cfg = config.programs.buku;
+  convertKey = k: "#_abuk_${placeholder k}";
+  containerTags = tags: let
+    allTags = concatLists (mapAttrsToList (_: c: c.tags) cfg.containers);
+  in intersectLists (unique allTags) tags;
+  bookmarkUrl = bk: "${bk.url}${concatStrings (map convertKey (containerTags bk.tags))}";
   database = pkgs.stdenvNoCC.mkDerivation {
     name = "bookmarks.db";
     nativeBuildInputs = [ cfg.package ];
@@ -11,7 +16,7 @@
         "--title" bookmark.title
       ] ++ optionals (bookmark.description != null) [ "-c" bookmark.description ]
         ++ optionals (!cfg.mutable) [ "--immutable" "1" ]
-        ++ [ "-a" bookmark.url ]
+        ++ [ "-a" (bookmarkUrl bookmark) ]
         ++ optional (bookmark.tags != []) (concatStringsSep "," bookmark.tags)
       )) (attrValues cfg.bookmarks)}
       mv bookmarks.db $out
@@ -115,5 +120,10 @@ in {
       ".local/share/buku/bookmarks.db".target = toString cfg.database.outPath;
     } else { };
     # TODO: if mutable, activation script should run buku -i ${cfg.database}?
+    programs.firefox.tridactyl.autocontain = mapAttrs' (k: c: nameValuePair "buku-${k}" {
+      urlPattern = "^https?://.*${convertKey k}";
+      container = c.container;
+      isDomainPattern = false;
+    }) cfg.containers;
   };
 }

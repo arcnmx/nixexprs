@@ -18,8 +18,8 @@
     autocmds = name: list: concatStringsSep "\n" (map (value:
       "autocmd ${configStrs.autocmdName name} ${configStrs.urlPattern value.urlPattern} ${configStrs.cmd value.cmd}"
     ) list);
-    autocontain = { urlPattern, container, ... }:
-      "autocontain ${urlPattern} ${if container == null then throw "default container unimplemented" else container}";
+    autocontain = { urlPattern, container, isDomainPattern, ... }:
+      "autocontain${optionalString (!isDomainPattern) " -u"} ${urlPattern} ${if container == null then throw "default container unimplemented" else container}";
     keyseq = mods: key: let
       modStr = concatStrings (map (mod: {
         alt = "A";
@@ -148,6 +148,11 @@ in {
             default = name;
           };
 
+          isDomainPattern = mkOption {
+            type = types.bool;
+            default = true;
+          };
+
           container = mkOption {
             type = types.nullOr types.str;
           };
@@ -230,7 +235,7 @@ in {
       (mkIf (cfg.sanitise.local || cfg.sanitise.sync) (mkBefore cfg.sanitise.excmd))
       (mkIf (cfg.exalias != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.alias cfg.exalias)))
       (mkIf (cfg.autocmd != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.autocmds cfg.autocmd)))
-      (mkIf (cfg.autocontain != { }) (concatStringsSep "\n" (mapAttrsToList (_ configStrs.autocontain) cfg.autocontain)))
+      (mkIf (cfg.autocontain != { }) (concatStringsSep "\n" (mapAttrsToList (_: configStrs.autocontain) cfg.autocontain)))
       (mkIf (cfg.settings != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.setting (builtins.removeAttrs cfg.settings ["storageloc"]))))
       (mkIf (cfg.urlSettings != { }) (concatStringsSep "\n" (mapAttrsToList configStrs.urlSettings cfg.urlSettings)))
       (mkIf (cfg.bindings != { }) (concatStringsSep "\n" (mapAttrsToList (_: configStrs.binding) cfg.bindings)))
