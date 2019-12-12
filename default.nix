@@ -1,2 +1,4 @@
 { pkgs ? import <nixpkgs> {} }:
-pkgs.arc or (pkgs.extend (import ./top-level.nix)).arc
+  if pkgs.arc.path or null == ./.
+  then pkgs.arc # avoid unnecessary duplication?
+  else ((pkgs.arc.super or pkgs).extend (import ./top-level.nix)).arc
