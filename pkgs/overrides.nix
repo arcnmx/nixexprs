@@ -1,6 +1,12 @@
 let
   packages = {
-    pass-arc = { pass, hostPlatform }: (pass.withExtensions (ext: [ext.pass-otp])).overrideAttrs (old: {
+    pass-arc = { pass, pass-extension-meta, pass-extension-arc-b2, hostPlatform }: let
+      pass-wrapped = pass.withExtensions (ext: [
+        ext.pass-otp
+        pass-extension-meta
+        pass-extension-arc-b2
+      ]);
+    in pass-wrapped.overrideAttrs (old: {
       doInstallCheck = !hostPlatform.isDarwin;
     });
 
