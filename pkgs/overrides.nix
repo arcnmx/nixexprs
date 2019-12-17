@@ -276,6 +276,17 @@ let
         else py
     ) pythonInterpreters;
 
+    mosh-client = { mosh, stdenvNoCC }: stdenvNoCC.mkDerivation {
+      inherit (mosh) name;
+
+      inherit mosh;
+      buildCommand = ''
+        mkdir -p $out/bin
+        ln -s $mosh/share $out/
+        ln -s $mosh/bin/mosh $mosh/bin/mosh-client $out/bin/
+      '';
+    };
+
     mkShell = { lib, mkShell, mkShellEnv }: {
       inherit mkShell;
       mkShellEnv = mkShellEnv.override { inherit mkShell; };
