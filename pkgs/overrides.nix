@@ -42,6 +42,7 @@ let
       '';
 
       meta = old.meta or {} // {
+        broken = old.meta.broken or false || notmuch.stdenv.isDarwin;
         passthru = old.meta.passthru or {} // {
           super = notmuch;
         };
@@ -118,7 +119,7 @@ let
       };
     in weechat-wrapped.overrideAttrs (old: {
         meta = old.meta // {
-          broken = old.meta.broken or false || weechat-unwrapped.stdenv.isDarwin;
+          broken = old.meta.broken or false || weechat-unwrapped.stdenv.isDarwin || lib.isNixpkgsStable;
         };
     });
 
@@ -210,6 +211,10 @@ let
         fetchSubmodules = true;
         sha256 = "13g8h2j1vg2dj97mxfiiwch1pw6xsg0r1wc2li3v6j85xvkcf4h9";
       });
+
+      meta = old.meta or {} // {
+        broken = old.meta.broken or false || openocd.stdenv.isDarwin;
+      };
     });
 
     kakoune = { kakoune, kakoune-unwrapped ? null }: if kakoune-unwrapped != null

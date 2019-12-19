@@ -43,6 +43,7 @@
       echo 'let $GEM_PATH=$GEM_PATH . ":${gemEnv}/${ruby.gemPath}"' >> plugin/notmuch.vim
       echo 'let $RUBYLIB=$RUBYLIB . ":${gemEnv}/${ruby.libPath}/${ruby.system}"' >> plugin/notmuch.vim
     '';
+    meta.broken = notmuch.meta.broken or false;
   };
   vim-cool = { fetchFromGitHub, vimUtils }: vimUtils.buildVimPlugin {
     name = "vim-cool";
