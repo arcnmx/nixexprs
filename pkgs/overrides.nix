@@ -22,7 +22,8 @@ let
       doInstallCheck = old.doInstallCheck or false && !nix.stdenv.isDarwin;
     });
 
-    notmuch = { notmuch, coreutils }: let
+    notmuch = { notmuch, coreutils }@args: let
+      notmuch = args.notmuch.super or args.notmuch;
       drv = notmuch.override { emacs = coreutils; };
     in drv.overrideAttrs (old: {
       configureFlags = old.configureFlags or [] ++ [ "--without-emacs" ];
@@ -39,6 +40,12 @@ let
         mv $out/lib/ruby/vendor_ruby/* $out/lib/ruby/
         rmdir $out/lib/ruby/vendor_ruby
       '';
+
+      meta = old.meta or {} // {
+        passthru = old.meta.passthru or {} // {
+          super = notmuch;
+        };
+      };
     });
     vim_configurable-pynvim = { vim_configurable, python3 }: vim_configurable.override {
       # vim with python3
@@ -149,7 +156,6 @@ let
       };
     });
 
-    vit2 = { python3Packages }: with python3Packages; toPythonApplication vit;
     yamllint = { python3Packages }: with python3Packages; toPythonApplication yamllint;
     cargo-download = { hostPlatform, cargo-download, cargo-download-arc }: let
       isBroken = hostPlatform.isDarwin || cargo-download.meta.broken or false == true;
@@ -235,7 +241,7 @@ let
 
     awscli = { awscli, hostPlatform, lib }: awscli.overrideAttrs (old: {
       meta = old.meta // {
-        broken = old.broken or false || (hostPlatform.isDarwin && lib.isNixpkgsStable);
+        broken = old.meta.broken or false || (hostPlatform.isDarwin && lib.isNixpkgsStable);
       };
     });
 
@@ -247,33 +253,19 @@ let
       };
     });
 
-    olm = { olm, fetchurl }: olm.overrideAttrs (old: rec {
-      pname = "olm";
-      version = "3.1.3";
-      name = "${pname}-${version}";
-      src = fetchurl {
-        url = "https://gitlab.matrix.org/matrix-org/olm/-/archive/${version}/${name}.tar.gz";
-        sha256 = "1zr6bi9kk1410mbawyvsbl1bnzw86wzwmgc7i5ap6i9l96mb1zqh";
-      };
-
-      meta = old.meta or {} // {
-        broken = olm.stdenv.isDarwin;
-      };
-    });
-
     pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (pyname: py: let
-        pythonOverrides = import ./python;
-        packageOverrides = pself: psuper:
-          builtins.mapAttrs (_: drv: pkgs.callPackage drv { pythonPackages = pself; }) (pythonOverrides psuper);
-      in if py.pkgs or null != null
-        then py.override (old: {
-          self = pkgs.pythonInterpreters.${pyname};
-          packageOverrides =
-            pself: psuper: let
-              psuper' = ((old.packageOverrides or (_: _: {})) pself psuper);
-            in psuper' // packageOverrides pself (psuper // psuper');
-        })
-        else py
+      pythonOverrides = import ./python;
+      packageOverrides = pself: psuper:
+        builtins.mapAttrs (_: drv: pkgs.callPackage drv { pythonPackages = pself; }) (pythonOverrides psuper);
+    in if py.pkgs or null != null
+      then py.override (old: {
+        self = pkgs.pythonInterpreters.${pyname};
+        packageOverrides =
+          pself: psuper: let
+            psuper' = ((old.packageOverrides or (_: _: {})) pself psuper);
+          in psuper' // packageOverrides pself (psuper // psuper');
+      })
+      else py
     ) pythonInterpreters;
 
     mosh-client = { mosh, stdenvNoCC }: stdenvNoCC.mkDerivation {
@@ -287,7 +279,9 @@ let
       '';
     };
 
-    mkShell = { lib, mkShell, mkShellEnv }: {
+    mkShell = { lib, mkShell, mkShellEnv }@args: let
+      mkShell = args.mkShell.mkShell or args.mkShell;
+    in {
       inherit mkShell;
       mkShellEnv = mkShellEnv.override { inherit mkShell; };
       __functor = self: attrs: lib.drvPassthru (drv: let
@@ -301,7 +295,9 @@ let
     };
 
     # nix progress displays better with the builtin :(
-    fetchurl = { fetchurl, nixFetchurl }: {
+    fetchurl = { fetchurl, nixFetchurl }@args: let
+      fetchurl = args.fetchurl.fetchurl or args.fetchurl;
+    in {
       inherit fetchurl;
       nixFetchurl = nixFetchurl.override { inherit fetchurl; };
       __functor = self: self.nixFetchurl;
@@ -310,12 +306,12 @@ let
 in packages // {
   instantiate = { self, super, ... }: let
     called = builtins.mapAttrs (name: p: let
-        args = if super ? ${name} && (! super ? arc) # awkward if this gets overlaid twice..?
-        then {
-          ${name} = super.${name};
-        } else { };
-        # TODO: this messes with the original .override so use lib.callWith instead?
-      in self.callPackage p args
-    ) packages;
+      fargs = super.lib.functionArgs p;
+      args = if fargs ? ${name}
+      then {
+        ${name} = super.${name} or (if fargs.${name} then null else throw "pkgs.${name} not found");
+      } else { };
+      # TODO: this messes with the original .override so use lib.callWith instead?
+    in self.callPackage p args) packages;
   in called;
 }

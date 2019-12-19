@@ -23,7 +23,6 @@ self: super: with super.lib; let
     build = filtered filterBuildSupportKeys self;
     lib = filtered filterLibKeys self.lib;
     path = ./.;
-    inherit super;
     inherit (packages'') shells;
   } // import ./static.nix;
 in {
