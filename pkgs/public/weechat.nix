@@ -1,5 +1,5 @@
 {
-  weechat-matrix-contrib = { python3Packages }: python3Packages.buildPythonApplication rec {
+  weechat-matrix-contrib = { python3Packages, lib }: python3Packages.buildPythonApplication rec {
     pname = "weechat-matrix-contrib";
     inherit (python3Packages.weechat-matrix) version src;
 
@@ -16,5 +16,6 @@
     installPhase = ''
       install -Dm0755 -t $out/bin contrib/matrix_{upload,decrypt}
     '';
+    meta.broken = lib.isNixpkgsStable;
   };
 }

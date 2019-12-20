@@ -66,7 +66,7 @@
     passthru.scripts = [ pname ];
   };
 
-  weechat-matrix = { stdenvNoCC, weechat-matrix-contrib }: stdenvNoCC.mkDerivation {
+  weechat-matrix = { stdenvNoCC, weechat-matrix-contrib, lib }: stdenvNoCC.mkDerivation {
     pname = "weechat-matrix";
     inherit (weechat-matrix-contrib) version src;
 
@@ -80,5 +80,6 @@
     '';
 
     passthru.scripts = [ "matrix.py" ];
+    meta.broken = lib.isNixpkgsStable;
   };
 }
