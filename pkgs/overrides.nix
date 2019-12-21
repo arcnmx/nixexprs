@@ -131,13 +131,13 @@ let
       };
     in drv.overrideAttrs (old: rec {
       name = "luakit-${version}";
-      rev = "4276fcad76d507cf82877a8dbab0709cbf48083b";
-      version = "2019-08-13";
+      rev = "8e1363f7f043dce49741c9be7e6b8bf14b9d383b";
+      version = "2019-12-20";
       src = fetchFromGitHub {
         owner = "luakit";
         repo = "luakit";
         inherit rev;
-        sha256 = "1vdvnqnwd0sya0zyz1zn7vwm36jrqij7zsv59axyfmjj9dsj63kv";
+        sha256 = "12sxm1vx973i914mk4wj03aa0swc3qqmw842jgsl89lmh4ds2lj2";
       };
     });
 
