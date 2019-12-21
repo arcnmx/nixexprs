@@ -258,6 +258,10 @@ let
       };
     });
 
+    git-revise = { git-revise }: git-revise.overrideAttrs (old: {
+      doInstallCheck = false;
+    });
+
     pythonInterpreters = { lib, pythonInterpreters, pkgs }: builtins.mapAttrs (pyname: py: let
       pythonOverrides = import ./python;
       packageOverrides = pself: psuper:
