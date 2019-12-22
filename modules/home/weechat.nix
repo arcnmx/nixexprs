@@ -22,8 +22,13 @@
     plugins = with availablePlugins;
       optional cfg.plugins.python.enable (
         python.withPackages (ps: drvAttrsFor ps cfg.plugins.python.packages)
-      );
+      ) ++ optional (cfg.environment != { }) {
+        # dummy for inserting env vars into wrapper script
+        pluginFile = "";
+        extraEnv = concatStringsSep "\n" (mapAttrsToList (k: v: "export ${k}=${escapeShellArg v}") cfg.environment);
+      };
     scripts = drvAttrsFor pkgs.weechatScripts cfg.scripts;
+    inherit (cfg) init;
   };
   pythonOverride = {
     python3Packages = cfg.pythonPackages;
@@ -80,7 +85,33 @@ in {
       example = [ "weechat-matrix" "weechat-autosort" ];
     };
 
-    autoconfig = mkOption {
+    init = mkOption {
+      type = types.lines;
+      description = "Commands to run on startup";
+      default = "";
+    };
+
+    source = mkOption {
+      type = types.listOf types.path;
+      description = "Files to source on startup";
+      default = [];
+    };
+
+    environment = mkOption {
+      type = types.attrsOf types.str;
+      description = "Extra environment variables";
+      default = { };
+    };
+
+    homeDirectory = mkOption {
+      type = types.nullOr types.path;
+      description = "Weechat home config directory";
+      defaultText = "~/.weechat";
+      example = literalExample "\${config.xdg.dataHome}/weechat";
+      default = null;
+    };
+
+    config = mkOption {
       type = settingType;
       default = { };
     };
@@ -89,12 +120,14 @@ in {
   config = mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
-    home.file.".weechat/.weerc" = mkIf (cfg.autoconfig != { }) {
-      text = ''
-        */set plugins.var.python.autoconf.autosave off
-      '' + concatStringsSep "\n" (mapAttrsToList (k: v:
-        "*/set ${k} ${configStr v}"
-      ) (flatConfig cfg.autoconfig));
+    programs.weechat = {
+      environment = mkIf (cfg.homeDirectory != null) {
+        WEECHAT_HOME = cfg.homeDirectory;
+      };
+      source = optional (cfg.config != { }) (pkgs.writeText "weechatrc" (concatStringsSep "\n" (mapAttrsToList
+        (k: v: "/set ${k} ${configStr v}") (flatConfig cfg.config)
+      )));
+      init = concatMapStringsSep "\n" (f: "/exec -sh -norc -oc cat ${f}") cfg.source;
     };
   };
 }
