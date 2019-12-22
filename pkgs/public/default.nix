@@ -12,7 +12,7 @@
   clip = import ./clip.nix;
 } // (import ./nixos.nix)
 // (import ./droid.nix)
-// (import ./weechat.nix)
+// (import ./weechat)
 // (import ./crates)
 // (import ./programs.nix)
 // (import ./linux)

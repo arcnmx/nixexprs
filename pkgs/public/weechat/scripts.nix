@@ -33,6 +33,9 @@
     pname = "urlgrab.py";
     version = "3.0";
     sha256 = "1z940g7r5w7qsay5jl7mr4ra9nyw3cgp5398i9xkmd0cxqw9aiw7";
+    patches = [
+      ./urlgrab-homedir.patch
+    ];
   };
   vimode = { buildWeechatScript }: buildWeechatScript {
     pname = "vimode.py";
