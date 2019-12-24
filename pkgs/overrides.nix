@@ -236,7 +236,7 @@ let
       pname = "${mpd.pname}-youtube-dl";
       patches = old.patches or [] ++ [ (fetchpatch {
         name = "mpd-youtube-dl.diff";
-        url = "https://github.com/MusicPlayerDaemon/MPD/compare/v${old.version}...arcnmx:ytdl-${old.version}.diff";
+        url = "https://github.com/MusicPlayerDaemon/MPD/compare/v0.21.16...arcnmx:ytdl-0.21.16.diff";
         sha256 = "1hmchq2wyjpwsry1jb33j3zd1ar7gf57b2vyirgfv15zl5wxvi59";
       }) ];
       meta = old.meta or {} // {
