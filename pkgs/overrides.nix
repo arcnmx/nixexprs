@@ -183,14 +183,16 @@ let
       nativeBuildInputs = old.nativeBuildInputs or [] ++ [ tcl ];
     });
 
-    openocd-eclipse = {
+    openocd-git = {
       openocd
-    , fetchFromGitHub, autoreconfHook, lib
+    , fetchgit, autoreconfHook, lib
     , git, jimtcl-minimal ? null, libjaylink ? null, enableJaylink ? libjaylink != null
     }: with lib; openocd.overrideAttrs (old: rec {
-      pname = "openocd-eclipse";
-      name = "openocd-eclipse-${version}";
-      version = "0.10.0-12-20190422";
+      pname = "openocd-git";
+      name = "openocd-git-${version}";
+      version = "2019-01-03";
+
+      patches = [ ];
 
       nativeBuildInputs = old.nativeBuildInputs ++ [ autoreconfHook git jimtcl-minimal ];
       buildInputs = old.buildInputs
@@ -200,13 +202,13 @@ let
         ++ optional (jimtcl-minimal != null) "--disable-internal-jimtcl"
         ++ optional (!enableJaylink || libjaylink != null) "--disable-internal-libjaylink";
 
+      enableParallelBuilding = true;
       NIX_LDFLAGS = optional (jimtcl-minimal != null) "-lreadline";
 
-      src = fetchFromGitHub ({
-        owner = "gnu-mcu-eclipse";
-        repo = "openocd";
-        rev = "v${version}";
-        sha256 = "08hqb2r58i8v7smw0x0jhlsiaf5hmnaq5igfbcy1p6zbip1prwnp";
+      src = fetchgit ({
+        url = "https://repo.or.cz/r/openocd.git";
+        rev = "9f1529da4fcc7d1e508ab9ea4dc915800d68e730";
+        sha256 = "12zxih93ygb2hq9llgd0ji3qwfhy7d1kax50jpp1qnfgmabnjs6f";
       } // optionalAttrs (jimtcl-minimal == null || (enableJaylink && libjaylink == null)) {
         fetchSubmodules = true;
         sha256 = "13g8h2j1vg2dj97mxfiiwch1pw6xsg0r1wc2li3v6j85xvkcf4h9";
