@@ -47,7 +47,8 @@
     nativeBuildInputs = lib.optional hostPlatform.isLinux pkgconfig;
     buildInputs = lib.optional hostPlatform.isLinux openssl
       ++ lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
-    cargoSha256 = "00sja62fykd3x1lq48as30xss301m04r0qj8c9rlv297yxnlz1vx";
+    cargoSha256 = "1ak0idi1wlwndw5rsp9ff1l3j05hf26h06rjs2ldfh09rss4s54b";
+    cargoPatches = [ ./cargo-download-lock.patch ];
   };
 
   cargo-with = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
