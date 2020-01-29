@@ -262,6 +262,25 @@ let
       };
     });
 
+    qemu-vfio = { qemu, fetchpatch, lib }: (qemu.override {
+      gtkSupport = false;
+      smartcardSupport = false;
+      hostCpuOnly = true;
+      smbdSupport = true;
+    }).overrideAttrs (old: {
+      patches = old.patches or [] ++ [
+        (fetchpatch {
+          name = "qemu-cpu-pinning.patch";
+          url = "https://github.com/saveriomiroddi/qemu-pinning/commit/4e4fe6402e9e4943cc247a4ccfea21fa5f608b30.patch";
+          sha256 = "12na0z8n48aiwiv96xn37b0i7i8kj5ph0rk8xbpm9jrzmi5rd4l1";
+        })
+      ];
+
+      meta = old.meta or {} // {
+        platforms = lib.platforms.linux;
+      };
+    });
+
     awscli = { awscli, hostPlatform, lib }: awscli.overrideAttrs (old: {
       meta = old.meta // {
         broken = old.meta.broken or false || (hostPlatform.isDarwin && lib.isNixpkgsStable);
