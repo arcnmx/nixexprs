@@ -9,6 +9,7 @@
   efm-langserver = import ./efm-langserver;
   markdownlint-cli = import ./markdownlint-cli;
   clip = import ./clip.nix;
+  nvidia-vbios-vfio-patcher = import ./nvidia-vbios-vfio-patcher;
 } // (import ./nixos.nix)
 // (import ./droid.nix)
 // (import ./weechat)
