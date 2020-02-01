@@ -30,6 +30,7 @@ in with lib; {
           ExecStart = pkgs.arc'private.konawall.exec;
           RemainAfterExit = true;
           IOSchedulingClass = "idle";
+          TimeoutStartSec = "5m";
         };
         Install.WantedBy = ["graphical-session.target"];
       };

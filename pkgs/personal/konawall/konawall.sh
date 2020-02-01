@@ -40,11 +40,13 @@ fi
 WAITPIDS=()
 for url in $(urls $URL_COUNT "$TAGS"); do
 	file=$(mktemp)
-	timeout 60 curl --retry 3 -fsSLo "$file" "$url" &
+	curl --retry 3 -fsSLo "$file" "$url" &
 	WAITPIDS+=($!)
 	FILES+=($file)
 done
-wait "${WAITPIDS[@]}"
+for pid in "${WAITPIDS[@]}"; do
+	wait -n $pid
+done
 
 if [ -n "${SWAYSOCK-}" ]; then
 	OUTPUT_I=0
