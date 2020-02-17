@@ -262,6 +262,16 @@ let
       production = true;
     };
 
+    bitlbee-discord = { bitlbee-discord, fetchFromGitHub }: bitlbee-discord.overrideAttrs (old: {
+      version = "2020-02-07";
+      src = fetchFromGitHub {
+        owner = "sm00th";
+        repo = "bitlbee-discord";
+        rev = "69e16be9d1d427e9bb085eabb9e4caecaa97dfc6";
+        sha256 = "1wd7qfzriccdbwmf8d20r479rrz92xg64q38c77nzqpw8dwz93gv";
+      };
+    });
+
     mpd-youtube-dl = { lib, mpd, fetchpatch }: mpd.overrideAttrs (old: {
       pname = "${mpd.pname}-youtube-dl";
       patches = old.patches or [] ++ [ (fetchpatch {
