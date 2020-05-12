@@ -141,20 +141,18 @@ let
 
     xdg_utils-mimi = { xdg_utils }: xdg_utils.override { mimiSupport = true; };
 
-    luakit-develop = { fetchFromGitHub, luakit, gst_all_1-noqt, lib }: let
-      drv = luakit.override {
-        gst_all_1 = gst_all_1-noqt;
-      };
-    in drv.overrideAttrs (old: rec {
+    luakit-develop = { fetchFromGitHub, luakit, lib }: luakit.overrideAttrs (old: rec {
       name = "luakit-${version}";
-      rev = "a023d2612982933dcfc888c1845e3d1df48e3e32";
-      version = "2020-01-14";
+      rev = "818d8f4777657d3bba0447c3baee86c2fe67fabf";
+      version = "2020-04-28";
       src = fetchFromGitHub {
         owner = "luakit";
         repo = "luakit";
         inherit rev;
-        sha256 = "1l9ifaxdjhbr4nwk5pqwhmk1z5xpznn69pvc6hbyp85kq80pc99r";
+        sha256 = "0jqyv5s07inkdpq5nryk1xfgkamnsnlxg1d5r6mx237y8gy8nax3";
       };
+      enableParallelBuilding = true;
+      patches = old.patches or [] ++ [ ./public/luakit/nodoc.patch ];
 
       meta = old.meta or {} // {
         broken = old.meta.broken or false || lib.isNixpkgsStable;
