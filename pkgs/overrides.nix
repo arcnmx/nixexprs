@@ -307,10 +307,18 @@ let
       hostCpuOnly = true;
       smbdSupport = true;
     }).overrideAttrs (old: {
-      patches = old.patches or [] ++ lib.optional (lib.versionAtLeast qemu.version "4.2") (fetchpatch {
+      patches = old.patches or [] ++ lib.optional (lib.versionAtLeast qemu.version "4.2" && lib.versionOlder qemu.version "5.0") (fetchpatch {
         name = "qemu-cpu-pinning.patch";
         url = "https://github.com/saveriomiroddi/qemu-pinning/commit/4e4fe6402e9e4943cc247a4ccfea21fa5f608b30.patch";
         sha256 = "12na0z8n48aiwiv96xn37b0i7i8kj5ph0rk8xbpm9jrzmi5rd4l1";
+      }) ++ lib.optional (lib.versionAtLeast qemu.version "5.0") (fetchpatch {
+        name = "qemu-cpu-pinning.patch";
+        url = "https://github.com/saveriomiroddi/qemu-pinning/commit/76241abfe8c5c71bc02a7e268ff3d3ca0734308c.patch";
+        sha256 = "1h4rm68vr4b2lpj7vi3wr5692kx4w4iccjasl86ldjsl40yfmc47";
+      }) ++ lib.singleton (fetchpatch {
+        name = "qemu-smb-symlinks.patch";
+        url = "https://github.com/saveriomiroddi/qemu-pinning/commit/c7d24d17e7cf9153dd2a3fcf716a17a4c86413fe.patch";
+        sha256 = "18sqw3sbsa5w7w5580g1b6l98grm0w3bhj7mrgnjgnir8m0as678";
       });
 
       meta = old.meta or {} // {
