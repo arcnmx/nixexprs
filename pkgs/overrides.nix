@@ -314,6 +314,15 @@ let
       };
     });
 
+    ncmpcpp = { ncmpcpp, fetchpatch }: ncmpcpp.overrideAttrs (old: {
+      patches = old.patches or [] ++ [ (fetchpatch {
+        name = "ncmpcpp-load-playlist.diff";
+        url = "https://github.com/arcnmx/ncmpcpp/commit/8a5738c333407c7aa4dd775e30ab50591728ce17.patch";
+        sha256 = "0bahn6ng8h30g36q2ji1cx4shyr4qimnc8vz246xschw6mr3271b";
+      }) ];
+      enableParallelBuilding = true;
+    });
+
     qemu-vfio = { qemu, fetchpatch, lib }: (qemu.override {
       gtkSupport = false;
       smartcardSupport = false;
