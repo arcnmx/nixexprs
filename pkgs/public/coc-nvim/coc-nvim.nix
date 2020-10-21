@@ -24,19 +24,15 @@ in vimUtils.buildVimPluginFrom2Nix {
     mkdir -p node_modules
     ln -s ${deps}/node_modules/* node_modules/
     ln -s ${deps}/node_modules/.bin node_modules/
-
-    # fragile :(
-    substituteInPlace webpack.config.js \
-      --replace "/Users/chemzqm/.config/yarn/global/node_modules/" "" \
-      --replace "git rev-parse HEAD" "echo $version" \
-      --replace "res.slice(0, 10)" "res"
   '';
+
+  patches = [ ./coc-nvim-webpack.patch ];
 
   buildPhase = ''
     yarn build
 
     webpack-cli
-    rm -r node_modules
+    rm -r node_modules bin/server.js
   '';
 
   meta.broken = !(builtins.tryEval yarn2nix).success || yarn.stdenv.isDarwin;
