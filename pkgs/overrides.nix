@@ -335,6 +335,11 @@ let
       };
     });
 
+    mpd_clientlib = { mpd_clientlib }: mpd_clientlib.overrideAttrs (old: {
+      # raise mpd line length limit from 4KB to 32KB
+      patches = old.patches or [ ] ++ [ ./mpd_clientlib-buffer.patch ];
+    });
+
     ncmpcpp = { ncmpcpp, fetchpatch }: ncmpcpp.overrideAttrs (old: {
       patches = old.patches or [] ++ [ (fetchpatch {
         name = "ncmpcpp-load-playlist.diff";
