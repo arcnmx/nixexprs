@@ -169,6 +169,9 @@ let
       };
       enableParallelBuilding = true;
       patches = old.patches or [] ++ [ ./public/luakit/nodoc.patch ];
+      meta = old.meta // {
+        broken = old.meta.broken or false || luakit.stdenv.isDarwin;
+      };
     });
 
     electrum-cli = { lib, electrum }: let
