@@ -255,7 +255,7 @@ let
     }: with lib; openocd.overrideAttrs (old: rec {
       pname = "openocd-git";
       name = "openocd-git-${version}";
-      version = "2020-02-09";
+      version = "2021-01-13";
 
       patches = [ ];
 
@@ -272,11 +272,11 @@ let
 
       src = fetchgit ({
         url = "https://repo.or.cz/r/openocd.git";
-        rev = "853a05287c987d419440b21e2b22f5ab75297739";
-        sha256 = "1czpj7c63q2bli2c5mnaiqz3ngw2na5yqwzvxqrrrzjczqjn8fli";
+        rev = "aaa6110d9b027acd1d027ef27c723ec9cf2381a0";
+        sha256 = "048vl18p65yjjkb6b97fskx9fwy2bgm5vnkpv56p1zp0prqr7icz";
       } // optionalAttrs (jimtcl-minimal == null || (enableJaylink && libjaylink == null)) {
         fetchSubmodules = true;
-        sha256 = "1czpj7c63q2bli2c5mnaiqz3ngw2na5yqwzvxqrrrzjczqjn8fli";
+        sha256 = "048vl18p65yjjkb6b97fskx9fwy2bgm5vnkpv56p1zp0prqr7icz";
       });
 
       meta = old.meta or {} // {
