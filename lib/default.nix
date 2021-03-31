@@ -109,10 +109,11 @@ in with self; {
   moduleValue = config: builtins.removeAttrs config ["_module"]; # wh-what was this for..?
 
   # .extend for extensible attrsets that may not exist yet
-  makeOrExtend = attrs: attr: overlay: let
+  makeOrExtend = super: attr: overlay: let
     overlay' = if isAttrs overlay then (_: _: overlay) else overlay;
-  in if attrs ? ${attr}.extend then attrs.${attr}.extend overlay'
-    else makeExtensible (flip overlay' attrs.${attr} or { });
+    super' = super.${attr} or { };
+  in if super' ? ${attr}.extend then super'.${attr}.extend overlay'
+    else makeExtensible (self: super' // flip overlay' super' self);
 
   # NOTE: a very basic/incomplete parser
   fromYAML = import ./from-yaml.nix self;
