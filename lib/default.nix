@@ -6,7 +6,9 @@ in with self; {
 
   # is a string a path?
   # (note: true for paths and strings that look like paths)
-  isPath = types.path.check;
+  isPathLike = types.path.check;
+
+  isPath = super.isPath or builtins.isPath or isPathLike;
 
   isFloat = super.isFloat or builtins.isFloat or (f:
     (builtins.tryEval (builtins.match "[0-9]*\\.[0-9]+" (toString f) != null)).value
@@ -18,13 +20,13 @@ in with self; {
     # undocumented behaviour (https://github.com/NixOS/nix/issues/200)
     if isDerivation contentsOrPath || (isStorePath contentsOrPath && !builtins.pathExists contentsOrPath) then contentsOrPath
     else if isStorePath contentsOrPath then builtins.storePath contentsOrPath # nix will re-copy a store path without this, and that's silly
-    else if isPath contentsOrPath then /. + contentsOrPath
+    else if isPathLike contentsOrPath then /. + contentsOrPath
     else builtins.toFile name contentsOrPath;
 
   # Return path-like strings as-is, otherwise copy contents to store first
   # (asPath except no requirement on being a path type or found in the store)
   asFile = name: contentsOrPath:
-    if isPath contentsOrPath then contentsOrPath
+    if isPathLike contentsOrPath then contentsOrPath
     else builtins.toFile name contentsOrPath;
 
   # named // operator
@@ -147,7 +149,7 @@ in with self; {
   #callFunctionWith for attrsets
   callFunctionsWith = autoArgs: fn: args: let
     res = callPackageWith autoArgs fn args;
-  in if isFunction fn || (!isAttrs fn && isPath fn) then
+  in if isFunction fn || (!isAttrs fn && isPathLike fn) then
     (if isFunction res
       then callFunctionWith autoArgs res args
       else res)
