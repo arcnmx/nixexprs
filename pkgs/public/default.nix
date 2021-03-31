@@ -12,6 +12,8 @@
   edfbrowser = import ./edfbrowser;
   scream = import ./scream.nix;
   mdloader = import ./mdloader.nix;
+  libjaylink = import ./libjaylink.nix;
+  openocd-git = import ./openocd-git.nix;
 } // (import ./nixos.nix)
 // (import ./droid.nix)
 // (import ./weechat)
