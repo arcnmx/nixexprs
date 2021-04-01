@@ -1,5 +1,6 @@
 { pkgs, lib, config, ... }: let
   cfg = config.services.konawall;
+  arc = import ../../canon.nix { inherit pkgs; };
 in with lib; {
   options.services.konawall = {
     enable = mkEnableOption "enable konawall";
@@ -27,7 +28,7 @@ in with lib; {
         Service = {
           Environment = ["KONATAGS=${concatStringsSep "+" cfg.tags}"];
           Type = "oneshot";
-          ExecStart = pkgs.arc'private.konawall.exec;
+          ExecStart = arc.packages.personal.konawall.exec;
           RemainAfterExit = true;
           IOSchedulingClass = "idle";
           TimeoutStartSec = "5m";

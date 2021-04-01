@@ -1,4 +1,9 @@
-self: super:
-  if super.arc.path or null == ../.
-  then { } # avoid unnecessary duplication/reoverlay
-  else import ../top-level.nix self super
+self: super: let
+  arc = import ../canon.nix { inherit self super; isOverlay = true; };
+in {
+  arc = super.lib.recurseIntoAttrs arc // {
+    _internal = super.arc._internal or { } // super.lib.dontRecurseIntoAttrs {
+      overlaid'arc = true;
+    };
+  };
+}

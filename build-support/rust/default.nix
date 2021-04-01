@@ -39,4 +39,4 @@
     rustPlatformFor = { rustChannel ? rust pkgs, pkgs ? null }: args:
       rustPlatformFor (rustChannel args);
   };
-in builtins.mapAttrs (_: p: self.callPackage p { }) builders
+in builders

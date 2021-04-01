@@ -2,7 +2,7 @@
   skipModules = if env.gh-event-name or null == "schedule" then "scheduled build"
     else if config.channels.home-manager.version != "master" then "home-manager release channel"
     else false;
-  arc = import ../. { inherit pkgs; };
+  arc = import ../. { inherit pkgs; overlay = true; };
   channel = channels.cipkgs.nix-gitignore.gitignoreSourcePure [ ../.gitignore ''
     /ci/
     /README.md
@@ -58,7 +58,7 @@ in {
       in [ (eval "lib") (eval "modules") (eval "overlays") ];
     };
     build = {
-      inputs = builtins.attrValues arc.packages;
+      inputs = arc.packages.groups.all;
       timeoutSeconds = 60 * 180; # max 360 on azure
     };
     shells = {
@@ -66,7 +66,7 @@ in {
       timeoutSeconds = 60 * 90;
     };
     tests = {
-      inputs = import ./tests.nix { inherit arc; };
+      inputs = import ./tests.nix { inherit arc pkgs; ci = channels.cipkgs.ci; };
     };
     modules = {
       name = "nix test modules";
