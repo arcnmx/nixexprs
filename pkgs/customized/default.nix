@@ -172,13 +172,14 @@ let
 
     luakit-develop = { fetchFromGitHub, luakit, lib }: luakit.overrideAttrs (old: rec {
       pname = "luakit-develop";
-      rev = "818d8f4777657d3bba0447c3baee86c2fe67fabf";
-      version = "2020-04-28";
+      version = "2021-03-23";
       src = fetchFromGitHub {
         owner = "luakit";
         repo = "luakit";
-        inherit rev;
-        sha256 = "0jqyv5s07inkdpq5nryk1xfgkamnsnlxg1d5r6mx237y8gy8nax3";
+        rev = "cb591ba9a466140559a5d9fcd5652b8aea13d80c";
+        sha256 = if lib.isNixpkgsStable
+          then "15qjf4zygx9s0sjn9qa8jwp28yy9bp46lg9c1ybvz9sajhf0xyzj"
+          else "14zrd4f2mbra12qal82nrxpsjh0zw9h6k4xivrlcpycikkra092f";
       };
       enableParallelBuilding = true;
       patches = old.patches or [] ++ [ ./luakit-nodoc.patch ];
