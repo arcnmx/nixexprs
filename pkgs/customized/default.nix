@@ -209,12 +209,14 @@ let
     yamllint = { python3Packages }: with python3Packages; toPythonApplication yamllint;
     svdtools = { python3Packages }: with python3Packages; toPythonApplication svdtools;
 
-    jimtcl-minimal = { lib, tcl, jimtcl, readline }: (jimtcl.override { SDL = null; SDL_gfx = null; sqlite = null; }).overrideAttrs (old: {
+    jimtcl-minimal = { lib, hostPlatform, tcl, jimtcl, readline }: (jimtcl.override { SDL = null; SDL_gfx = null; sqlite = null; }).overrideAttrs (old: {
       pname = "jimtcl-minimal";
       NIX_CFLAGS_COMPILE = "";
       configureFlags = with lib; filter (f: !hasSuffix "sqlite3" f && !hasSuffix "sdl" f) old.configureFlags;
       propagatedBuildInputs = old.propagatedBuildInputs or [] ++ [ readline ];
       nativeBuildInputs = old.nativeBuildInputs or [] ++ [ tcl ];
+
+      doCheck = lib.isNixpkgsUnstable || !hostPlatform.isDarwin;
     });
 
     mustache = { nodeEnv, fetchurl }: nodeEnv.buildNodePackage rec {

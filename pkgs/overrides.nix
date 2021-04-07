@@ -23,9 +23,17 @@
     {
       attr = "cargo-expand";
       apply = { previous, self, ... }: previous.overrideAttrs (old: {
-        meta = old.meta or { } // {
-          broken = old.meta.broken or self.hostPlatform.isDarwin;
-        };
+        buildInputs = old.buildInputs or [ ]
+          ++ self.lib.optional self.hostPlatform.isDarwin self.darwin.libiconv;
+      });
+    }
+    {
+      attr = "cargo-watch";
+      apply = { previous, self, ... }: previous.overrideAttrs (old: {
+        buildInputs = old.buildInputs or [ ]
+          ++ self.lib.optional self.hostPlatform.isDarwin self.darwin.libiconv;
+      } // self.lib.optionalAttrs (self.hostPlatform.isDarwin && isNixpkgsStable) {
+        doCheck = false;
       });
     }
     {
