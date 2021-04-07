@@ -177,9 +177,8 @@ let
         owner = "luakit";
         repo = "luakit";
         rev = "cb591ba9a466140559a5d9fcd5652b8aea13d80c";
-        sha256 = if lib.isNixpkgsStable
-          then "15qjf4zygx9s0sjn9qa8jwp28yy9bp46lg9c1ybvz9sajhf0xyzj"
-          else "14zrd4f2mbra12qal82nrxpsjh0zw9h6k4xivrlcpycikkra092f";
+        sha256 = "0yh8a1pr5x9k04kji9232p13fnp7gslyz74g4s2a29wxkrpbqwry";
+        fetchSubmodules = true; # not actually used but otherwise hash is unstable due to a nixpkgs bug?
       };
       enableParallelBuilding = true;
       patches = old.patches or [] ++ [ ./luakit-nodoc.patch ];
