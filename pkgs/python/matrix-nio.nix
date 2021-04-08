@@ -38,7 +38,7 @@ buildPythonPackage rec {
 
       doCheck = false;
 
-      propagatedBuildInputs = with pythonPackages; [ aiohttp attrs python-socks ];
+      propagatedBuildInputs = [ aiohttp attrs python-socks ];
     };
     aiofiles = pythonPackages.aiofiles.overrideAttrs (old: rec {
       version = "0.4.0";
@@ -80,7 +80,7 @@ buildPythonPackage rec {
         sha256 = "1qfad70h59hya21vrzz8dqyyaiqhac0anl2dx3s3k80gpskvrm1k";
       };
     });
-  in with pythonPackages; [
+  in [
     attrs
     future
     h11
@@ -90,7 +90,7 @@ buildPythonPackage rec {
     Logbook
     jsonschema
     unpaddedbase64
-  ] ++ lib.optionals (!pythonPackages.python.isPy2) [ aiohttp aiofiles aiohttp-socks ]
+  ] ++ lib.optionals (!python.isPy2) [ aiohttp aiofiles aiohttp-socks ]
     ++ lib.optionals enableOlm [ olm peewee atomicwrites cachetools ];
 
   passthru = {
