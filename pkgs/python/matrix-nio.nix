@@ -22,7 +22,8 @@ buildPythonPackage rec {
   doCheck = enableOlm;
 
   propagatedBuildInputs = let
-    aiohttp-socks = pythonPackages.aiohttp-socks.overrideAttrs (old: rec {
+    aiohttp-socks = buildPythonPackage rec {
+      pname = "aiohttp-socks";
       version = "0.5.5";
       src = fetchPypi {
         inherit version;
@@ -30,8 +31,15 @@ buildPythonPackage rec {
         sha256 = "0jmhb0l1w8k1nishij3awd9zv8zbyb5l35a2pdalrqxxasbhbcif";
       };
 
-      propagatedBuildInputs = old.propagatedBuildInputs ++ [ pythonPackages.python-socks ];
-    });
+      postPatch = ''
+        substituteInPlace setup.py \
+          --replace '[asyncio]' ""
+      '';
+
+      doCheck = false;
+
+      propagatedBuildInputs = with pythonPackages; [ aiohttp attrs python-socks ];
+    };
     aiofiles = pythonPackages.aiofiles.overrideAttrs (old: rec {
       version = "0.4.0";
       src = fetchPypi {
