@@ -23,7 +23,7 @@
   testAll = tests: all id tests;
   tests = {
     individualOverlayFetchurl = { pkgs ? pkgsOverlayFetchurl }: testAll (
-    optionals (pkgs ? arc._internal.overlaid'fetchurl) [
+    optionals (overlays.hasOverlay "fetchurl" pkgs) [
       (!(compare pkgs.fetchurl pkgs'.fetchurl))
       (compare pkgs.nixpkgsFetchurl pkgs'.fetchurl)
     ]);
@@ -39,13 +39,13 @@
       (pkgs.python3Packages.arc'test != pkgs.python2.pkgs.arc'test)
     ];
     overlayOverrides = { pkgs ? pkgsOverlayOverrides }: testAll (
-    optionals (pkgs ? arc._internal.overlaid'overrides) [
+    optionals (overlays.hasOverlay "overrides" pkgs) [
       (pkgs.notmuch.pname != "notmuch")
       (pkgs.nixpkgsNotmuch.pname == "notmuch")
       (pkgs.notmuch.super.pname == "notmuch")
     ]);
     overlayShells = { pkgs ? pkgsOverlayShells }: testAll (
-    optionals (pkgs ? arc._internal.overlaid'shells) [
+    optionals (overlays.hasOverlay "shells" pkgs) [
       ((pkgs.mkShell { }) ? shellEnv)
     ]);
     manualOverlay = { pkgs ? pkgsManualOverlay }: testAll [

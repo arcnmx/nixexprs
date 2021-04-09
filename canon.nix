@@ -4,8 +4,11 @@
 , isOverlay ? false
 , config ? { overrides = true; fetchurl = true; }
 }@args: let
+  overlays = import ./overlays;
+  selfOverlays = overlays.arc'internal.collectOverlays self.overlays;
   isSuperOverlaid = args ? super && super.arc.path or null == ./.;
-  isSelfOverlaid = self.arc.path or null == ./. && self ? arc._internal.overlaid'arc;
+  isOverlaid = attr: selfOverlays.path or null == ./. && selfOverlays.${attr} or false;
+  isSelfOverlaid = isOverlaid "arc";
   needsInstantiation = isOverlay || !isSelfOverlaid;
   arcImpl = if isSuperOverlaid then super.arc else if !needsInstantiation then self.arc else arc';
   arc' = {
@@ -18,22 +21,23 @@
         ++ builtins.map (py: "${py}Packages") pythons;
       pythonAttrNames = filter (k: super ? ${k}) pythonAttrNames';
       python = getAttrs pythonAttrNames pkgs';
-      packages = optionalAttrs (! self ? arc._internal.overlaid'packages) (arc.packages.groups.toplevel
+      packages = optionalAttrs (! isOverlaid "packages") (arc.packages.groups.toplevel
       // builtins.mapAttrs (k: v: super.${k} or { } // v) (arc.packages.groups.groups // arc.packages.customization)
       // arc.build);
-      lib = optionalAttrs (! self ? lib.arclib) {
+      lib = optionalAttrs (! (self.lib.arclib.path or null == ./. && self ? lib.arclib)) {
         lib = super.lib // arc.lib;
       };
-      shells = optionalAttrs (! self ? arc._internal.overlaid'shells) {
+      shells = optionalAttrs (! isOverlaid "shells") {
         shells = super.shells or { } // arc.shells;
       };
       attrs = packages // lib // shells;
       missing = attrs
-      // optionalAttrs (! self ? arc._internal.overlaid'python) python
-      // optionalAttrs ((! self ? arc._internal.overlaid'fetchurl) && config.fetchurl) {
-        inherit (pkgs') fetchurl nixpkgsFetchurl;
-      } // optionalAttrs ((! self ? arc._internal.overlaid'overrides) && config.overrides) (getAttrs overrideAttrs pkgs')
-      // optionalAttrs (! self ? arc._internal.overlaid'arc) { inherit arc; };
+      // optionalAttrs (! isOverlaid "python") python
+      // optionalAttrs ((! isOverlaid "fetchurl") && config.fetchurl) {
+        nixpkgsFetchurl = self.fetchurl;
+        fetchurl = self.nixFetchurl;
+      } // optionalAttrs ((! isOverlaid "overrides") && config.overrides) (getAttrs overrideAttrs pkgs')
+      // optionalAttrs (! isOverlaid "arc") { inherit arc; };
     in if missing == { } then self else self // missing // {
       callPackage = arc.pkgs.newScope { };
       newScope = scope: self.newScope (missing // scope);

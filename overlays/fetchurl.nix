@@ -1,6 +1,6 @@
 self: super: let
   arc = import ../canon.nix { inherit self super; };
-in assert ! super ? arc._internal.overlaid'fetchurl; {
+in assert ! super ? nixpkgsFetchurl; {
   inherit (arc.lib.overlayOverride {
     inherit self super;
     attr = "fetchurl";
@@ -12,12 +12,6 @@ in assert ! super ? arc._internal.overlaid'fetchurl; {
   callPackageOverrides = super.callPackageOverrides or { } // {
     nixFetchurl = {
       fetchurl = self.nixpkgsFetchurl or super.fetchurl or (throw "TODO");
-    };
-  };
-
-  arc = super.arc or { } // {
-    _internal = super.arc._internal or { } // {
-      overlaid'fetchurl = true;
     };
   };
 }

@@ -19,10 +19,4 @@ in {
       mkShell = self.nixpkgsMkShell or super.mkShell or (throw "mkShell missing");
     };
   };
-
-  arc = super.arc or { } // {
-    _internal = super.arc._internal or { } // {
-      overlaid'shells = true;
-    };
-  };
 }
