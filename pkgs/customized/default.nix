@@ -205,6 +205,17 @@ let
       };
     });
 
+    syncplay-cli = { syncplay }: let
+      syncplay-cli = syncplay.override {
+        qt5 = {
+          wrapQtAppsHook = null;
+        };
+        pyside2 = null;
+      };
+    in syncplay-cli.overrideAttrs (old: {
+      postFixup = "wrapPythonPrograms";
+    });
+
     yamllint = { python3Packages }: with python3Packages; toPythonApplication yamllint;
     svdtools = { python3Packages }: with python3Packages; toPythonApplication svdtools;
 
