@@ -37,10 +37,10 @@
       });
     }
     {
-      attr = "mpd_clientlib";
-      withAttr = "mpd_clientlib-buffer";
-      superAttr = "nixpkgsMpd_clientlib";
-      fallback = { ... }: arc.packages.groups.customized.mpd_clientlib-buffer;
+      attr = if isNixpkgsUnstable then "libmpdclient" else "mpd_clientlib";
+      withAttr = "libmpdclient-buffer";
+      superAttr = "nixpkgsLibmpdclient";
+      fallback = { ... }: arc.packages.groups.customized.libmpdclient-buffer;
     }
 
     # TODO: make tests that assert given (uncustomized) packages are still broken
