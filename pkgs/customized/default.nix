@@ -86,13 +86,13 @@ let
     rxvt-unicode-cvs-unwrapped = { rxvt-unicode-unwrapped ? null, fetchcvs, stdenv }: let
       drv = rxvt-unicode-unwrapped.overrideAttrs (old: rec {
         pname = "rxvt-unicode-cvs";
-        version = "2020-02-15";
+        version = "2020-06-30";
         enableParallelBuilding = true;
         src = fetchcvs {
           cvsRoot = ":pserver:anonymous@cvs.schmorp.de:/schmorpforge";
           module = "rxvt-unicode";
           date = version;
-          sha256 = "0n8z3c8fb1pqph09fnl9msswdw2wqm84xm5kaax6nf514gg05dpx";
+          sha256 = "1kfd09fqls8ah9ydkh2bnsdx7ikg48hcp8rh2yxnsbagzjlmdwqf";
         };
         meta = old.meta or {} // {
           broken = old.meta.broken or false || !rxvt-unicode-unwrapped.stdenv.isLinux;
