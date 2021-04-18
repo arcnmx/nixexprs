@@ -1,17 +1,10 @@
-{ lib, pythonPackages, fetchFromGitHub, weechat-matrix-contrib }:
+{ lib, pythonPackages, weechat-matrix-contrib }:
 
 with pythonPackages;
 
 buildPythonPackage rec {
   pname = "weechat-matrix";
-  version = "2021-02-18";
-
-  src = fetchFromGitHub {
-    owner = "poljar";
-    repo = pname;
-    rev = "ef09292005d67708511a44c8285df1342ab66bd1";
-    sha256 = "0rjfmzj5mp4b1kbxi61z6k46mrpybxhbqh6a9zm9lv2ip3z6bhlw";
-  };
+  inherit (weechat-matrix-contrib) version src;
 
   propagatedBuildInputs = [
     pyopenssl
@@ -54,4 +47,6 @@ buildPythonPackage rec {
     substituteInPlace requirements.txt \
       --replace "[e2e]" ""
   '';
+
+  meta.broken = ! weechat-matrix-contrib.meta.available or true;
 }

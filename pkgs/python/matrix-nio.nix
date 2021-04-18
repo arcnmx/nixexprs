@@ -1,5 +1,6 @@
 { lib, pythonPackages, git
 , enableOlm ? !pythonPackages.python.stdenv.isDarwin
+, hostPlatform
 }:
 
 with pythonPackages;
@@ -39,6 +40,8 @@ buildPythonPackage rec {
       doCheck = false;
 
       propagatedBuildInputs = [ aiohttp attrs python-socks ];
+
+      meta.broken = lib.isNixpkgsStable && hostPlatform.isDarwin;
     };
     aiofiles = pythonPackages.aiofiles.overrideAttrs (old: rec {
       version = "0.4.0";

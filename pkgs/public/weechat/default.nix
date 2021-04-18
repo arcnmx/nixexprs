@@ -1,9 +1,16 @@
 {
-  weechat-matrix-contrib = { python3Packages, lib }: python3Packages.buildPythonApplication rec {
+  weechat-matrix-contrib = { python3Packages, fetchFromGitHub }: with python3Packages; buildPythonApplication rec {
     pname = "weechat-matrix-contrib";
-    inherit (python3Packages.weechat-matrix) version src;
+    version = "2021-02-18";
 
-    propagatedBuildInputs = with python3Packages; [ python_magic requests matrix-nio aiohttp ];
+    src = fetchFromGitHub {
+      owner = "poljar";
+      repo = pname;
+      rev = "ef09292005d67708511a44c8285df1342ab66bd1";
+      sha256 = "0rjfmzj5mp4b1kbxi61z6k46mrpybxhbqh6a9zm9lv2ip3z6bhlw";
+    };
+
+    propagatedBuildInputs = [ python_magic requests matrix-nio aiohttp ];
 
     format = "other";
 

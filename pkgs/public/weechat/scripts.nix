@@ -83,5 +83,6 @@
     '';
 
     passthru.scripts = [ "matrix.py" ];
+    meta.broken = ! weechat-matrix-contrib.meta.available or true;
   };
 }
