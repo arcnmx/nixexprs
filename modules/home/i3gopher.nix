@@ -1,5 +1,6 @@
 { config, pkgs, lib, ... }: with lib; let
   cfg = config.xsession.windowManager.i3.i3gopher;
+  arc = import ../../canon.nix { inherit pkgs; };
 in {
   options.xsession.windowManager.i3.i3gopher = {
     enable = mkEnableOption "i3 focus history";
@@ -11,7 +12,7 @@ in {
     };
     package = mkOption {
       type = types.package;
-      default = pkgs.i3gopher.override { enableSway = false; i3 = config.xsession.windowManager.i3.package; };
+      default = (pkgs.i3gopher or arc.packages.i3gopher).override { enableSway = false; i3 = config.xsession.windowManager.i3.package; };
       defaultText = "pkgs.i3gopher";
     };
   };

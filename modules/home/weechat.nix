@@ -27,7 +27,7 @@
         pluginFile = "";
         extraEnv = concatStringsSep "\n" (mapAttrsToList (k: v: "export ${k}=${escapeShellArg v}") cfg.environment);
       };
-    scripts = drvAttrsFor pkgs.weechatScripts cfg.scripts;
+    scripts = drvAttrsFor arc.pkgs.weechatScripts cfg.scripts;
     inherit (cfg) init;
   };
   pythonOverride = {
@@ -35,6 +35,7 @@
   };
   defaultHomeDirectory = "${config.home.homeDirectory}/.weechat";
   weechatrc = "${config.home.homeDirectory}/${config.xdg.configFile."weechat/weechatrc".target}";
+  arc = import ../../canon.nix { inherit pkgs; };
 in {
   options.programs.weechat = {
     enable = mkEnableOption "weechat";
@@ -61,7 +62,7 @@ in {
       type = types.unspecified;
       defaultText = "pkgs.python3Packages";
       example = literalExample "pkgs.pythonPackages";
-      default = pkgs.python3Packages;
+      default = arc.pkgs.python3Packages;
     };
 
     plugins = {

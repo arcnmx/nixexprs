@@ -1,8 +1,9 @@
-{ pkgs, config, lib, ... }: with pkgs.lib; with lib; let
+{ pkgs, config, lib, ... }: let
   cfg = config.base16;
   consoleShell = (config.lib.arc.base16.schemeFor cfg.console.scheme).shell.override { inherit (cfg.console) ansiCompatibility; };
-  makeColorCS = n: value: "\\e]P${toHexUpper n}${value}";
-in {
+  makeColorCS = n: value: "\\e]P${lib.toHexUpper or arc.lib.toHexUpper n}${value}";
+  arc = import ../../canon.nix { inherit pkgs; };
+in with lib; {
   options.console.mingetty = {
     greetingPrefix = mkOption {
       type = types.separatedString "";
