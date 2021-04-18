@@ -128,12 +128,12 @@ let
 
     bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
 
-    mumble-arc = { mumble, lib }: let
+    mumble-speechd = { mumble, lib }: let
       drv = mumble.override {
         speechdSupport = true;
       };
     in drv.overrideAttrs (old: {
-      pname = "mumble-arc";
+      pname = "mumble-speechd";
       patches = old.patches or [] ++ [ ./mumble-pa-role.diff ];
     });
 
