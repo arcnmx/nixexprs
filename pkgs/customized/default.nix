@@ -226,7 +226,7 @@ let
       propagatedBuildInputs = old.propagatedBuildInputs or [] ++ [ readline ];
       nativeBuildInputs = old.nativeBuildInputs or [] ++ [ tcl ];
 
-      doCheck = lib.isNixpkgsUnstable || !hostPlatform.isDarwin;
+      doCheck = !hostPlatform.isDarwin;
     });
 
     mustache = { nodeEnv, fetchurl }: nodeEnv.buildNodePackage rec {
