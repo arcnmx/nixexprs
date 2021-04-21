@@ -85,6 +85,10 @@
             if stringLength self.hex.raw == 8 then self.hex.raw
             else if stringLength self.hex.raw == 6 then "${self.hex.raw}ff"
             else throw ''base16 unsupported value "${self.hex.raw}"'';
+          argb =
+            if stringLength self.hex.raw == 6 then "ff${self.hex.raw}"
+            else if stringLength self.hex.raw == 8 then "${self.hex.a}${self.hex.r}${self.hex.g}${self.hex.b}"
+            else throw ''base16 unsupported value "${self.hex.raw}"'';
           rgb = substring 0 6 self.hex.rgba;
           rgb16 = substring 0 12 self.hex.rgba16;
           bgr = "${self.hex.b}${self.hex.g}${self.hex.r}";
