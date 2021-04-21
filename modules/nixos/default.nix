@@ -1,5 +1,6 @@
 {
   modprobe = ./modprobe.nix;
+  pulseaudio = ./pulseaudio.nix;
   yggdrasil = ./yggdrasil.nix;
   display = ./display.nix;
   filebin = ./filebin.nix;
@@ -11,6 +12,7 @@
   __functor = self: { ... }: {
     imports = with self; [
       modprobe
+      pulseaudio
       yggdrasil
       display
       filebin
