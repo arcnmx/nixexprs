@@ -232,5 +232,6 @@ in {
 
   linuxPackagesFor = kernel: (super.linuxPackagesFor kernel).extend (_: ksuper: {
     forcefully-remove-bootfb = (self.forcefully-remove-bootfb.override { linux = ksuper.kernel; }).out;
+    ryzen-smu = self.ryzen-smu.override { linux = ksuper.kernel; };
   });
 }

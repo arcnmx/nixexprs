@@ -84,6 +84,35 @@ let
       dontStrip = true;
       meta.platforms = lib.platforms.linux;
     };
+
+    ryzen-smu = { stdenv, lib, fetchFromGitLab, linux }: stdenv.mkDerivation rec {
+      version = "0.1.2";
+      pname = let
+        pname = "ryzen-smu";
+        kernel-name = builtins.tryEval "${pname}-${linux.version}";
+      in if kernel-name.success then kernel-name.value else pname;
+
+      src = fetchFromGitLab {
+        owner = "leogx9r";
+        repo = "ryzen_smu";
+        rev = "v${version}";
+        sha256 = "08vvkn340wffm8gq74b64v7ifhr0kv5f6xjyfwm795yqqiyjvxbp";
+      };
+
+      kernelVersion = linux.modDirVersion;
+      modules = [ "ryzen-smu" ];
+      makeFlags = [
+        "-C ${linux.dev}/lib/modules/${linux.modDirVersion}/build modules"
+        "M=$(NIX_BUILD_TOP)/source"
+        "VERSION=$(version)"
+      ];
+
+      installPhase = ''
+        install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/ ryzen_smu.ko
+      '';
+
+      meta.platforms = lib.platforms.linux;
+    };
   };
 #in (callPackage packages { })
 in packages

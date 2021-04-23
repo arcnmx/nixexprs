@@ -20,6 +20,7 @@
 // (import ./crates)
 // (import ./programs.nix)
 // (import ./linux)
+// (import ./ryzen-smu.nix)
 // (import ./matrix)
 // (import ./pass)
 // (import ../git)
