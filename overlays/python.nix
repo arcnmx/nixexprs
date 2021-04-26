@@ -12,9 +12,8 @@ in {
   ) pythonOverrides) ];
   pythonOverrides = super.lib.dontRecurseIntoAttrs super.pythonOverrides or { };
   pythonInterpreters = builtins.mapAttrs (pyname: py:
-    if py.pkgs or null != null
+    if py ? override
     then py.override (old: {
-      self = self.pythonInterpreters.${pyname};
       packageOverrides = arc.super.lib.composeManyExtensions
         (super.lib.optional (old ? packageOverrides) old.packageOverrides ++ self.pythonOverlays);
     })
