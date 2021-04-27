@@ -25,6 +25,7 @@
   syncplay = ./syncplay.nix;
   weechat = ./weechat.nix;
   systemd = ./systemd.nix;
+  xdg = ./xdg.nix;
 
   __functionArgs = { };
   __functor = self: { ... }: {
@@ -50,6 +51,7 @@
       syncplay
       weechat
       systemd
+      xdg
     ];
   };
 }
