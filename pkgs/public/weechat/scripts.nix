@@ -24,6 +24,11 @@
     version = "27";
     sha256 = "0hiay88vvy171jiq6ahflm0ipb7sslfxwhmmm8psv6qk19rv2sxs";
   };
+  title = { buildWeechatScript }: buildWeechatScript {
+    pname = "title.py";
+    version = "0.9";
+    sha256 = "1h8mxpv47q3inhynlfjm3pdjxlr2fl06z4cdhr06kpm8f7xvz56p";
+  };
   unread_buffer = { buildWeechatScript }: buildWeechatScript {
     pname = "unread_buffer.py";
     version = "2";
