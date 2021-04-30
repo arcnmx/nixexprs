@@ -4,15 +4,16 @@ with pythonPackages;
 
 buildPythonPackage rec {
   pname = "svdtools";
-  version = "0.1.10";
+  version = "0.1.13";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "0vj9l9s275k2cc8rffp9xq24gxp9xzf23gh70aw12fkkibqzydfs";
+    sha256 = "00shi243vi7zxhnlw28idx0xap4il2zkma08ms1ad1cclayl6asb";
   };
 
   propagatedBuildInputs = [
     pyyaml
+    lxml
     click
   ];
 
