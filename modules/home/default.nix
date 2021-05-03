@@ -18,6 +18,7 @@
   lorri = ./lorri.nix;
   shell = ./shell.nix;
   less = ./less.nix;
+  firefox = ./firefox.nix;
   tridactyl = ./tridactyl.nix;
   ncpamixer = ./ncpamixer.nix;
   nix-path = ./nix-path.nix;
@@ -44,6 +45,7 @@
       lorri
       shell
       less
+      firefox
       tridactyl
       ncpamixer
       nix-path
