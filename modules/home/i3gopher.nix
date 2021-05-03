@@ -21,7 +21,7 @@ in {
     i3gopher = {
       Unit = {
         Description = "i3 focus history";
-        After = ["graphical-session-i3.target"];
+        After = ["i3-session.target"];
         PartOf = ["graphical-session.target"];
       };
       Service = {
@@ -33,7 +33,7 @@ in {
           then "${cfg.package.exec} -exec \${I3GOPHER_EXEC}"
           else cfg.package.exec;
       };
-      Install.WantedBy = ["graphical-session-i3.target"];
+      Install.WantedBy = ["i3-session.target"];
     };
   };
 }
