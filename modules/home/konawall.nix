@@ -42,7 +42,7 @@ in with lib; {
         };
         Service = {
           Type = "oneshot";
-          ExecStart = "${config.systemd.package}/bin/systemctl --user restart konawall";
+          ExecStart = "${config.systemd.package or pkgs.systemd}/bin/systemctl --user restart konawall";
         };
       };
     };
