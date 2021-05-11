@@ -7,7 +7,7 @@
 , websocketpp, asio_1_10
 , libmad, libogg, libvorbis
 , libtomcrypt, libtommath, muFFT
-, sqlite, sqlitecpp
+, sqlite, sqlitecpp ? null
 , rapidjson, discord-rpc
 , luajit
 }: with lib; stdenv.mkDerivation rec {
@@ -80,4 +80,6 @@
     rapidjson discord-rpc
     luajit
   ];
+
+  meta.broken = sqlitecpp == null; # introduced in 21.05
 }
