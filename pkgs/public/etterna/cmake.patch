@@ -1,0 +1,90 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3d367ce..38049ef 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -47,7 +47,6 @@ set_target_properties(Etterna PROPERTIES
+ 
+ ### macOS and Linux place binary in root directory
+ if(NOT WIN32)
+-    set_target_properties(Etterna PROPERTIES RUNTIME_OUTPUT_DIRECTORY "$<1:${PROJECT_SOURCE_DIR}>")
+ endif()
+ 
+ ## Includes
+@@ -55,14 +54,24 @@ target_include_directories(Etterna PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated
+ target_include_directories(Etterna PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)          # Add src/ to include search dirs
+ 
+ ## Package Includes
+-### OpenSSL is not used directly by our program, but we have to use OpenSSL first
+-### in order to statically link. Once find_package is run once, it's results are cached
+-set(OPENSSL_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
+-set(OPENSSL_MSVC_STATIC_RT ON CACHE BOOL "" FORCE)
++find_package(websocketpp CONFIG REQUIRED)
+ find_package(OpenSSL REQUIRED)
+-find_package(Threads REQUIRED)
+-target_link_libraries(Etterna PRIVATE Threads::Threads)
+-target_link_libraries(Etterna PRIVATE OpenSSL::SSL)
++find_package(CURL REQUIRED)
++find_package(SQLite3 REQUIRED)
++find_package(SQLiteCpp CONFIG REQUIRED)
++find_package(ZLIB REQUIRED)
++find_package(GLEW REQUIRED)
++find_package(PkgConfig REQUIRED)
++pkg_search_module(RAPIDJSON REQUIRED IMPORTED_TARGET RapidJSON)
++pkg_search_module(PCRE REQUIRED IMPORTED_TARGET libpcre)
++pkg_search_module(OGG REQUIRED IMPORTED_TARGET ogg)
++pkg_check_modules(VORBIS REQUIRED IMPORTED_TARGET vorbis vorbisfile)
++pkg_search_module(TOMCRYPT REQUIRED IMPORTED_TARGET libtomcrypt)
++pkg_search_module(TOMMATH REQUIRED IMPORTED_TARGET libtommath)
++pkg_search_module(MUFFT REQUIRED IMPORTED_TARGET mufft)
++pkg_search_module(MAD REQUIRED IMPORTED_TARGET mad)
++pkg_search_module(LUA REQUIRED IMPORTED_TARGET luajit)
++
+ if(WIN32)
+     # These libraries are all included as the openssl instructions state they are needed for static linking.
+     # The source code does include some of these through "#pragma comment(lib, LIB)" though to keep it linking
+@@ -75,26 +84,27 @@ if(WIN32)
+ endif()
+ 
+ # Load external libraries
+-add_subdirectory(extern EXCLUDE_FROM_ALL) # EXCLUDE_FROM_ALL to exclude from cpack binary
++add_subdirectory(extern/picosha2)
+ 
+ ## Linking
+-target_link_libraries(Etterna PRIVATE SQLiteCpp sqlite3)
+-target_link_libraries(Etterna PRIVATE zlib)
+-target_link_libraries(Etterna PRIVATE rapidjson)
+-target_link_libraries(Etterna PRIVATE websocketpp)
+-target_link_libraries(Etterna PRIVATE luajit)
+-target_link_libraries(Etterna PRIVATE discord-rpc)
+-target_link_libraries(Etterna PRIVATE tomcrypt)
+-target_link_libraries(Etterna PRIVATE libtommath)
+-target_link_libraries(Etterna PRIVATE muFFT)
+-target_link_libraries(Etterna PRIVATE glfw)
+-target_link_libraries(Etterna PRIVATE ogg)
+-target_link_libraries(Etterna PRIVATE vorbis)
+-target_link_libraries(Etterna PRIVATE pcre)
+-target_link_libraries(Etterna PRIVATE libmad)
+-target_link_libraries(Etterna PRIVATE stb)
+-target_link_libraries(Etterna PRIVATE libcurl)
+-target_link_libraries(Etterna PRIVATE picosha2)
++target_link_libraries(Etterna PRIVATE
++  SQLiteCpp sqlite3
++  ZLIB::ZLIB
++  CURL::libcurl OpenSSL::SSL
++  GLEW::GLEW
++  websocketpp::websocketpp
++  PkgConfig::RAPIDJSON
++  PkgConfig::PCRE
++  PkgConfig::OGG
++  PkgConfig::VORBIS
++  PkgConfig::TOMCRYPT
++  PkgConfig::TOMMATH
++  PkgConfig::MAD
++  PkgConfig::LUA
++  PkgConfig::MUFFT
++  discord-rpc
++  picosha2
++)
+ 
+ # OS Specific Initialization
+ if(WIN32)
