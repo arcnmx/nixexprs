@@ -37,6 +37,23 @@ let
       doInstallCheck = false; # old.doInstallCheck or false && !nix.stdenv.isDarwin;
     });
 
+    rink-readline = { rink, rustPlatform, fetchpatch }: rustPlatform.buildRustPackage {
+      pname = "${rink.pname}-readline";
+      inherit (rink) src version nativeBuildInputs buildInputs doCheck meta;
+
+      patches = rink.patches or [ ] ++ [ (fetchpatch {
+        url = "https://github.com/kittywitch/rink-rs/commit/d69635621575af36dc1a4802843e085b4e66c903.patch";
+        sha256 = "19ifgzp9fhga210rljs0kbxm8fr6hh5k377l1mkfrm9x1ypyd1ik";
+      }) ];
+
+      cargoPatches = rink.cargoPatches or [ ] ++ [ (fetchpatch {
+        url = "https://github.com/kittywitch/rink-rs/commit/c33df70c8c115d8b34062d6835b69a7c5e00a33c.patch";
+        sha256 = "1rd0r7j6dvi6m7h7qhhw7870kbnj7x64ba9w8hzaklw4yh8l82v3";
+      }) ];
+
+      cargoSha256 = "1chxf0rgdps21rm3p2c0yn9z0gvzx095n74ryiv89y0d1gka5jy6";
+    };
+
     i3gopher-sway = { i3gopher }: i3gopher.override {
       enableI3 = false;
       enableSway = true;
