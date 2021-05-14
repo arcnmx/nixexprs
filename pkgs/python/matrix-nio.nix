@@ -1,6 +1,7 @@
 { lib, pythonPackages, git
 , enableOlm ? !pythonPackages.python.stdenv.isDarwin
 , hostPlatform
+, fetchFromGitHub
 }:
 
 with pythonPackages;
@@ -81,6 +82,15 @@ buildPythonPackage rec {
         inherit (old) pname;
         inherit version;
         sha256 = "1qfad70h59hya21vrzz8dqyyaiqhac0anl2dx3s3k80gpskvrm1k";
+      };
+    });
+    unpaddedbase64 = pythonPackages.unpaddedbase64.overrideAttrs (old: rec {
+      version = "1.1.0";
+      src = fetchFromGitHub {
+        owner = "matrix-org";
+        repo = "python-${old.pname}";
+        rev = "v${version}";
+        sha256 = "0if3fjfxga0bwdq47v77fs9hrcqpmwdxry2i2a7pdqsp95258nxd";
       };
     });
   in [
