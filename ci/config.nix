@@ -38,8 +38,8 @@ in {
     home-manager = mkDefault "master";
   };
   cache.cachix.arc = {
-    enable = true;
     publicKey = "arc.cachix.org-1:DZmhclLkB6UO0rc0rBzNpwFbbaeLfyn+fYccuAy7YVY=";
+    signingKey = "mew"; # TODO: fix and remove
   };
 
   tasks = {
