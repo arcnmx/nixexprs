@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, runCommand, yarn2nix, nodejs, nodePackages, python2, libiconv }: let
+{ lib, fetchFromGitHub, runCommand, mkYarnPackage, nodejs, nodePackages, python2, libiconv }: let
   version = "0.13.0";
   pname = "matrix-appservice-irc";
   src = fetchFromGitHub {
@@ -11,7 +11,7 @@
     tar --no-same-owner --no-same-permissions -xf ${nodejs.src}
     mv node-* $out
   '';
-  drv = yarn2nix.mkYarnPackage {
+  drv = mkYarnPackage {
     inherit version pname src;
     name = "${pname}-${version}";
     yarnLock = ./yarn.lock;
@@ -33,10 +33,5 @@
 
     buildInputs = [ nodejs ];
     inherit nodejs;
-
-    meta = {
-      broken = !(builtins.tryEval yarn2nix).success;
-    };
-    passthru.ci.omit = true; # derivation name depends on the package json...
   };
 in lib.drvExec "bin/${drv.pname}" drv

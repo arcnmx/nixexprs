@@ -1,4 +1,4 @@
-{ fetchFromGitHub, yarn2nix, yarn, vimUtils, nodePackages }: let
+{ fetchFromGitHub, mkYarnModules, yarn, vimUtils, nodePackages }: let
   pname = "coc-json";
   version = "1.3.2";
   src = fetchFromGitHub {
@@ -7,7 +7,7 @@
     rev = version;
     sha256 = "04malzxmpazl08wzjgncwy1n4wssrdkvazjval6pyg5cg7rljxz3";
   };
-  deps = yarn2nix.mkYarnModules rec {
+  deps = mkYarnModules rec {
     inherit pname version;
     name = "${pname}-modules-${version}";
     packageJSON = src + "/package.json";
@@ -33,5 +33,5 @@ in vimUtils.buildVimPluginFrom2Nix {
     rm -r node_modules
   '';
 
-  meta.broken = !(builtins.tryEval yarn2nix).success || yarn.stdenv.isDarwin;
+  meta.broken = yarn.stdenv.isDarwin;
 }

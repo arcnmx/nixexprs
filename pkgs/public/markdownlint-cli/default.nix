@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, runCommand, yarn2nix, nodejs }: let
+{ lib, fetchFromGitHub, runCommand, mkYarnPackage, nodejs }: let
   version = "0.18.0";
   pname = "markdownlint-cli";
   src = fetchFromGitHub {
@@ -7,7 +7,7 @@
     rev = "v${version}";
     sha256 = "1rrmxr3s4bij5ps8chjkw9hkd4hn0fwxwjc3xx6j4qrzjhj39d2a";
   };
-  drv = yarn2nix.mkYarnPackage {
+  drv = mkYarnPackage {
     inherit version pname src;
     name = "${pname}-${version}";
     yarnLock = ./yarn.lock;
@@ -24,9 +24,6 @@
       ln -Tsf ../../node_modules deps/$pname/node_modules
     '';
 
-    meta = {
-      broken = !(builtins.tryEval yarn2nix).success;
-    };
     passthru.ci.omit = true; # derivation name depends on the package json...
   };
 in lib.drvExec "bin/${drv.pname}" drv

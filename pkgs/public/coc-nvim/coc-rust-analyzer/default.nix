@@ -1,4 +1,4 @@
-{ fetchFromGitHub, yarn2nix, yarn, vimUtils, nodePackages, fetchpatch }: let
+{ fetchFromGitHub, mkYarnModules, yarn, vimUtils, nodePackages, fetchpatch }: let
   pname = "coc-rust-analyzer";
   version = "0.29.0";
   src = fetchFromGitHub {
@@ -7,7 +7,7 @@
     rev = "5f0fdac5cfb2ce8ce225b8eff6323fe367df4a47";
     sha256 = "0p1rfvvrhjs627w3204g0780d21a5xxnj60s5vmq5pmq453cxchk";
   };
-  deps = yarn2nix.mkYarnModules rec {
+  deps = mkYarnModules rec {
     inherit pname version;
     name = "${pname}-modules-${version}";
     packageJSON = src + "/package.json";
@@ -37,5 +37,5 @@ in vimUtils.buildVimPluginFrom2Nix {
     rm -r node_modules
   '';
 
-  meta.broken = !(builtins.tryEval yarn2nix).success || yarn.stdenv.isDarwin;
+  meta.broken = yarn.stdenv.isDarwin;
 }

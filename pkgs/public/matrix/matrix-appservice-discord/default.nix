@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, runCommand, yarn2nix, nodejs, nodePackages, python2 }: let
+{ lib, fetchFromGitHub, runCommand, mkYarnPackage, nodejs, nodePackages, python2 }: let
   version = "0.5.1";
   pname = "matrix-appservice-discord";
   src = fetchFromGitHub {
@@ -16,7 +16,7 @@
     tar --no-same-owner --no-same-permissions -xf ${nodejs.src}
     mv node-* $out
   '';
-  drv = yarn2nix.mkYarnPackage {
+  drv = mkYarnPackage {
     inherit version pname src packageJSON;
     name = "${pname}-${version}";
     yarnLock = ./yarn.lock;
@@ -71,10 +71,5 @@
       main=tools/chanfix substituteAll $mainWrapperPath $out/bin/$pname-chanfix
       chmod +x $out/bin/*
     '';
-
-    meta = {
-      broken = !(builtins.tryEval yarn2nix).success;
-    };
-    passthru.ci.omit = true; # derivation name depends on the package json...
   };
 in lib.drvExec "bin/${drv.pname}" drv

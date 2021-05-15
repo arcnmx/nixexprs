@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, runCommand, yarn2nix, nodejs, nodePackages, python2, pidgin, pkg-config, withPurple ? false }: with lib; let
+{ lib, fetchFromGitHub, runCommand, mkYarnPackage, nodejs, nodePackages, python2, pidgin, pkg-config, withPurple ? false }: with lib; let
   version = "0.2.0";
   pname = "matrix-bifrost";
   src = fetchFromGitHub {
@@ -18,7 +18,7 @@
     tar --no-same-owner --no-same-permissions -xf ${nodejs.src}
     mv node-* $out
   '';
-  drv = yarn2nix.mkYarnPackage {
+  drv = mkYarnPackage {
     inherit version pname src packageJSON;
     name = "matrix-appservice-purple-${version}";
     yarnLock = ./yarn.lock;
@@ -71,10 +71,5 @@
       substituteAll $mainWrapperPath $out/bin/$pname
       chmod +x $out/bin/$pname
     '';
-
-    meta = {
-      broken = !(builtins.tryEval yarn2nix).success;
-    };
-    passthru.ci.omit = true; # derivation name depends on the package json...
   };
 in drvExec "bin/${drv.pname}" drv
