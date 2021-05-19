@@ -35,7 +35,7 @@
       // optionalAttrs (! isOverlaid "python") python
       // optionalAttrs ((! isOverlaid "fetchurl") && config.fetchurl) {
         nixpkgsFetchurl = self.fetchurl;
-        fetchurl = self.nixFetchurl;
+        fetchurl = self.nixFetchurl or arc.build.nixFetchurl;
       } // optionalAttrs ((! isOverlaid "overrides") && config.overrides) (getAttrs overrideAttrs pkgs')
       // optionalAttrs (! isOverlaid "arc") { inherit arc; };
     in if missing == { } then self else self // missing // {
