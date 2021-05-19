@@ -1,4 +1,4 @@
-{ lib, pythonPackages }:
+{ lib, pythonPackages, protobuf3_15 }:
 
 with pythonPackages;
 
@@ -19,7 +19,9 @@ buildPythonPackage rec {
     readlike
     requests
     reparser
-    protobuf
+    (protobuf.override {
+      protobuf = protobuf3_15;
+    })
     urwid
     (MechanicalSoup.overrideAttrs (old: rec {
       version = "0.12.0";
