@@ -58,7 +58,7 @@ let
       };
     };
 
-    looking-glass-client-develop = { looking-glass-client, fetchFromGitHub, libXinerama, libffi, wayland-protocols }: looking-glass-client.overrideAttrs (old: {
+    looking-glass-client-develop = { lib, looking-glass-client, fetchFromGitHub, libXinerama }: looking-glass-client.overrideAttrs (old: {
       version = "2021-05-19";
       src = fetchFromGitHub {
         owner = "gnif";
@@ -70,10 +70,11 @@ let
 
       buildInputs = old.buildInputs ++ [
         libXinerama
-        wayland-protocols libffi
       ];
 
       patches = [ ];
+
+      meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
     });
 
     looking-glass-obs = { looking-glass-client, libbfd, obs-studio, libGLU }: looking-glass-client.overrideAttrs (old: {
