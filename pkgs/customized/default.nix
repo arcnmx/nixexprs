@@ -58,6 +58,27 @@ let
       };
     };
 
+    looking-glass-obs = { looking-glass-client, libbfd, obs-studio, libGLU }: looking-glass-client.overrideAttrs (old: {
+      pname = "looking-glass-obs";
+
+      buildInputs = [ libbfd obs-studio libGLU ];
+      cmakeFlags = old.cmakeFlags or [ ] ++ [
+        "../../obs"
+      ];
+
+      preConfigure = let
+        pluginPath = {
+          x86 = "32bit";
+          x86-64 = "64bit";
+        }.${obs-studio.stdenv.targetPlatform.parsed.cpu.arch};
+      in ''
+        chmod +w $NIX_BUILD_TOP/source/obs/CMakeLists.txt
+        echo "install(TARGETS looking-glass-obs
+          LIBRARY DESTINATION share/obs/obs-plugins/$pname/bin/${pluginPath}
+        )" >> $NIX_BUILD_TOP/source/obs/CMakeLists.txt
+      '';
+    });
+
     i3gopher-sway = { i3gopher }: i3gopher.override {
       enableI3 = false;
       enableSway = true;

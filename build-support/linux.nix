@@ -231,6 +231,7 @@ in {
   };
 
   linuxPackagesFor = kernel: (super.linuxPackagesFor kernel).extend (_: ksuper: {
+    looking-glass-kvmfr = (self.looking-glass-kvmfr.override { linux = ksuper.kernel; }).out;
     forcefully-remove-bootfb = (self.forcefully-remove-bootfb.override { linux = ksuper.kernel; }).out;
     ryzen-smu = self.ryzen-smu.override { linux = ksuper.kernel; };
   });
