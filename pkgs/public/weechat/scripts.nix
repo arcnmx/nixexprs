@@ -12,7 +12,7 @@
   autoconf = { buildWeechatScript }: buildWeechatScript {
     pname = "autoconf.py";
     version = "0.3";
-    sha256 = "1i81imlx4bcy3xl01lld1shj1wxqx2ixl72fwknb0s90gn7j4jrc";
+    sha256 = "122krj58hvsn7z6221ra7f1l5h6xa4g0dsdsrxzwkvkq83j01f00";
   };
   autosort = { buildWeechatScript }: buildWeechatScript {
     pname = "autosort.py";
