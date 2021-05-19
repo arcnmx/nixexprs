@@ -1,14 +1,14 @@
-{ lib, pythonPackages, protobuf3_15 }:
+{ lib, pythonPackages, protobuf3_13 ? null, protobuf3_15 ? protobuf3_13 }:
 
 with pythonPackages;
 
 buildPythonPackage rec {
   pname = "hangups";
-  version = "0.4.13";
+  version = "0.4.14";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "015g635vnrxk5lf9n80rdcmh6chv8kmla1k2j7m1iijijs519ngn";
+    sha256 = "15qbbafcrdkx73xz9y30qa3d8nj6mgrp2m41749i5nn1qywmikk8";
   };
 
   propagatedBuildInputs = [
