@@ -38,7 +38,7 @@ buildPythonPackage rec {
   ] ++ lib.optional (pythonOlder "3.7") dataclasses
   ++ lib.optionals enableOlm [ olm peewee atomicwrites cachetools ];
 
-  meta.broken = python.isPy2;
+  meta.broken = python.isPy2 || lib.isNixpkgsStable;
   passthru = {
     inherit enableOlm;
   };

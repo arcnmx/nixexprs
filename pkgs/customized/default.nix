@@ -221,14 +221,15 @@ let
     });
 
     weechat-arc = { lib, wrapWeechat, weechat-unwrapped, weechatScripts, python3Packages }: let
-      weechat-wrapped = wrapWeechat weechat-unwrapped {
+      filterBroken = lib.filter (s: ! s.meta.broken or false && s.meta.available or true); # matrix-nio is often broken
+      weechat-wrapped = (wrapWeechat.override { inherit python3Packages; }) weechat-unwrapped {
         configure = { availablePlugins, ... }: {
           plugins = with availablePlugins; [
-            (python.withPackages (ps: with ps; [
+            (python.withPackages (ps: with ps; filterBroken [
               weechat-matrix
             ]))
           ];
-          scripts = with weechatScripts; [
+          scripts = with weechatScripts; filterBroken [
             go auto_away autoconf autosort colorize_nicks unread_buffer urlgrab vimode-git weechat-matrix
           ];
         };

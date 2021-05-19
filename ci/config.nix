@@ -34,6 +34,7 @@ in {
     nixpkgs = {
       version = mkDefault "unstable";
       nixPathImport = skipModules == false;
+      args.config.checkMetaRecursively = true;
     };
     home-manager = mkDefault "master";
   };
