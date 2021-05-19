@@ -58,6 +58,24 @@ let
       };
     };
 
+    looking-glass-client-develop = { looking-glass-client, fetchFromGitHub, libXinerama, libffi, wayland-protocols }: looking-glass-client.overrideAttrs (old: {
+      version = "2021-05-19";
+      src = fetchFromGitHub {
+        owner = "gnif";
+        repo = "LookingGlass";
+        rev = "fd531bd39bf85ca4e7afd44e3134e7d5bce5508d";
+        sha256 = "1fhzrydgk9id8rdg0skdhgjh8kbcm6kd75i62kcck2bgnv634rcd";
+        fetchSubmodules = true;
+      };
+
+      buildInputs = old.buildInputs ++ [
+        libXinerama
+        wayland-protocols libffi
+      ];
+
+      patches = [ ];
+    });
+
     looking-glass-obs = { looking-glass-client, libbfd, obs-studio, libGLU }: looking-glass-client.overrideAttrs (old: {
       pname = "looking-glass-obs";
 
@@ -78,6 +96,17 @@ let
         )" >> $NIX_BUILD_TOP/source/obs/CMakeLists.txt
       '';
     });
+
+    looking-glass-obs-develop = { looking-glass-obs, looking-glass-client-develop }:
+      looking-glass-obs.override {
+        looking-glass-client = looking-glass-client-develop;
+      };
+
+    looking-glass-kvmfr-develop = { looking-glass-kvmfr, looking-glass-client-develop, linux }:
+      looking-glass-kvmfr.override {
+        looking-glass-client = looking-glass-client-develop;
+        inherit linux;
+      };
 
     i3gopher-sway = { i3gopher }: i3gopher.override {
       enableI3 = false;
