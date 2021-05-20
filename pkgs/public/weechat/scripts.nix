@@ -74,20 +74,5 @@
     passthru.scripts = [ pname ];
   };
 
-  weechat-matrix = { stdenvNoCC, weechat-matrix-contrib, lib }: stdenvNoCC.mkDerivation {
-    pname = "weechat-matrix";
-    inherit (weechat-matrix-contrib) version src;
-
-    weechatMatrixContrib = weechat-matrix-contrib;
-    buildPhase = "true";
-    installPhase = ''
-      install -D main.py $out/share/matrix.py
-
-      install -d $out/bin
-      ln -s $weechatMatrixContrib/bin/matrix_{upload,decrypt} $out/bin/
-    '';
-
-    passthru.scripts = [ "matrix.py" ];
-    meta.broken = ! weechat-matrix-contrib.meta.available or true;
-  };
+  weechat-matrix = { python3Packages, weechat-matrix }: python3Packages.weechat-matrix or weechat-matrix;
 }

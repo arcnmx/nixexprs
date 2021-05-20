@@ -1,10 +1,10 @@
-{ lib, pythonPackages, weechat-matrix-contrib }:
+{ lib, pythonPackages, weechat-matrix }:
 
 with pythonPackages;
 
 buildPythonPackage rec {
   pname = "weechat-matrix";
-  inherit (weechat-matrix-contrib) version src;
+  inherit (weechat-matrix) version src;
 
   propagatedBuildInputs = [
     pyopenssl
@@ -29,24 +29,37 @@ buildPythonPackage rec {
       requirements = f.read().splitlines()
 
     setup(
-      name='@name@',
+      name='@pname@',
       version='@version@',
       install_requires=requirements,
       packages=find_packages(),
+      scripts=['contrib/matrix_upload.py', 'contrib/matrix_sso_helper.py'],
     )
   '';
 
-  weechatMatrixContrib = weechat-matrix-contrib;
   postPatch = ''
-    substituteInPlace matrix/uploads.py \
-      --replace matrix_upload $weechatMatrixContrib/bin/matrix_upload
-    substituteInPlace matrix/server.py \
-      --replace matrix_sso_helper $weechatMatrixContrib/bin/matrix_sso_helper
     substituteAll $setupPath setup.py
+
+    substituteInPlace contrib/matrix_upload.py \
+      --replace "env -S " ""
+    substituteInPlace contrib/matrix_sso_helper.py \
+      --replace "env -S " ""
+
+    substituteInPlace matrix/uploads.py \
+      --replace matrix_upload $out/bin/matrix_upload.py
+    substituteInPlace matrix/server.py \
+      --replace matrix_sso_helper $out/bin/matrix_sso_helper.py
   '' + lib.optionalString (!matrix-nio.enableOlm) ''
     substituteInPlace requirements.txt \
       --replace "[e2e]" ""
   '';
 
-  meta.broken = ! weechat-matrix-contrib.meta.available or true;
+  postInstall = ''
+    install -D main.py $out/share/weechat/matrix.py
+  '';
+
+  meta.broken = python.isPy2;
+  passthru = {
+    inherit (weechat-matrix) scripts;
+  };
 }

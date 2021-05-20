@@ -1,6 +1,6 @@
 {
-  weechat-matrix-contrib = { python3Packages, fetchFromGitHub }: with python3Packages; buildPythonApplication rec {
-    pname = "weechat-matrix-contrib";
+  weechat-matrix = { python3Packages, fetchFromGitHub }: with python3Packages; buildPythonApplication rec {
+    pname = "weechat-matrix";
     version = "2021-05-01";
 
     src = fetchFromGitHub {
@@ -10,22 +10,35 @@
       sha256 = "13bgsa92g3xkw5mg4zrgmp0f9b7a6yyphvjjhvq6ch6agxr84sdp";
     };
 
-    propagatedBuildInputs = [ python_magic requests matrix-nio aiohttp ];
+    propagatedBuildInputs = [ requests matrix-nio ];
 
-    format = "other";
+    doCheck = false;
+
+    passAsFile = [ "setup" ];
+    setup = ''
+      from setuptools import setup
+
+      setup(
+        name='@pname@',
+        version='@version@',
+        install_requires=['requests', 'matrix-nio'],
+        scripts=['contrib/matrix_decrypt.py'],
+      )
+    '';
 
     postPatch = ''
-      substituteInPlace contrib/matrix_upload.py \
-        --replace "env -S " ""
-      substituteInPlace contrib/matrix_sso_helper.py \
-        --replace "env -S " ""
+      substituteAll $setupPath setup.py
     '';
 
-    buildPhase = "true";
-    installPhase = ''
-      install -Dm0755 contrib/matrix_upload.py $out/bin/matrix_upload
-      install -Dm0755 contrib/matrix_decrypt.py $out/bin/matrix_decrypt
-      install -Dm0755 contrib/matrix_sso_helper.py $out/bin/matrix_sso_helper
+    postInstall = ''
+      mv $out/bin/matrix_decrypt{.py,}
+
+      install -D main.py $out/share/weechat/matrix.py
     '';
+
+    passthru = {
+      scripts = [ "weechat/matrix.py" ];
+      pythonPath = weechat-matrix;
+    };
   };
 }

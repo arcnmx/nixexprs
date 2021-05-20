@@ -85,7 +85,7 @@ in {
       type = types.listOf drvAttr;
       description = "Attributes or derivations from pkgs.weechatScripts";
       default = [ ];
-      example = [ "weechat-matrix" "weechat-autosort" ];
+      example = [ "weechat-matrix" "autosort" ];
     };
 
     init = mkOption {
