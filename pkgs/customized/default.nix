@@ -77,7 +77,7 @@ let
       meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
     });
 
-    looking-glass-obs = { looking-glass-client, libbfd, obs-studio, libGLU }: looking-glass-client.overrideAttrs (old: {
+    looking-glass-obs = { looking-glass-client, lib, libbfd, obs-studio, libGLU }: looking-glass-client.overrideAttrs (old: {
       pname = "looking-glass-obs";
 
       buildInputs = [ libbfd obs-studio libGLU ];
@@ -96,6 +96,10 @@ let
           LIBRARY DESTINATION share/obs/obs-plugins/$pname/bin/${pluginPath}
         )" >> $NIX_BUILD_TOP/source/obs/CMakeLists.txt
       '';
+
+      meta = old.meta or { } // {
+        broken = old.meta.broken or false || lib.isNixpkgsStable;
+      };
     });
 
     looking-glass-obs-develop = { looking-glass-obs, looking-glass-client-develop }:
