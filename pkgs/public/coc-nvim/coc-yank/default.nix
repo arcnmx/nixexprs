@@ -32,5 +32,4 @@ in vimUtils.buildVimPluginFrom2Nix {
     webpack-cli
     rm -r node_modules
   '';
-  meta.broken = yarn.stdenv.isDarwin;
 }
