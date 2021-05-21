@@ -20,7 +20,9 @@
     else throw "unknown weechat config value ${toString v}";
   configure = { availablePlugins, ... }: {
     plugins = with availablePlugins;
-      optional cfg.plugins.python.enable (
+      optional cfg.plugins.perl.enable (
+        perl
+      ) ++ optional cfg.plugins.python.enable (
         python.withPackages (ps: drvAttrsFor ps cfg.plugins.python.packages)
       ) ++ optional (cfg.environment != { }) {
         # dummy for inserting env vars into wrapper script
@@ -65,6 +67,12 @@ in {
     };
 
     plugins = {
+      perl = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+        };
+      };
       python = {
         enable = mkOption {
           type = types.bool;
