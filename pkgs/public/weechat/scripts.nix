@@ -4,6 +4,11 @@
     version = "2.6";
     sha256 = "0zgy1dgkzlqjc0jzbdwa21yfcnvlwx154rlzll4c75c1y5825mld";
   };
+  highmon = { buildWeechatScript }: buildWeechatScript {
+    pname = "highmon.pl";
+    version = "2.7";
+    sha256 = "1vvgzscb12l3cp2nq954fx6j3awvpjsb0nqylal51ps9cq9a3wir";
+  };
   auto_away = { buildWeechatScript }: buildWeechatScript {
     pname = "auto_away.py";
     version = "0.4";
