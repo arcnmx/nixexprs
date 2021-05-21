@@ -2,7 +2,7 @@
   skipModules = if env.gh-event-name or null == "schedule" then "scheduled build"
     else if config.channels.home-manager.version != "master" then "home-manager release channel"
     else false;
-  inherit (channels) arc;
+  arc = import ../. { inherit pkgs; overlay = true; };
   channel = channels.cipkgs.nix-gitignore.gitignoreSourcePure [ ../.gitignore ''
     /ci/
     /README.md
@@ -37,10 +37,6 @@ in {
       args.config.checkMetaRecursively = true;
     };
     home-manager = mkDefault "master";
-    arc = {
-      path = ../.;
-      args.overlay = true;
-    };
   };
   cache.cachix.arc = {
     publicKey = "arc.cachix.org-1:DZmhclLkB6UO0rc0rBzNpwFbbaeLfyn+fYccuAy7YVY=";
