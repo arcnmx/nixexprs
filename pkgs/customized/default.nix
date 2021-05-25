@@ -77,13 +77,16 @@ let
       meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
     });
 
-    looking-glass-obs = { looking-glass-client, lib, libbfd, obs-studio, libGLU }: looking-glass-client.overrideAttrs (old: {
+    looking-glass-obs = { stdenv, looking-glass-client, lib, libbfd, obs-studio, libGLU, cmake, pkg-config }: stdenv.mkDerivation {
       pname = "looking-glass-obs";
+      inherit (looking-glass-client) src version NIX_CFLAGS_COMPILE;
 
+      patches = looking-glass-client.patches or [ ];
+
+      nativeBuildInputs = [ cmake pkg-config ];
       buildInputs = [ libbfd obs-studio libGLU ];
-      cmakeFlags = old.cmakeFlags or [ ] ++ [
-        "../../obs"
-      ];
+
+      cmakeFlags = [ "../obs" ];
 
       preConfigure = let
         pluginPath = {
@@ -97,10 +100,10 @@ let
         )" >> $NIX_BUILD_TOP/source/obs/CMakeLists.txt
       '';
 
-      meta = old.meta or { } // {
-        broken = old.meta.broken or false || lib.isNixpkgsStable;
+      meta = looking-glass-client.meta or { } // {
+        broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
       };
-    });
+    };
 
     looking-glass-obs-develop = { looking-glass-obs, looking-glass-client-develop }:
       looking-glass-obs.override {
