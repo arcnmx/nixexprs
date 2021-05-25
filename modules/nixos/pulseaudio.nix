@@ -14,9 +14,9 @@
     else if opt == true then "1"
     else if opt == false then "0"
     else toString opt;
-  optPrimitive = with types; oneOf [ str int bool ];
+  optPrimitive = with types; oneOf [ (nullOr str) int bool float ];
   optAttrs = with types; attrsOf optPrimitive;
-  optList = with types; listOf str;
+  optList = with types; listOf optPrimitive;
   optType = with types; oneOf [ optPrimitive optAttrs optList ];
   moduleType = { config, ... }: {
     options = {
