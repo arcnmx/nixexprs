@@ -59,12 +59,12 @@ let
     };
 
     looking-glass-client-develop = { lib, looking-glass-client, fetchFromGitHub, libXinerama }: looking-glass-client.overrideAttrs (old: {
-      version = "2021-05-19";
+      version = "2021-05-25";
       src = fetchFromGitHub {
         owner = "gnif";
         repo = "LookingGlass";
-        rev = "fd531bd39bf85ca4e7afd44e3134e7d5bce5508d";
-        sha256 = "1fhzrydgk9id8rdg0skdhgjh8kbcm6kd75i62kcck2bgnv634rcd";
+        rev = "a7e4d9ec689209c0ececa617587ea80fb85ee3f9";
+        sha256 = "19ng0wjc8fqry161mnigky7lqln150i8fy0filf4yyi1ivpq7wyf";
         fetchSubmodules = true;
       };
 
