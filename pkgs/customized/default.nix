@@ -137,6 +137,29 @@ let
       '';
     };
 
+    rnnoise-plugin-extern = { rnnoise-plugin, rnnoise, ladspaH, pkg-config }: rnnoise-plugin.overrideAttrs (old: rec {
+      nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
+      buildInputs = old.buildInputs or [ ] ++ [ rnnoise ladspaH ];
+
+      patches = old.patches or [ ] ++ [ ./rnnoise-plugin.diff ];
+
+      postPatch = old.postPatch or "" + ''
+        rm src/ladspa_plugin/ladspa.h
+        substituteInPlace src/ladspa_plugin/CMakeLists.txt \
+          --replace "ladspa.h" ""
+      '';
+    });
+
+    rnnoise-plugin-develop = { rnnoise-plugin-extern, fetchFromGitHub }: rnnoise-plugin-extern.overrideAttrs (old: rec {
+      version = "2021-05-21";
+      src = fetchFromGitHub {
+        owner = "werman";
+        repo = "noise-suppression-for-voice";
+        rev = "89496c24cbc7d8660609f9add5560bf33d78b737";
+        sha256 = "09xqxph6gs81sgcy5zyik8yq51flqq9j0jf5k945sdl4mlva2325";
+      };
+    });
+
     i3gopher-sway = { i3gopher }: i3gopher.override {
       enableI3 = false;
       enableSway = true;
