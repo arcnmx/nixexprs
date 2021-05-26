@@ -254,7 +254,7 @@ let
 
     bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
 
-    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, portaudio, libopus, libjack2, celt_0_7, poco, cmake, ninja, qt5, pkg-config }: let
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, portaudio, libopus, libjack2, celt_0_7, poco, pcre, cmake, ninja, qt5, pkg-config }: let
       drv = mumble.override {
         speechdSupport = true;
         jackSupport = true;
@@ -281,7 +281,7 @@ let
 
       patches = [ ];
       nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook ];
-      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco qt5.qtspeech qt5.qttools ];
+      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco pcre qt5.qtspeech qt5.qttools ];
       qtWrapperArgs = old.qtWrapperArgs or [ ] ++ [
         "--prefix" "LD_LIBRARY_PATH" ":" (lib.makeLibraryPath runtimeDependencies)
       ];
