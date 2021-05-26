@@ -254,13 +254,78 @@ let
 
     bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
 
-    mumble-speechd = { mumble, lib }: let
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, portaudio, libopus, libjack2, celt_0_7, poco, cmake, ninja, qt5, pkg-config }: let
       drv = mumble.override {
         speechdSupport = true;
+        jackSupport = true;
       };
+      version = "2021-05-23";
+      runtimeDependencies = [ libpulseaudio pipewire portaudio libopus libjack2 ];
     in drv.overrideAttrs (old: {
-      pname = "mumble-speechd";
-      patches = old.patches or [] ++ [ ./mumble-pa-role.diff ];
+      pname = "mumble-develop";
+
+      src = fetchFromGitHub {
+        owner = "mumble-voip";
+        repo = "mumble";
+        rev = "8c99fe8119ce00fbcba55c69bde0a48383e7fa79";
+        sha256 = "1qnr2bf3mlhf6fa60489q1n56c3krhj1ha93s4bw75n19ifqjdia";
+
+        # fetch a single submodule
+        leaveDotGit = true;
+        postFetch = ''
+          git -C $out reset -- themes/Mumble
+          git -C $out submodule update --init --depth 1 -- themes/Mumble &&
+            rm -r $out/.git/modules/themes/Mumble
+        '';
+      };
+
+      patches = [ ];
+      nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook ];
+      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco qt5.qtspeech qt5.qttools ];
+      qtWrapperArgs = old.qtWrapperArgs or [ ] ++ [
+        "--prefix" "LD_LIBRARY_PATH" ":" (lib.makeLibraryPath runtimeDependencies)
+      ];
+      cmakeFlags = [
+        "-Dserver=OFF"
+        "-DRELEASE_ID=${version}"
+        "-Dbundled-opus=NO"
+        "-Dbundled-celt=NO"
+        "-Dbundled-speex=NO"
+        "-Dqtspeech=YES"
+        "-Dembed-qt-translations=NO"
+        "-Dupdate=OFF"
+        "-Doverlay-xcompile=OFF"
+      ];
+
+      postPatch = old.postPatch or "" + ''
+        echo '
+          pkg_search_module(RNNOISE IMPORTED_TARGET rnnoise)
+          add_library(rnnoise ALIAS PkgConfig::RNNOISE)
+        ' > 3rdparty/rnnoise-build/CMakeLists.txt
+
+        echo '
+          pkg_search_module(PIPEWIRE IMPORTED_TARGET libpipewire-0.3)
+          target_link_libraries(mumble PRIVATE PkgConfig::PIPEWIRE)
+        ' >> src/mumble/CMakeLists.txt
+
+        sed -i src/mumble/CMakeLists.txt \
+          -e /set_target_properties.rnnoise/d \
+          -e /install_library.rnnoise/d
+        sed -i cmake/qt-utils.cmake \
+          -e /include.FindPythonInterpreter/d
+        sed -i src/mumble/{CELTCodec.h,AudioOutputSpeech.h,AudioOutput.cpp,AudioInput.cpp} \
+          -e s-celt\\.h-celt/celt.h-
+
+        rm -r 3rdparty/{jack,opus,pipewire,portaudio,pulseaudio,*-src}
+      '';
+
+      installPhase = ''
+        runHook preInstall
+
+        cmake --install .
+
+        runHook postInstall
+      '';
     });
 
     pidgin-arc = { pidgin, purple-plugins-arc }: let
