@@ -264,20 +264,23 @@ let
     in drv.overrideAttrs (old: {
       pname = "mumble-develop";
 
-      src = fetchFromGitHub {
+      src = fetchFromGitHub ({
         owner = "mumble-voip";
         repo = "mumble";
         rev = "8c99fe8119ce00fbcba55c69bde0a48383e7fa79";
-        sha256 = "1qnr2bf3mlhf6fa60489q1n56c3krhj1ha93s4bw75n19ifqjdia";
-
+        sha256 = "10qhqawr6jxcvyh2rdbr21lxqsh7mxzd8ba057i9p7rx39hy5srb";
+        fetchSubmodules = true;
+      } // lib.optionalAttrs lib.isNixpkgsUnstable {
         # fetch a single submodule
+        fetchSubmodules = false;
         leaveDotGit = true;
         postFetch = ''
           git -C $out reset -- themes/Mumble
           git -C $out submodule update --init --depth 1 -- themes/Mumble &&
             rm -r $out/.git/modules/themes/Mumble
         '';
-      };
+        sha256 = "1qnr2bf3mlhf6fa60489q1n56c3krhj1ha93s4bw75n19ifqjdia";
+      });
 
       patches = [ ];
       nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook ];
