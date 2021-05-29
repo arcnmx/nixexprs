@@ -525,20 +525,53 @@ let
       };
     });
 
-    scream-arc = { scream, fetchpatch, fetchFromGitHub }: let
+    scream-develop = { scream, fetchFromGitHub, libjack2 }: let
       drv = scream.override {
         pulseSupport = true;
+        #jackSupport = true;
       };
     in drv.overrideAttrs (old: {
+      version = "2020-12-13";
+      src = fetchFromGitHub {
+        owner = "duncanthrax";
+        repo = "scream";
+        rev = "c1d5aef7723e617a738b303a2ea48866d6ddf848";
+        sha256 = "0kdwqia1j90k34spr5mah3lb47pacnn0cvgbizlj5zxvkv0h7k7k";
+      };
+
+      # unnecessary once a scream update is released:
+      buildInputs = old.buildInputs ++ [ libjack2 ];
+      cmakeFlags = old.cmakeFlags ++ [
+        "-DJACK_ENABLE=ON"
+      ];
+    });
+
+    scream-arc = { scream-develop, fetchpatch }: scream-develop.overrideAttrs (old: {
       pname = "scream-arc";
       patches = old.patches or [] ++ [
         (fetchpatch {
-          url = "https://github.com/duncanthrax/scream/pull/90.diff";
-          sha256 = "0xzwx86yswn59szicq4jbaa0p2dpnj94bbgwqa8776vn786phyan";
+          # https://github.com/duncanthrax/scream/pull/90
+          # https://github.com/arcnmx/scream/commits/pulse-max-latency
+          url = "https://github.com/arcnmx/scream/commit/897b4f6bd8c38f395cf7cf1cef762575c09f9464.patch";
+          sha256 = "0irn67fk5azzzps00qz5fs2i208h6c907m362k3sxx8jl9xgysi7";
         })
         (fetchpatch {
-          url = "https://github.com/duncanthrax/scream/pull/91.patch";
+          # https://github.com/duncanthrax/scream/pull/91
+          url = "https://github.com/arcnmx/scream/commit/4b032957ea4e3038941b234c39da5bbb7b5dfb20.patch";
           sha256 = "0lk9b5abcz1fzg7b26awcfjb6gbv8d7mx6a989sa4k94p080x4dz";
+        })
+        (fetchpatch {
+          # https://github.com/arcnmx/scream/commits/shmem-catch-up
+          url = "https://github.com/arcnmx/scream/commit/756ded53e590d969fdd23871400f7b8c75317ce4.patch";
+          sha256 = "1z96fcvhgnwkbinv3ix3dkm9fhy8fvxvmhx45zpg4nig2snqyqmb";
+        })
+        (fetchpatch {
+          url = "https://github.com/arcnmx/scream/commit/fd8ae24a5261bbdb901ec1aed9fa8960741b6c46.patch";
+          sha256 = "18pavs8kdqsj43iapfs5x639w613xhahd168c2j86sizy04390ga";
+        })
+        (fetchpatch {
+          url = "https://github.com/duncanthrax/scream/pull/137.patch";
+          sha256 = "024r0s9hip4x9hdq6z9skqm8ly6didqqxkq69a88slxcd7awlvn8";
         })
       ];
     });
