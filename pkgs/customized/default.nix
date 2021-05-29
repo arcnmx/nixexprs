@@ -138,9 +138,11 @@ let
 
         runHook postInstall
       '';
+
+      meta.broken = stdenv.isDarwin;
     };
 
-    rnnoise-plugin-extern = { rnnoise-plugin, rnnoise, ladspaH, pkg-config }: rnnoise-plugin.overrideAttrs (old: rec {
+    rnnoise-plugin-extern = { stdenv, rnnoise-plugin, rnnoise, ladspaH, pkg-config }: rnnoise-plugin.overrideAttrs (old: rec {
       nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
       buildInputs = old.buildInputs or [ ] ++ [ rnnoise ladspaH ];
 
@@ -151,6 +153,10 @@ let
         substituteInPlace src/ladspa_plugin/CMakeLists.txt \
           --replace "ladspa.h" ""
       '';
+
+      meta = old.meta or { } // {
+        broken = old.meta.broken or false || stdenv.isDarwin;
+      };
     });
 
     rnnoise-plugin-develop = { rnnoise-plugin-extern, fetchFromGitHub }: rnnoise-plugin-extern.overrideAttrs (old: rec {
