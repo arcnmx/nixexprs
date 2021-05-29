@@ -10,7 +10,6 @@
   nvflash = import ./nvflash.nix;
   nvidia-vbios-vfio-patcher = import ./nvidia-vbios-vfio-patcher;
   edfbrowser = import ./edfbrowser;
-  scream = import ./scream.nix;
   mdloader = import ./mdloader.nix;
   muFFT = import ./mufft.nix;
   etterna = import ./etterna;
