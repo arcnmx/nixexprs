@@ -525,13 +525,19 @@ let
       };
     });
 
-    scream-develop = { scream, fetchFromGitHub, libjack2 }: let
+    scream-develop = { scream ? null, stdenv, fetchFromGitHub, libjack2 }: let
+      version = "2020-12-13";
       drv = scream.override {
         pulseSupport = true;
         #jackSupport = true;
       };
-    in drv.overrideAttrs (old: {
-      version = "2020-12-13";
+      broken = stdenv.mkDerivation {
+        pname = "scream";
+        inherit version;
+        meta.broken = true;
+      };
+    in if scream == null then broken else drv.overrideAttrs (old: {
+      inherit version;
       src = fetchFromGitHub {
         owner = "duncanthrax";
         repo = "scream";
