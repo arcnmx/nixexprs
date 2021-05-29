@@ -1,8 +1,8 @@
 {
   go = { buildWeechatScript }: buildWeechatScript {
     pname = "go.py";
-    version = "2.6";
-    sha256 = "0zgy1dgkzlqjc0jzbdwa21yfcnvlwx154rlzll4c75c1y5825mld";
+    version = "2.7";
+    sha256 = "0bnbfpj1qg4yzwbikh1aw5ajc8l44lkb0y0m6mz8grpf5bxk5cwm";
   };
   highmon = { buildWeechatScript }: buildWeechatScript {
     pname = "highmon.pl";
