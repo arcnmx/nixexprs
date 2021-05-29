@@ -18,6 +18,7 @@
   groups' = {
     vimPlugins = import ./vimPlugins.nix;
     kakPlugins = import ./kakPlugins.nix;
+    mpvScripts = import ./mpvScripts.nix;
     rxvt-unicode-plugins = import ./urxvt;
     gitAndTools = import ./git;
     weechatScripts = import ./public/weechat/scripts.nix;
