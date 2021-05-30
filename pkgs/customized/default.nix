@@ -267,7 +267,8 @@ let
       };
       version = "2021-05-23";
       runtimeDependencies = [ libpulseaudio pipewire portaudio libopus libjack2 ];
-    in drv.overrideAttrs (old: {
+      qtspeechSupport = false;
+    in with lib; drv.overrideAttrs (old: {
       pname = "mumble-develop";
 
       src = fetchFromGitHub ({
@@ -276,23 +277,24 @@ let
         rev = "8c99fe8119ce00fbcba55c69bde0a48383e7fa79";
         sha256 = "10qhqawr6jxcvyh2rdbr21lxqsh7mxzd8ba057i9p7rx39hy5srb";
         fetchSubmodules = true;
-      } // lib.optionalAttrs lib.isNixpkgsUnstable {
+      } // optionalAttrs isNixpkgsUnstable {
         # fetch a single submodule
         fetchSubmodules = false;
         leaveDotGit = true;
         postFetch = ''
           git -C $out reset -- themes/Mumble
           git -C $out submodule update --init --depth 1 -- themes/Mumble &&
-            rm -r $out/.git/modules/themes/Mumble
+            rm -r $out/.git
         '';
-        sha256 = "1qnr2bf3mlhf6fa60489q1n56c3krhj1ha93s4bw75n19ifqjdia";
+        sha256 = "1bznz01rcqlnmq8vldb0mpmir1ky7sv2zydsfmmbx38xywrr4pd5";
       });
 
       patches = [ ];
-      nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook ];
-      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco pcre qt5.qtspeech qt5.qttools ];
+      nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook qt5.qttools ];
+      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco pcre ]
+        ++ optional qtspeechSupport qt5.qtspeech;
       qtWrapperArgs = old.qtWrapperArgs or [ ] ++ [
-        "--prefix" "LD_LIBRARY_PATH" ":" (lib.makeLibraryPath runtimeDependencies)
+        "--prefix" "LD_LIBRARY_PATH" ":" (makeLibraryPath runtimeDependencies)
       ];
       cmakeFlags = [
         "-Dserver=OFF"
@@ -300,7 +302,7 @@ let
         "-Dbundled-opus=NO"
         "-Dbundled-celt=NO"
         "-Dbundled-speex=NO"
-        "-Dqtspeech=YES"
+        "-Dqtspeech=${if qtspeechSupport then "YES" else "NO"}"
         "-Dembed-qt-translations=NO"
         "-Dupdate=OFF"
         "-Doverlay-xcompile=OFF"
