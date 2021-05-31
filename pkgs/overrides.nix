@@ -32,12 +32,10 @@
       apply = { previous, self, ... }: previous.overrideAttrs (old: {
         buildInputs = old.buildInputs or [ ]
           ++ self.lib.optional self.hostPlatform.isDarwin self.darwin.libiconv;
-      } // self.lib.optionalAttrs (self.hostPlatform.isDarwin && isNixpkgsStable) {
-        doCheck = false;
       });
     }
     {
-      attr = if isNixpkgsUnstable then "libmpdclient" else "mpd_clientlib";
+      attr = "libmpdclient";
       withAttr = "libmpdclient-buffer";
       superAttr = "nixpkgsLibmpdclient";
       fallback = { ... }: arc.packages.groups.customized.libmpdclient-buffer;
