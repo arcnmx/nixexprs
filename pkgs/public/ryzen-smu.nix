@@ -94,13 +94,13 @@
   };
   ryzen-monitor = { stdenv, fetchFromGitHub, ryzen-smu, libsmu }: stdenv.mkDerivation {
     pname = "ryzen-monitor";
-    version = "2021-02-27";
+    version = "2021-05-16";
 
     src = fetchFromGitHub {
       owner = "hattedsquirrel";
       repo = "ryzen_monitor";
-      rev = "280c2304c36a886c24e0cef8227b4df45ea89296";
-      sha256 = "0b6sqijwflqijn94ddkkycxdcnppgpwnl0rfkdwv4psac8cwhr8w";
+      rev = "fe721002e7937549847f9dd549f4244e74e220f1";
+      sha256 = "01ywnm0kmdxnr9aq66cjrp17kaahcc626ha9qawc8c1q8sbwp1q2";
     };
 
     buildInputs = [ libsmu ];

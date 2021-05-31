@@ -86,7 +86,7 @@ let
     };
 
     ryzen-smu = { stdenv, lib, fetchFromGitLab, linux }: stdenv.mkDerivation rec {
-      version = "0.1.2";
+      version = "2021-04-21";
       pname = let
         pname = "ryzen-smu";
         kernel-name = builtins.tryEval "${pname}-${linux.version}";
@@ -95,8 +95,9 @@ let
       src = fetchFromGitLab {
         owner = "leogx9r";
         repo = "ryzen_smu";
-        rev = "v${version}";
-        sha256 = "08vvkn340wffm8gq74b64v7ifhr0kv5f6xjyfwm795yqqiyjvxbp";
+        #rev = "v${version}";
+        rev = "847caf27a1e05bfcb546e4456572ed2bc4ffd262";
+        sha256 = "1xcrdwdkk7ijhiqix5rmz59cfps7p0x7gwflhqdcjm6np0ja3acv";
       };
 
       kernelVersion = linux.modDirVersion;
