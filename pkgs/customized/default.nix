@@ -39,7 +39,7 @@ let
 
     rink-readline = { lib, rink, rustPlatform, fetchpatch }: rustPlatform.buildRustPackage {
       pname = "${rink.pname}-readline";
-      inherit (rink) src version nativeBuildInputs buildInputs doCheck;
+      inherit (rink) src version nativeBuildInputs buildInputs doCheck meta;
 
       patches = rink.patches or [ ] ++ [ (fetchpatch {
         url = "https://github.com/kittywitch/rink-rs/commit/d69635621575af36dc1a4802843e085b4e66c903.patch";
@@ -52,10 +52,6 @@ let
       }) ];
 
       cargoSha256 = "1chxf0rgdps21rm3p2c0yn9z0gvzx095n74ryiv89y0d1gka5jy6";
-
-      meta = rink.meta or { } // {
-        broken = rink.meta.broken or false || lib.isNixpkgsStable;
-      };
     };
 
     looking-glass-client-develop = { lib, looking-glass-client, fetchFromGitHub, libXinerama }: looking-glass-client.overrideAttrs (old: {
@@ -73,8 +69,6 @@ let
       ];
 
       patches = [ ];
-
-      meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
     });
 
     looking-glass-obs = { stdenv, fetchpatch, looking-glass-client, lib, libbfd, obs-studio, libGLU, cmake, pkg-config, enableThreading ? false }: let
@@ -102,7 +96,7 @@ let
       };
     in stdenv.mkDerivation {
       pname = "looking-glass-obs";
-      inherit (looking-glass-client) src version;
+      inherit (looking-glass-client) src version meta;
 
       NIX_CFLAGS_COMPILE = looking-glass-client.NIX_CFLAGS_COMPILE or "-mavx"; # TODO fix?
 
@@ -116,8 +110,6 @@ let
         "-DENABLE_THREADS=${if enableThreading then "ON" else "OFF"}"
         "../obs"
       ];
-
-      meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
 
       passthru = {
         inherit namedPatches;
@@ -298,9 +290,8 @@ let
         owner = "mumble-voip";
         repo = "mumble";
         rev = "8c99fe8119ce00fbcba55c69bde0a48383e7fa79";
-        sha256 = "10qhqawr6jxcvyh2rdbr21lxqsh7mxzd8ba057i9p7rx39hy5srb";
-        fetchSubmodules = true;
-      } // optionalAttrs isNixpkgsUnstable {
+        sha256 = "1bznz01rcqlnmq8vldb0mpmir1ky7sv2zydsfmmbx38xywrr4pd5";
+
         # fetch a single submodule
         fetchSubmodules = false;
         leaveDotGit = true;
@@ -309,7 +300,6 @@ let
           git -C $out submodule update --init --depth 1 -- themes/Mumble &&
             rm -r $out/.git
         '';
-        sha256 = "1bznz01rcqlnmq8vldb0mpmir1ky7sv2zydsfmmbx38xywrr4pd5";
       });
 
       patches = [ ];

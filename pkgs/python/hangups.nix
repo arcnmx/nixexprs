@@ -1,4 +1,4 @@
-{ lib, pythonPackages, protobuf3_13 ? null, protobuf3_15 ? protobuf3_13 }:
+{ pythonPackages, protobuf3_13 ? null, protobuf3_15 ? protobuf3_13 }:
 
 with pythonPackages;
 
@@ -41,5 +41,5 @@ buildPythonPackage rec {
     pytest-asyncio
   ];
 
-  meta.broken = pythonOlder "3.6" || lib.isNixpkgsStable;
+  meta.broken = pythonOlder "3.6";
 }

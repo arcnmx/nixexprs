@@ -15,9 +15,7 @@
     buildInputs = lib.optionals hostPlatform.isDarwin [ darwin.cf-private darwin.apple_sdk.frameworks.CoreServices darwin.libiconv ];
     # darwin undefined symbol _CFURLResourceIsReachable: https://discourse.nixos.org/t/help-with-rust-linker-error-on-darwin-cfurlresourceisreachable/2657
 
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "0s7ihdjbm68xr7fq1lykxjk0vy6xd4qwa64pmikj04a3n30djhfx"
-      else "10hk6argjqdl0wvgadfafc049b1ny6qk0rlp621ik5j8yicsgj4q";
+    cargoSha256 = "0s7ihdjbm68xr7fq1lykxjk0vy6xd4qwa64pmikj04a3n30djhfx";
     meta.broken = ! lib.versionAtLeast rustPlatform.rust.rustc.version "1.46.0";
 
     doCheck = false;
@@ -39,13 +37,11 @@
     nativeBuildInputs = lib.optional hostPlatform.isLinux pkgconfig;
     buildInputs = lib.optional hostPlatform.isLinux openssl
       ++ lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "1bgiwnppbhrhx376fba4bqh1bhick80zrknwnw0qz425vxhffl5k"
-      else "1q62rk253nmvvgw8ksf8nvlc1g0ynzqkk3w35wa2iiral7wnfj2r";
+    cargoSha256 = "1bgiwnppbhrhx376fba4bqh1bhick80zrknwnw0qz425vxhffl5k";
     cargoPatches = [ ./cargo-download-lock.patch ];
   };
 
-  cargo-with = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
+  cargo-with = { fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
     pname = "cargo-with";
     version = "0.3.2";
     src = fetchFromGitHub {
@@ -56,9 +52,7 @@
     };
 
     cargoPatches = [ ./cargo-with-lock.patch ];
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "07rv1laydzwkkicblrqlybp8w82qrdbj95pff93vi7012mii0mpc"
-      else "0mvyimwqxg5i9m29ikzfl9dzbjsp1ksjkpxc794xnn7c0lspa2gi";
+    cargoSha256 = "07rv1laydzwkkicblrqlybp8w82qrdbj95pff93vi7012mii0mpc";
   };
 
   cargo-info = {
@@ -82,16 +76,14 @@
       url = "https://gitlab.com/imp/cargo-info/commit/635a128a9e46ee9f3c443ed070da63b3ebb78033.diff";
       sha256 = "14vz860a40njx4fdaxdw1iy92isihgab65x5c6kxb68iha6bg4j9";
     }) ];
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "1fvdpx60v3cv07b9vzybki519x10xgmm65bj5a57gjg6vii3ywfd"
-      else "0pzync67crq9raw78yyvsj5b2vflpvb17p5fwn5f5mwgfqj82dvi";
+    cargoSha256 = "1fvdpx60v3cv07b9vzybki519x10xgmm65bj5a57gjg6vii3ywfd";
 
     nativeBuildInputs = lib.optional hostPlatform.isLinux pkgconfig;
     buildInputs = lib.optional hostPlatform.isLinux openssl
       ++ lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
   };
 
-  xargo-unwrapped = { fetchFromGitHub, rustPlatform, lib }: rustPlatform.buildRustPackage rec {
+  xargo-unwrapped = { fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
     pname = "xargo";
     version = "0.3.16";
     src = fetchFromGitHub {
@@ -104,9 +96,7 @@
     RUSTC_BOOTSTRAP = true;
 
     patches = [ ./xargo-stable.patch ];
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "1y0l5mi1pvq9h9mgvig2qyam49ij33p5lr8ww0qypdg1r8kslhsa"
-      else "17afazmggwlnd6cs43cbj8hghc2ddlka517vjrpiqgcw1vx4h7qw";
+    cargoSha256 = "1y0l5mi1pvq9h9mgvig2qyam49ij33p5lr8ww0qypdg1r8kslhsa";
 
     doCheck = false;
   };
@@ -128,7 +118,7 @@
   };
 
   cargo-binutils-unwrapped = {
-    lib, fetchFromGitHub, rustPlatform
+    fetchFromGitHub, rustPlatform
   }: rustPlatform.buildRustPackage rec {
     pname = "cargo-binutils";
     version = "0.3.2";
@@ -141,9 +131,7 @@
     cargoPatches = [ ./cargo-binutils-lock.patch ];
     patches = [ ./cargo-binutils-path.patch ];
 
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "0kkmqqdq1aknw6598nnwar9j254qlw45vf3byxskfy1qhq77ryql"
-      else "0z13mlgnl0rs6a6yczdkwxym1iss2jmz85cf7g0yah4z44ff74a4";
+    cargoSha256 = "0kkmqqdq1aknw6598nnwar9j254qlw45vf3byxskfy1qhq77ryql";
 
     doCheck = false;
 
@@ -194,16 +182,14 @@
     patches = [
       ./cargo-call-stack-udf.patch # https://github.com/japaric/cargo-call-stack/issues/20
     ];
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "0pj6skdbmwwp49yin4fx4finbpkjhn4w904lk2s0ik17klrvmm5j"
-      else "14x1m7mm4bhndp9ifgzkv7ri25vj7xfjqc85k67p841rsbncwkw3";
+    cargoSha256 = "0pj6skdbmwwp49yin4fx4finbpkjhn4w904lk2s0ik17klrvmm5j";
 
     # Only because of the cargo lockfile version...
     meta.broken = !lib.rustVersionAtLeast rustPlatform "1.41";
   };
 
   cargo-stack-sizes = {
-    lib, fetchFromGitHub, rustPlatform
+    fetchFromGitHub, rustPlatform
   }: rustPlatform.buildRustPackage rec {
     pname = "stack-sizes";
     version = "0.4.0";
@@ -217,15 +203,13 @@
 
     cargoPatches = [ ./cargo-stack-sizes-lock.patch ];
     patches = [ ./cargo-stack-sizes-warn.patch ./cargo-stack-sizes-features.patch ];
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "1blkxw6ginvzmgijv6zsjny4q5wrb92xbsy0sqxziqgy2lvl02za"
-      else "1lnplkxapxl84cbrrhi0hs875d9v7mdgqj719177xy86nywsmwba";
+    cargoSha256 = "1blkxw6ginvzmgijv6zsjny4q5wrb92xbsy0sqxziqgy2lvl02za";
 
     doCheck = false; # there are no tests
   };
 
   cargo-llvm-lines = {
-    lib, fetchFromGitHub, rustPlatform
+    fetchFromGitHub, rustPlatform
   }: rustPlatform.buildRustPackage rec {
     pname = "cargo-llvm-lines";
     version = "0.4.9";
@@ -237,16 +221,13 @@
       sha256 = "0lkg1xfabb1psxizbis7rymr70yz5l5rjsn6k7w5wpzqqsni0qyv";
     };
 
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "1a7j4bqwa9zqmfvp851jlm9macvhsav31qxsiyl94xnn1l5yvwg1"
-      else "04s2lv0idlfssmsavyac1jy57x8f14nqlr1n552cn1pi78d4wnfr";
+    cargoSha256 = "1a7j4bqwa9zqmfvp851jlm9macvhsav31qxsiyl94xnn1l5yvwg1";
   };
 
   screenstub = {
     fetchFromGitHub
   , rustPlatform
   , pkg-config
-  , lib
   , libxcb
   , udev
   , python3
@@ -263,9 +244,7 @@
     nativeBuildInputs = [ pkg-config python3 ];
     buildInputs = [ libxcb udev ];
 
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "0577qifz39yiz636fs815mcyn6kcjmwaga2zndk31q0dcr8j774m"
-      else "1vjw5zifl0kkicjs5zb6xra06977zqdi3wcvfzyw0ybkm44fb2wx";
+    cargoSha256 = "0577qifz39yiz636fs815mcyn6kcjmwaga2zndk31q0dcr8j774m";
 
     doCheck = false;
   };
@@ -295,9 +274,7 @@
       ++ lib.optional hostPlatform.isDarwin darwin.apple_sdk.frameworks.Security;
 
     cargoBuildFlags = ["--bin" "bitw" ];
-    cargoSha256 = if lib.isNixpkgsUnstable
-      then "1qs09dqyfxyxlvf98rsvvjxvf4r1dcp84siwbj1q9pch0aaf4gjr"
-      else "1byz66ral9ir9k7dwnvq2x9s7wrab6q0siq88vmlmijdw82sacjp";
+    cargoSha256 = "1qs09dqyfxyxlvf98rsvvjxvf4r1dcp84siwbj1q9pch0aaf4gjr";
 
     postInstall = lib.optionalString enableGpg ''
         wrapProgram $out/bin/bitw \
