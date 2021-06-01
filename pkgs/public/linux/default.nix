@@ -46,6 +46,14 @@ let
         };
       };
     });
+    kernelMakeFlags = linux: [
+      "-C" "${linux.dev}/lib/modules/${linux.modDirVersion}/build" "modules"
+      "CROSS_COMPILE=${linux.stdenv.cc.targetPrefix or ""}"
+      "M=$(NIX_BUILD_TOP)/source"
+      "VERSION=$(version)"
+    ] ++ (if linux.stdenv.hostPlatform ? linuxArch then [
+      "ARCH=${linux.stdenv.hostPlatform.linuxArch}"
+    ] else [ ]);
   packages = {
     inherit mergeLinuxConfig generateLinuxConfig;
 
@@ -68,10 +76,7 @@ let
 
       kernelVersion = linux.modDirVersion;
       modules = [ "forcefully_remove_bootfb" ];
-      makeFlags = [
-        "-C ${linux.dev}/lib/modules/${linux.modDirVersion}/build modules"
-        "M=$(NIX_BUILD_TOP)/source"
-      ];
+      makeFlags = kernelMakeFlags linux;
 
       outputs = [ "bin" "out" ];
 
@@ -102,11 +107,7 @@ let
 
       kernelVersion = linux.modDirVersion;
       modules = [ "ryzen-smu" ];
-      makeFlags = [
-        "-C ${linux.dev}/lib/modules/${linux.modDirVersion}/build modules"
-        "M=$(NIX_BUILD_TOP)/source"
-        "VERSION=$(version)"
-      ];
+      makeFlags = kernelMakeFlags linux;
 
       installPhase = ''
         install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/ ryzen_smu.ko
@@ -127,11 +128,7 @@ let
 
       kernelVersion = linux.modDirVersion;
       modules = [ "kvmfr" ];
-      makeFlags = [
-        "-C ${linux.dev}/lib/modules/${linux.modDirVersion}/build modules"
-        "M=$(NIX_BUILD_TOP)/$(sourceRoot)"
-        "VERSION=$(version)"
-      ];
+      makeFlags = kernelMakeFlags linux;
 
       installPhase = ''
         install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/ kvmfr.ko
