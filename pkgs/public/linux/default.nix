@@ -49,7 +49,7 @@ let
     kernelMakeFlags = linux: [
       "-C" "${linux.dev}/lib/modules/${linux.modDirVersion}/build" "modules"
       "CROSS_COMPILE=${linux.stdenv.cc.targetPrefix or ""}"
-      "M=$(NIX_BUILD_TOP)/source"
+      "M=$(NIX_BUILD_TOP)/$(sourceRoot)"
       "VERSION=$(version)"
     ] ++ (if linux.stdenv.hostPlatform ? linuxArch then [
       "ARCH=${linux.stdenv.hostPlatform.linuxArch}"
@@ -70,6 +70,7 @@ let
         rev = "2793a4b";
         sha256 = "1npbns5x2lssjxkqvj97bgi263l7zx6c9ij5r9ksbcdfpws5mmy5";
       };
+      sourceRoot = "source";
 
       nativeBuildInputs = [ makeWrapper ];
       shellPath = lib.makeBinPath [ kmod gnugrep coreutils ];
@@ -104,6 +105,7 @@ let
         rev = "847caf27a1e05bfcb546e4456572ed2bc4ffd262";
         sha256 = "1xcrdwdkk7ijhiqix5rmz59cfps7p0x7gwflhqdcjm6np0ja3acv";
       };
+      sourceRoot = "source";
 
       kernelVersion = linux.modDirVersion;
       modules = [ "ryzen-smu" ];
@@ -129,6 +131,7 @@ let
         rev = "03ac413135a355b55b693154c44b70f86a39732e";
         sha256 = "0wiikviwyvy6h55rgdvy7csi1zqniqg26p8x44rd6mhbw0g00h56";
       };
+      sourceRoot = "source";
 
       kernelVersion = linux.modDirVersion;
       modules = [ "8189es" ];
