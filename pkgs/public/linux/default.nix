@@ -78,6 +78,7 @@ let
       kernelVersion = linux.modDirVersion;
       modules = [ "forcefully_remove_bootfb" ];
       makeFlags = kernelMakeFlags linux;
+      enableParallelBuilding = true;
 
       outputs = [ "bin" "out" ];
 
@@ -110,6 +111,7 @@ let
       kernelVersion = linux.modDirVersion;
       modules = [ "ryzen-smu" ];
       makeFlags = kernelMakeFlags linux;
+      enableParallelBuilding = true;
 
       installPhase = ''
         install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/ ryzen_smu.ko
@@ -138,6 +140,7 @@ let
       makeFlags = kernelMakeFlags linux ++ [
         "CONFIG_RTL8189ES=m"
       ];
+      enableParallelBuilding = true;
 
       installPhase = ''
         install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/net/wireless 8189es.ko
@@ -159,6 +162,7 @@ let
       kernelVersion = linux.modDirVersion;
       modules = [ "kvmfr" ];
       makeFlags = kernelMakeFlags linux;
+      enableParallelBuilding = true;
 
       installPhase = ''
         install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/ kvmfr.ko
