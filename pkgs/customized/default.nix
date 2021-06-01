@@ -104,7 +104,7 @@ let
       pname = "looking-glass-obs";
       inherit (looking-glass-client) src version;
 
-      NIX_CFLAGS_COMPILE = looking-glass-client.NIX_CFLAGS_COMPILE or "";
+      NIX_CFLAGS_COMPILE = looking-glass-client.NIX_CFLAGS_COMPILE or "-mavx"; # TODO fix?
 
       patches = looking-glass-client.patches or [ ] ++ lib.attrValues namedPatches;
 
