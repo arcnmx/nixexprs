@@ -59,12 +59,12 @@ let
     };
 
     looking-glass-client-develop = { lib, looking-glass-client, fetchFromGitHub, libXinerama }: looking-glass-client.overrideAttrs (old: {
-      version = "2021-05-25";
+      version = "2021-05-31";
       src = fetchFromGitHub {
         owner = "gnif";
         repo = "LookingGlass";
-        rev = "a7e4d9ec689209c0ececa617587ea80fb85ee3f9";
-        sha256 = "19ng0wjc8fqry161mnigky7lqln150i8fy0filf4yyi1ivpq7wyf";
+        rev = "6058a0e24371947063ce7f10e16037a7d7be72b3";
+        sha256 = "0jndl67a98b5mym2qf131s7hlwwhkwy5x154xww436xbc1y31yp9";
         fetchSubmodules = true;
       };
 
@@ -77,38 +77,57 @@ let
       meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
     });
 
-    looking-glass-obs = { stdenv, looking-glass-client, lib, libbfd, obs-studio, libGLU, cmake, pkg-config }: stdenv.mkDerivation {
+    looking-glass-obs = { stdenv, fetchpatch, looking-glass-client, lib, libbfd, obs-studio, libGLU, cmake, pkg-config, enableThreading ? false }: let
+      namedPatches = {
+        cmake-install = fetchpatch {
+          url = "https://github.com/arcnmx/LookingGlass/commit/a07a6d2f37f2f468a95d94a9be4e6d51cddb53b5.patch";
+          sha256 = "114vjkng87096d7zrh13s453vif2kfmxjd5dmmrzdb7bhkjanz1n";
+        };
+        singlethread = fetchpatch {
+          url = "https://github.com/arcnmx/LookingGlass/commit/f654f19606219157afe03ab5c5b965a28d3169ef.patch";
+          sha256 = "0g532b0ckvb3rcahsmmlq3fji6zapihqzd2ch0msj0ygjzcgkabw";
+        };
+        cursorblend = fetchpatch {
+          url = "https://github.com/arcnmx/LookingGlass/commit/dde4e3dbf8913f112530e293cbc98c42e8af2abd.patch";
+          sha256 = "1dfxp5ns0mg88msh70pik162b4ydhyrqr9cz35qizqngiilxc9ba";
+        };
+        cursoroob = fetchpatch {
+          url = "https://github.com/arcnmx/LookingGlass/commit/4ee0ea164dce97d5a5f533d2bb44b897325ed39b.patch";
+          sha256 = "0hws9qzbdyn1ypbbalsxpvc8vp0qr9ggk6f5715m0k96692whwsp";
+        };
+        cursorcrop = fetchpatch {
+          url = "https://github.com/arcnmx/LookingGlass/commit/e5993741e464e3def3aee7b2390900f0280fbfbd.patch";
+          sha256 = "07rsrpmrl93i2vs8lw1ggp9py59bji56klanaf9jaydf5aksjxlc";
+        };
+      };
+    in stdenv.mkDerivation {
       pname = "looking-glass-obs";
       inherit (looking-glass-client) src version NIX_CFLAGS_COMPILE;
 
-      patches = looking-glass-client.patches or [ ];
+      patches = looking-glass-client.patches or [ ] ++ lib.attrValues namedPatches;
 
       nativeBuildInputs = [ cmake pkg-config ];
       buildInputs = [ libbfd obs-studio libGLU ];
 
-      cmakeFlags = [ "../obs" ];
+      cmakeFlags = [
+        "-DOPTIMIZE_FOR_NATIVE=OFF"
+        "-DENABLE_THREADS=${if enableThreading then "ON" else "OFF"}"
+        "../obs"
+      ];
 
-      preConfigure = let
-        pluginPath = {
-          x86 = "32bit";
-          x86-64 = "64bit";
-        }.${obs-studio.stdenv.targetPlatform.parsed.cpu.arch};
-      in ''
-        chmod +w $NIX_BUILD_TOP/source/obs/CMakeLists.txt
-        echo "install(TARGETS looking-glass-obs
-          LIBRARY DESTINATION share/obs/obs-plugins/$pname/bin/${pluginPath}
-        )" >> $NIX_BUILD_TOP/source/obs/CMakeLists.txt
-      '';
-
-      meta = looking-glass-client.meta or { } // {
-        broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
+      passthru = {
+        inherit namedPatches;
       };
     };
 
     looking-glass-obs-develop = { looking-glass-obs, looking-glass-client-develop }:
-      looking-glass-obs.override {
+      (looking-glass-obs.override {
         looking-glass-client = looking-glass-client-develop;
-      };
+      }).overrideAttrs (old: {
+        patches = with looking-glass-obs.namedPatches; [
+          cmake-install singlethread
+        ];
+      });
 
     looking-glass-kvmfr-develop = { looking-glass-kvmfr, looking-glass-client-develop, linux }:
       looking-glass-kvmfr.override {
