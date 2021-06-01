@@ -230,10 +230,10 @@ in {
     inherit (presets) linux latest linux_5_1 linux_5_0 linux_4_19 linux_4_4;
   };
 
-  linuxPackagesFor = kernel: (super.linuxPackagesFor kernel).extend (_: ksuper: {
-    looking-glass-kvmfr = (self.looking-glass-kvmfr.override { linux = ksuper.kernel; }).out;
-    looking-glass-kvmfr-develop = (self.looking-glass-kvmfr-develop.override { linux = ksuper.kernel; }).out;
-    forcefully-remove-bootfb = (self.forcefully-remove-bootfb.override { linux = ksuper.kernel; }).out;
-    ryzen-smu = self.ryzen-smu.override { linux = ksuper.kernel; };
+  linuxPackagesFor = kernel: (super.linuxPackagesFor kernel).extend (kself: ksuper: {
+    looking-glass-kvmfr = (self.looking-glass-kvmfr.override { linux = kself.kernel; }).out;
+    looking-glass-kvmfr-develop = (self.looking-glass-kvmfr-develop.override { linux = kself.kernel; }).out;
+    forcefully-remove-bootfb = (self.forcefully-remove-bootfb.override { linux = kself.kernel; }).out;
+    ryzen-smu = self.ryzen-smu.override { linux = kself.kernel; };
   });
 }
