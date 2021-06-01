@@ -116,6 +116,33 @@ let
       meta.platforms = lib.platforms.linux;
     };
 
+    rtl8189es = { stdenv, lib, fetchFromGitHub, linux }: stdenv.mkDerivation rec {
+      version = "2021-03-02";
+      pname = let
+        pname = "rtl8189es";
+        kernel-name = builtins.tryEval "${pname}-${linux.version}";
+      in if kernel-name.success then kernel-name.value else pname;
+
+      src = fetchFromGitHub {
+        owner = "jwrdegoede";
+        repo = "rtl8189ES_linux";
+        rev = "03ac413135a355b55b693154c44b70f86a39732e";
+        sha256 = "0wiikviwyvy6h55rgdvy7csi1zqniqg26p8x44rd6mhbw0g00h56";
+      };
+
+      kernelVersion = linux.modDirVersion;
+      modules = [ "8189es" ];
+      makeFlags = kernelMakeFlags linux ++ [
+        "CONFIG_RTL8189ES=m"
+      ];
+
+      installPhase = ''
+        install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/net/wireless 8189es.ko
+      '';
+
+      meta.platforms = lib.platforms.linux;
+    };
+
     looking-glass-kvmfr = { stdenv, looking-glass-client, lib, linux }: stdenv.mkDerivation rec {
       inherit (looking-glass-client) version;
       pname = let

@@ -234,6 +234,7 @@ in {
     looking-glass-kvmfr = (self.looking-glass-kvmfr.override { linux = kself.kernel; }).out;
     looking-glass-kvmfr-develop = (self.looking-glass-kvmfr-develop.override { linux = kself.kernel; }).out;
     forcefully-remove-bootfb = (self.forcefully-remove-bootfb.override { linux = kself.kernel; }).out;
+    rtl8189es = self.rtl8189es.override { linux = kself.kernel; };
     ryzen-smu = self.ryzen-smu.override { linux = kself.kernel; };
   });
 }
