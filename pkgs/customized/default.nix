@@ -59,12 +59,12 @@ let
     };
 
     looking-glass-client-develop = { lib, looking-glass-client, fetchFromGitHub, libXinerama }: looking-glass-client.overrideAttrs (old: {
-      version = "2021-05-31";
+      version = "2021-06-01";
       src = fetchFromGitHub {
         owner = "gnif";
         repo = "LookingGlass";
-        rev = "6058a0e24371947063ce7f10e16037a7d7be72b3";
-        sha256 = "0jndl67a98b5mym2qf131s7hlwwhkwy5x154xww436xbc1y31yp9";
+        rev = "b657b570163439138dae5a9c917a23a627775887";
+        sha256 = "0bgkab1k4lfs7aliazml79s833nf766kdxkm7syxsf4nylix64j1";
         fetchSubmodules = true;
       };
 
@@ -129,7 +129,7 @@ let
         looking-glass-client = looking-glass-client-develop;
       }).overrideAttrs (old: {
         patches = with looking-glass-obs.namedPatches; [
-          cmake-install singlethread
+          singlethread
         ];
       });
 
