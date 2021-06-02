@@ -117,6 +117,8 @@ let
         "../obs"
       ];
 
+      meta.broken = looking-glass-client.meta.broken or false || lib.isNixpkgsStable;
+
       passthru = {
         inherit namedPatches;
       };
