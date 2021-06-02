@@ -27,7 +27,7 @@ buildPythonPackage rec {
       version = "0.12.0";
       src = fetchPypi {
         inherit version;
-        inherit (old) pname;
+        pname = "MechanicalSoup";
         sha256 = "1g976rk79apz6rc338zq3ml2yps8hb88nyw3a698d0brm4khd9ir";
       };
     }))
