@@ -547,7 +547,7 @@ let
     });
 
     scream-develop = { scream ? null, stdenv, fetchFromGitHub, libjack2 }: let
-      version = "2020-12-13";
+      version = "2021-05-30";
       drv = scream.override {
         pulseSupport = true;
         #jackSupport = true;
@@ -562,8 +562,8 @@ let
       src = fetchFromGitHub {
         owner = "duncanthrax";
         repo = "scream";
-        rev = "c1d5aef7723e617a738b303a2ea48866d6ddf848";
-        sha256 = "0kdwqia1j90k34spr5mah3lb47pacnn0cvgbizlj5zxvkv0h7k7k";
+        rev = "91d9a0a3afc49e5fdd02eb079dfd90c7b6ca760a";
+        sha256 = "04i3rwcl1sf21ihhgfsipsv1c9gyc8sryv0hyqsjmvnks8h60liq";
       };
 
       # unnecessary once a scream update is released:
@@ -595,10 +595,6 @@ let
         (fetchpatch {
           url = "https://github.com/arcnmx/scream/commit/fd8ae24a5261bbdb901ec1aed9fa8960741b6c46.patch";
           sha256 = "18pavs8kdqsj43iapfs5x639w613xhahd168c2j86sizy04390ga";
-        })
-        (fetchpatch {
-          url = "https://github.com/duncanthrax/scream/pull/137.patch";
-          sha256 = "024r0s9hip4x9hdq6z9skqm8ly6didqqxkq69a88slxcd7awlvn8";
         })
       ];
     });
