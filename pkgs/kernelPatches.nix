@@ -58,7 +58,7 @@
     '';
   };
 
-  efifb-nobar = {
+  efifb-nobar = { }: {
     name = "efifb-nobar";
     patch = ./public/linux/efifb-nobar.patch;
   };
