@@ -275,22 +275,13 @@ let
 
     bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
 
-    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, portaudio, libopus, libjack2, celt_0_7, poco, pcre, cmake, ninja, qt5, pkg-config }: let
-      drv = mumble.override {
-        speechdSupport = true;
-        jackSupport = true;
-      };
-      version = "2021-05-23";
-      runtimeDependencies = [ libpulseaudio pipewire portaudio libopus libjack2 ];
-      qtspeechSupport = false;
-    in with lib; drv.overrideAttrs (old: {
-      pname = "mumble-develop";
-
-      src = fetchFromGitHub ({
+    mumble_1_4 = { mumble-develop, fetchFromGitHub }: mumble-develop.overrideAttrs (old: rec {
+      version = "1.4.0-development-snapshot-006";
+      src = fetchFromGitHub {
         owner = "mumble-voip";
         repo = "mumble";
-        rev = "8c99fe8119ce00fbcba55c69bde0a48383e7fa79";
-        sha256 = "1bznz01rcqlnmq8vldb0mpmir1ky7sv2zydsfmmbx38xywrr4pd5";
+        rev = version;
+        sha256 = "1rnnbhw37ga96vsaijfcfl84bgjy1d7nq7hfx0hahrr5lisaj69a";
 
         # fetch a single submodule
         fetchSubmodules = false;
@@ -300,7 +291,27 @@ let
           git -C $out submodule update --init --depth 1 -- themes/Mumble &&
             rm -r $out/.git
         '';
-      });
+      };
+    });
+
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, libopus, libjack2, celt_0_7, poco, pcre, cmake, ninja, qt5, pkg-config }: let
+      drv = mumble.override {
+        speechdSupport = true;
+        jackSupport = true;
+      };
+      version = "2021-06-04";
+      runtimeDependencies = [ libpulseaudio pipewire libopus libjack2 ];
+      qtspeechSupport = false;
+    in with lib; drv.overrideAttrs (old: {
+      pname = "mumble-develop";
+
+      src = fetchFromGitHub {
+        owner = "mumble-voip";
+        repo = "mumble";
+        rev = "4fab1880e119b23f340e9001350b975c531778c5";
+        sha256 = "0iba1yd4f3y9nzlb9dj2v0k39b9znlazzaj6lzp2gxq1zkzjfprz";
+        fetchSubmodules = false;
+      };
 
       patches = [ ];
       nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook qt5.qttools ];
@@ -315,6 +326,7 @@ let
         "-Dbundled-opus=NO"
         "-Dbundled-celt=NO"
         "-Dbundled-speex=NO"
+        "-Dportaudio=NO"
         "-Dqtspeech=${if qtspeechSupport then "YES" else "NO"}"
         "-Dembed-qt-translations=NO"
         "-Dupdate=OFF"
