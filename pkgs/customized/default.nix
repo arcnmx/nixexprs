@@ -35,6 +35,8 @@ let
       EDITLINE_LIBS = "${readline}/lib/libreadline${nix.stdenv.hostPlatform.extensions.sharedLibrary}";
       EDITLINE_CFLAGS = "-DREADLINE";
       doInstallCheck = false; # old.doInstallCheck or false && !nix.stdenv.isDarwin;
+    } // lib.optionalAttrs lib.isNixpkgsStable {
+      __forceRebuild = true; # TODO: remove once unnecessary
     });
 
     rink-readline = { lib, rink, rustPlatform, fetchpatch }: rustPlatform.buildRustPackage {
