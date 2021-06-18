@@ -103,6 +103,10 @@
       sha256 = "01ywnm0kmdxnr9aq66cjrp17kaahcc626ha9qawc8c1q8sbwp1q2";
     };
 
+    patches = [
+      ./ryzen-monitor-update.patch
+    ];
+
     buildInputs = [ libsmu ];
     makeFlags = "-C src";
 
