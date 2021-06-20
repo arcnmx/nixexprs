@@ -12,7 +12,6 @@
   edfbrowser = import ./edfbrowser;
   mdloader = import ./mdloader.nix;
   muFFT = import ./mufft.nix;
-  etterna = import ./etterna;
   libjaylink = import ./libjaylink.nix;
   openocd-git = import ./openocd-git.nix;
 } // (import ./nixos.nix)
