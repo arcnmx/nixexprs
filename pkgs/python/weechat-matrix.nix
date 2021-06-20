@@ -1,4 +1,4 @@
-{ lib, pythonPackages, weechat-matrix }:
+{ lib, pythonPackages, weechat-matrix, enableOlm ? true }:
 
 with pythonPackages;
 
@@ -49,7 +49,7 @@ buildPythonPackage rec {
       --replace matrix_upload $out/bin/matrix_upload.py
     substituteInPlace matrix/server.py \
       --replace matrix_sso_helper $out/bin/matrix_sso_helper.py
-  '' + lib.optionalString (!matrix-nio.enableOlm) ''
+  '' + lib.optionalString (!enableOlm) ''
     substituteInPlace requirements.txt \
       --replace "[e2e]" ""
   '';
