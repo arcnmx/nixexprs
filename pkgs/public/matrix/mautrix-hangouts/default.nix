@@ -30,7 +30,14 @@
       CommonMark
       python_magic
       hangups
-      (mautrix.override { inherit sqlalchemy; })
+      ((mautrix.override { inherit sqlalchemy; }).overrideAttrs (old: rec {
+        version = "0.9.6";
+        src = fetchPypi {
+          inherit (old) pname;
+          inherit version;
+          sha256 = "1kxv65d36gwfp7vnb1hbk7p2a9ab3d689q9l0xz0ww40yyvxw40q";
+        };
+      }))
       setuptools
     ] ++ lib.optionals e2be [
       asyncpg
