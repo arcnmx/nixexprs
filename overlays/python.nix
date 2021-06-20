@@ -10,7 +10,7 @@ in {
       pythonPackagesSuper = psuper;
     }) else drv
   ) pythonOverrides) ];
-  pythonOverrides = super.lib.dontRecurseIntoAttrs super.pythonOverrides or { };
+  pythonOverrides = super.lib.dontRecurseIntoAttrs or super.lib.id super.pythonOverrides or { };
   pythonInterpreters = builtins.mapAttrs (pyname: py:
     if py ? override
     then py.override (old: {

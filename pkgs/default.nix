@@ -52,11 +52,11 @@
     })) overrides');
 in select.toplevel // {
   groups =
-    builtins.mapAttrs (_: dontRecurseIntoAttrs) (packages // select) //
-    builtins.mapAttrs (_: recurseIntoAttrs) groups;
+    builtins.mapAttrs (_: lib.dontRecurseIntoAttrs or lib.id) (packages // select) //
+    builtins.mapAttrs (_: lib.recurseIntoAttrs or lib.id) groups;
   customization =
-    builtins.mapAttrs (_: dontRecurseIntoAttrs) customization;
-  personal = dontRecurseIntoAttrs packages.personal;
+    builtins.mapAttrs (_: lib.dontRecurseIntoAttrs or lib.id) customization;
+  personal = lib.dontRecurseIntoAttrs or lib.id packages.personal;
   inherit extendWith;
   inherit extendWithOverrides;
 }
