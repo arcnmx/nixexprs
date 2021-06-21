@@ -1,5 +1,5 @@
 { fetchFromGitHub, fetchpatch, lib, python3Packages, e2be ? true }: with python3Packages; let
-  sqlalchemy = python3Packages.sqlalchemy.overrideAttrs (old: rec {
+  sqlalchemy_1_3 = python3Packages.sqlalchemy.overrideAttrs (old: rec {
     version = "1.3.24";
     src = fetchPypi {
       inherit version;
@@ -7,6 +7,9 @@
       sha256 = "06bmxzssc66cblk1hamskyv5q3xf1nh1py3vi6dka4lkpxy7gfzb";
     };
   });
+  sqlalchemy = if lib.versionAtLeast python3Packages.sqlalchemy.version "1.4"
+    then sqlalchemy_1_3
+    else python3Packages.sqlalchemy;
   drv = buildPythonApplication rec {
     pname = "mautrix-hangouts";
     version = "2021-06-16";
