@@ -1,6 +1,7 @@
 {
   modprobe = ./modprobe.nix;
   pulseaudio = ./pulseaudio.nix;
+  pipewire = ./pipewire.nix;
   yggdrasil = ./yggdrasil.nix;
   display = ./display.nix;
   filebin = ./filebin.nix;
@@ -13,6 +14,7 @@
     imports = with self; [
       modprobe
       pulseaudio
+      pipewire
       yggdrasil
       display
       filebin
