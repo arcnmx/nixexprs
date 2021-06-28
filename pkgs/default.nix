@@ -21,6 +21,7 @@
     mpvScripts = import ./mpvScripts.nix;
     kernelPatches = import ./kernelPatches.nix;
     rxvt-unicode-plugins = import ./urxvt;
+    obs-studio-plugins = import ./obs;
     gitAndTools = import ./git;
     weechatScripts = import ./public/weechat/scripts.nix;
   };
