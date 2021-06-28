@@ -14,6 +14,8 @@
   muFFT = import ./mufft.nix;
   libjaylink = import ./libjaylink.nix;
   openocd-git = import ./openocd-git.nix;
+  gst-jpegtrunc = import ./gst-jpegtrunc.nix;
+  gst-rtsp-launch = import ./gst-rtsp-launch;
 } // (import ./nixos.nix)
 // (import ./droid.nix)
 // (import ./weechat)
