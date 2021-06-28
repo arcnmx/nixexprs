@@ -12,4 +12,6 @@
   nativeBuildInputs = [ cmake ninja ];
   buildInputs = [ obs-studio qtbase websocketpp asio_1_10 ];
   dontWrapQtApps = true;
+
+  meta.broken = lib.versionOlder obs-studio.version "27";
 }
