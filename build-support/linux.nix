@@ -237,4 +237,17 @@ in {
     rtl8189es = self.rtl8189es.override { linux = kself.kernel; };
     ryzen-smu = self.ryzen-smu.override { linux = kself.kernel; };
   });
+
+  linuxPackages_bleeding = with lib; let
+    nonNullPackages = filter (p: p != null) [
+      self.linuxPackages_latest
+      self.linuxPackages_5_13 or null
+      self.linuxPackages_5_12 or null
+      self.linuxPackages_testing or null
+    ];
+    stripVersion = ver: head (splitString "-rc" ver);
+    compareVersions = l: r: versionOlder (stripVersion r.kernel.version) (stripVersion l.kernel.version);
+    sortedPackages = sort compareVersions nonNullPackages;
+    linuxPackages = head sortedPackages;
+  in linuxPackages;
 }
