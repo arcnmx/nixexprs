@@ -296,14 +296,13 @@ let
       };
     });
 
-    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, libopus, libjack2, celt_0_7, poco, pcre, cmake, ninja, qt5, pkg-config }: let
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, libopus, libjack2, celt_0_7, poco, pcre, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
       drv = mumble.override {
         speechdSupport = true;
         jackSupport = true;
       };
       version = "2021-06-04";
       runtimeDependencies = [ libpulseaudio pipewire libopus libjack2 ];
-      qtspeechSupport = false;
     in with lib; drv.overrideAttrs (old: {
       pname = "mumble-develop";
 
