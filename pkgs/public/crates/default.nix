@@ -249,6 +249,29 @@
     doCheck = false;
   };
 
+  ladspa-rnnoise = {
+    fetchFromGitHub
+  , rustPlatform
+  }: rustPlatform.buildRustPackage rec {
+    pname = "ladspa-rnnoise";
+    version = "2021-05-24";
+    src = fetchFromGitHub {
+      owner = "kittywitch";
+      repo = "ladspa-rnnoise-rs";
+      rev = "b516b4e0790f30a73d3e6ce6e9f9a8fd32cc8e88";
+      sha256 = "178056z1z6dybhhbpgr9lyi73az6jp40c2zw104mhwcv9cqbqpis";
+    };
+
+    NIX_LDFLAGS = "-u ladspa_descriptor"; # ladspa.rs linker symbol workaround
+
+    postInstall = ''
+      install -d $out/lib/ladspa
+      mv $out/lib/*.so $out/lib/ladspa/
+    '';
+
+    cargoSha256 = "1dlywwlrn06k3dwk7l93il32mp1ry890pg4zc16middiwzs4pdwq";
+  };
+
   rbw-bitw = {
     fetchFromGitHub
   , rustPlatform
