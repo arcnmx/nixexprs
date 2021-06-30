@@ -4,11 +4,11 @@ with pythonPackages;
 
 buildPythonPackage rec {
   pname = "svdtools";
-  version = "0.1.13";
+  version = "0.1.14";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "00shi243vi7zxhnlw28idx0xap4il2zkma08ms1ad1cclayl6asb";
+    sha256 = "1llkhryk20h16q80wdp7csi1fp60xkjv28vdi4zlsi4k233anz9v";
   };
 
   propagatedBuildInputs = [
