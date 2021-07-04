@@ -33,7 +33,7 @@ in with lib; {
     console = mkIf cfg.console.enable {
       colors = map (v: v.hex.rgb) consoleShell.colours16;
       getty = mkIf cfg.console.getty.enable {
-        greetingPrefix = mkBefore (concatImap0Strings makeColorCS config.console.colors);
+        greetingPrefix = mkBefore ((lib.concatImap0Strings or arc.lib.concatImap0Strings) makeColorCS config.console.colors);
         greeting = mkDefault ''<<< Welcome to NixOS ${config.system.nixos.label} (\m) - \l >>>'';
       };
     };
