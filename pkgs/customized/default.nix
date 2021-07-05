@@ -56,32 +56,6 @@ let
       cargoSha256 = "1chxf0rgdps21rm3p2c0yn9z0gvzx095n74ryiv89y0d1gka5jy6";
     };
 
-    looking-glass-client-develop = { lib, looking-glass-client, fetchFromGitHub, libXinerama }: looking-glass-client.overrideAttrs (old: {
-      version = "2021-06-01";
-      src = fetchFromGitHub {
-        owner = "gnif";
-        repo = "LookingGlass";
-        rev = "b657b570163439138dae5a9c917a23a627775887";
-        sha256 = "0bgkab1k4lfs7aliazml79s833nf766kdxkm7syxsf4nylix64j1";
-        fetchSubmodules = true;
-      };
-
-      buildInputs = old.buildInputs ++ [
-        libXinerama
-      ];
-
-      patches = [ ];
-    });
-
-    looking-glass-obs-develop = { looking-glass-obs, looking-glass-client-develop }:
-      (looking-glass-obs.override {
-        looking-glass-client = looking-glass-client-develop;
-      }).overrideAttrs (old: {
-        patches = with looking-glass-obs.namedPatches; [
-          singlethread
-        ];
-      });
-
     looking-glass-kvmfr-develop = { looking-glass-kvmfr, looking-glass-client-develop, linux }:
       looking-glass-kvmfr.override {
         looking-glass-client = looking-glass-client-develop;
