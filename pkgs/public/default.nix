@@ -20,6 +20,7 @@
 } // (import ./nixos.nix)
 // (import ./droid.nix)
 // (import ./weechat)
+// (import ./looking-glass)
 // (import ./crates)
 // (import ./programs.nix)
 // (import ./linux)
