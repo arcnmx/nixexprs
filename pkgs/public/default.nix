@@ -9,6 +9,7 @@
   clip = import ./clip.nix;
   nvflash = import ./nvflash.nix;
   nvidia-vbios-vfio-patcher = import ./nvidia-vbios-vfio-patcher;
+  nvidia-capture-sdk = import ./nvidia-capture-sdk.nix;
   edfbrowser = import ./edfbrowser;
   mdloader = import ./mdloader.nix;
   muFFT = import ./mufft.nix;
