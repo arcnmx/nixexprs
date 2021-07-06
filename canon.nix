@@ -22,7 +22,7 @@
       pythonAttrNames = filter (k: super ? ${k}) pythonAttrNames';
       python = getAttrs pythonAttrNames pkgs';
       packages = optionalAttrs (! isOverlaid "packages") (arc.packages.groups.toplevel
-      // builtins.mapAttrs (k: v: super.${k} or { } // v) (arc.packages.groups.groups // arc.packages.customization)
+      // builtins.mapAttrs (k: v: super.${k} or { } // v) (filterAttrs (_: isAttrs) (arc.packages.groups.groups // arc.packages.customization))
       // arc.build);
       lib = optionalAttrs (! (self.lib.arclib.path or null == ./. && self ? lib.arclib)) {
         lib = super.lib // arc.lib;

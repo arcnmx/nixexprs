@@ -51,7 +51,7 @@
   } // foldAttrList (mapAttrsToList (_: o: overlayOverride (o // {
       inherit self super;
     })) overrides');
-in select.toplevel // {
+in lib.recurseIntoAttrs or lib.id select.toplevel // {
   groups =
     builtins.mapAttrs (_: lib.dontRecurseIntoAttrs or lib.id) (packages // select) //
     builtins.mapAttrs (_: lib.recurseIntoAttrs or lib.id) groups;
