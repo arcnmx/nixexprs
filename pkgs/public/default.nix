@@ -14,12 +14,11 @@
   openocd-git = import ./openocd-git.nix;
   gst-jpegtrunc = import ./gst-jpegtrunc.nix;
   gst-rtsp-launch = import ./gst-rtsp-launch;
-} // (import ./nixos.nix)
+}
 // (import ./droid.nix)
 // (import ./weechat)
 // (import ./looking-glass)
 // (import ./crates)
-// (import ./programs.nix)
 // (import ./linux)
 // (import ./ryzen-smu)
 // (import ./matrix)
