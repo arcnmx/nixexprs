@@ -10,6 +10,7 @@
   sqlalchemy = if lib.versionAtLeast python3Packages.sqlalchemy.version "1.4"
     then sqlalchemy_1_3
     else python3Packages.sqlalchemy;
+  hangups = python3Packages.hangups or null;
   drv = buildPythonApplication rec {
     pname = "mautrix-hangouts";
     version = "2021-06-16";
@@ -48,6 +49,8 @@
       pycryptodome
       unpaddedbase64
     ];
+
+    meta.broken = hangups == null;
 
     doCheck = false;
   };
