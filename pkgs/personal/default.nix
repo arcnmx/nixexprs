@@ -7,4 +7,5 @@
   filebin = import ./filebin;
   winpath = import ./winpath.nix;
   task-blocks = import ./task-blocks.nix;
+  openrazer-dpi = import ./openrazer-dpi.nix;
 }
