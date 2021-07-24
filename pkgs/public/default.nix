@@ -12,6 +12,7 @@
   muFFT = import ./mufft.nix;
   libjaylink = import ./libjaylink.nix;
   openocd-git = import ./openocd-git.nix;
+  gst-plugin-cedar = import ./gst-plugin-cedar;
   gst-jpegtrunc = import ./gst-jpegtrunc.nix;
   gst-protectbuffer = import ./gst-protectbuffer.nix;
   gst-rtsp-launch = import ./gst-rtsp-launch;
