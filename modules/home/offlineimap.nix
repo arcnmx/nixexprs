@@ -30,6 +30,9 @@ in {
       Unit = {
         Description = "OfflineIMAP sync";
         After = [ "network-online.target" ];
+        X-Restart-Triggers = [
+          "${config.xdg.configFile."offlineimap/config".source}"
+        ];
       };
 
       Install = {
