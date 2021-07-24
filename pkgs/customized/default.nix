@@ -589,5 +589,43 @@ let
         ln -s $mosh/bin/mosh $mosh/bin/mosh-client $out/bin/
       '';
     };
+
+    prelink-yocto = { prelink, fetchgit, autoreconfHook, libiberty }: prelink.overrideAttrs (old: {
+      version = "2019-06-24";
+
+      src = fetchgit {
+        url = "https://git.yoctoproject.org/git/prelink-cross";
+        branchName = "cross_prelink";
+        rev = "f9975537dbfd9ade0fc813bd5cf5fcbe41753a37";
+        sha256 = "15x1p6x9wndbjqaajhmg5nd4rcg805blixwm0l0jaiqbi9kfiprv";
+      };
+
+      buildInputs = old.buildInputs ++ [
+        libiberty
+      ];
+
+      nativeBuildInputs = [
+        autoreconfHook
+      ];
+
+      doCheck = false;
+    });
+
+    gobject-introspection-full-classic = import ./gobject-introspection.nix;
+    gobject-introspection-py-tools = { gobject-introspection-full-classic, buildPackages }: gobject-introspection-full-classic.override {
+      build_python_tools = true;
+      build_library_and_c_tools = false;
+      buildPackages = {
+        prelink = buildPackages.callPackage (import ./.).prelink;
+      };
+    };
+    gobject-introspection-tools = { gobject-introspection-full-classic, buildPackages }: gobject-introspection-full-classic.override {
+      build_python_tools = false;
+      build_library_and_c_tools = true;
+      gi_cross_use_prebuilt_gi = true;
+      buildPackages = {
+        prelink = buildPackages.callPackage (import ./.).prelink;
+      };
+    };
   };
 in packages
