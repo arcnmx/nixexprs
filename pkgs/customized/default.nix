@@ -10,6 +10,14 @@ let
       doInstallCheck = !hostPlatform.isDarwin;
     });
 
+    xmrig-zen3 = { gcc11Stdenv, xmrig, gccArch ? "znver3" }: let
+      drv = xmrig.override {
+        stdenv = gcc11Stdenv;
+      };
+    in drv.overrideAttrs (old: {
+      NIX_CXXFLAGS_COMPILE = old.NIX_CXXFLAGS_COMPILE or "" + " -O3 -march=${gccArch} -ftree-vectorize-pipe ";
+    });
+
     nix-readline = { nix, readline, fetchurl, lib }: nix.overrideAttrs (old: {
       pname = "nix-readline";
       buildInputs = old.buildInputs ++ [ readline ];
