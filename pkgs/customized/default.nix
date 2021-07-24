@@ -93,6 +93,24 @@ let
       '';
     };
 
+    # inject JS loaders into firefox
+    wrapFirefoxJS = { wrapFirefox, lib }: unwrapped: { jsLoaders ? [ ], ... }@config: with lib; let
+      firefoxLibName = config.firefoxLibName or unwrapped.firefoxLibName or "firefox";
+      autoconfig = "$out/lib/${firefoxLibName}/defaults/pref/autoconfig.js";
+      jsLoaderLine = loader: if isDerivation loader
+        then ''Cu.import("file://${loader}")''
+        else "${loader}";
+      js = concatMapStringsSep "\n" (loader: jsLoaderLine (loader.js or loader)) jsLoaders;
+      wrapperConfig = removeAttrs config [ "jsLoaders" ] // optionalAttrs (jsLoaders != [ ]) {
+        extraPrefs = config.extraPrefs or "" + js;
+      };
+      wrapped = wrapFirefox unwrapped wrapperConfig;
+    in wrapped.overrideAttrs (old: {
+      buildCommand = old.buildCommand + ''
+        echo 'pref("general.config.sandbox_enabled", false);' >> ${autoconfig}
+      '';
+    });
+
     rnnoise-plugin-extern = { stdenv, rnnoise-plugin, rnnoise, ladspaH, pkg-config }: rnnoise-plugin.overrideAttrs (old: rec {
       nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
       buildInputs = old.buildInputs or [ ] ++ [ rnnoise ladspaH ];

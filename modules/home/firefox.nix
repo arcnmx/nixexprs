@@ -10,6 +10,10 @@
   profilesPath = firefoxConfigPath + optionalString pkgs.hostPlatform.isDarwin "/Profiles";
   profileType = { config, ... }: {
     options = {
+      userScripts = mkOption {
+        type = types.listOf types.package;
+        default = [ ];
+      };
       containers = mkOption {
         default = { };
         description = "Firefox multi-account container definitions";
