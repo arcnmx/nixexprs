@@ -16,6 +16,7 @@
   gst-jpegtrunc = import ./gst-jpegtrunc.nix;
   gst-protectbuffer = import ./gst-protectbuffer.nix;
   gst-rtsp-launch = import ./gst-rtsp-launch;
+  vocoder-ladspa = import ./vocoder-ladspa.nix;
   zsh-completions-abduco = import ./zsh-completions-abduco.nix;
   lua-amalg = import ./lua-amalg.nix;
   github-label-sync = import ./github-label-sync;
