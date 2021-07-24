@@ -15,6 +15,7 @@
   gst-jpegtrunc = import ./gst-jpegtrunc.nix;
   gst-protectbuffer = import ./gst-protectbuffer.nix;
   gst-rtsp-launch = import ./gst-rtsp-launch;
+  wireplumber = import ./wireplumber.nix;
 }
 // (import ./droid.nix)
 // (import ./weechat)
