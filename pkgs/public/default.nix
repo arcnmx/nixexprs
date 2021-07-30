@@ -1,6 +1,5 @@
 {
   i3gopher = import ./i3gopher;
-  tamzen = import ./tamzen.nix;
   paswitch = import ./paswitch.nix;
   base16-shell = import ./base16-shell.nix;
   clip = import ./clip.nix;
