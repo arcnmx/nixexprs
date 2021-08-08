@@ -438,8 +438,12 @@ let
     qemu-vfio = { qemu, fetchpatch, lib }: (qemu.override {
       gtkSupport = false;
       smartcardSupport = false;
-      hostCpuOnly = true;
       smbdSupport = true;
+      hostCpuTargets = [
+        "${qemu.stdenv.hostPlatform.qemuArch}-softmmu"
+        "aarch64-linux-user" "aarch64-softmmu"
+        "arm-linux-user" "arm-softmmu"
+      ] ++ lib.optional qemu.stdenv.isx86_64 "i386-softmmu";
     }).overrideAttrs (old: {
       pname = "qemu-vfio";
       patches = old.patches or [] ++ lib.optional (lib.versionAtLeast qemu.version "4.2" && lib.versionOlder qemu.version "5.0") (fetchpatch {
