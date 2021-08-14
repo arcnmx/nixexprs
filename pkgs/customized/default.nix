@@ -103,8 +103,8 @@ let
 
     # inject JS loaders into firefox
     wrapFirefoxJS = { wrapFirefox, lib }: unwrapped: { jsLoaders ? [ ], ... }@config: with lib; let
-      firefoxLibName = config.firefoxLibName or unwrapped.firefoxLibName or "firefox";
-      autoconfig = "$out/lib/${firefoxLibName}/defaults/pref/autoconfig.js";
+      libName = config.firefoxLibName or config.libName or unwrapped.firefoxLibName or unwrapped.libName or "firefox";
+      autoconfig = "$out/lib/${libName}/defaults/pref/autoconfig.js";
       jsLoaderLine = loader: if isDerivation loader
         then ''Cu.import("file://${loader}")''
         else "${loader}";
