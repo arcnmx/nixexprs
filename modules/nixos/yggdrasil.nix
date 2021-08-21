@@ -1,61 +1,17 @@
-{ pkgs, config, lib, ... }: with lib; let
+{ pkgs, config, options, lib, ... }: with lib; let
   cfg = config.services.yggdrasil;
+  opt = options.services.yggdrasil;
   isPath = lib.types.path.check;
-  configFile = builtins.toFile "yggdrasil.conf" (builtins.toJSON configData);
-  configData = (convertConfig cfg) // cfg.extraConfig;
-  convertConfig = cfg: {
-    Peers = cfg.peers;
-    InterfacePeers = cfg.interfacePeers;
-    Listen = cfg.listen;
-    AdminListen = if cfg.adminListen == null then "none" else "unix://${cfg.adminListen}";
-    MulticastInterfaces = cfg.multicastInterfaces;
-    AllowedEncryptionPublicKeys = cfg.allowedEncryptionPublicKeys;
-    EncryptionPublicKey = cfg.encryptionPublicKey;
-    EncryptionPrivateKey = assert !isPath cfg.encryptionPrivateKey; cfg.encryptionPrivateKey;
-    SigningPublicKey = cfg.signingPublicKey;
-    SigningPrivateKey = assert !isPath cfg.signingPrivateKey; cfg.signingPrivateKey;
-    LinkLocalTCPPort = cfg.linkLocalTcpPort;
-    IfName = cfg.ifName;
-    IfTAPMode = cfg.ifTapMode;
-    IfMTU = cfg.ifMtu;
-    SessionFirewall = with cfg.sessionFirewall; {
-      Enable = enable;
-      AllowFromDirect = allowFromDirect;
-      AllowFromRemote = allowFromRemote;
-      AlwaysAllowOutbound = alwaysAllowOutbound;
-      WhitelistEncryptionPublicKeys = whitelistEncryptionPublicKeys;
-      BlacklistEncryptionPublicKeys = blacklistEncryptionPublicKeys;
-    };
-    TunnelRouting = with cfg.tunnelRouting; {
-      Enable = enable;
-      IPv6Destinations = ipv6Destinations;
-      IPv6Sources = ipv6Sources;
-      IPv4Destinations = ipv4Destinations;
-      IPv4Sources = ipv4Sources;
-    };
-    SwitchOptions.MaxTotalQueueSize = cfg.switchOptions.maxTotalQueueSize;
-    NodeInfoPrivacy = cfg.nodeInfoPrivacy;
-    NodeInfo = cfg.nodeInfo;
-  };
+  runtimeDir = "/run/${config.services.yggdrasil.serviceConfig.RuntimeDirectory or "yggdrasil"}";
+  configFile = pkgs.writeText "yggdrasil.conf" (builtins.toJSON cfg.extraConfig);
+  arc = import ../../canon.nix { inherit pkgs; };
+  yggdrasil-address = (pkgs.yggdrasil-address or arc.build.yggdrasil-address).override (
+    optionalAttrs (pkgs.yggdrasil != cfg.package) { yggdrasil = cfg.package; }
+  );
+  address = (yggdrasil-address cfg.encryptionPublicKey).address;
+  jsonType = with types; oneOf [ int str bool (listOf jsonType) (attrsOf jsonType) ];
 in {
-  disabledModules = [
-    "services/networking/yggdrasil.nix" # what was merged feels pretty weird so...
-  ];
   options.services.yggdrasil = {
-    enable = mkEnableOption "yggdrasil systemd service";
-
-    group = mkOption {
-      type = types.str;
-      default = "yggdrasil";
-      description = "Group account under which yggdrasil runs.";
-    };
-
-    package = mkOption {
-      type = types.package;
-      default = pkgs.yggdrasil;
-      defaultText = "pkgs.yggdrasil";
-    };
-
     peers = mkOption {
       type = types.listOf types.str;
       default = [ ];
@@ -73,7 +29,7 @@ in {
 
     adminListen = mkOption {
       type = types.nullOr types.path;
-      default = "/run/yggdrasil.sock";
+      default = runtimeDir + "/yggdrasil.sock";
     };
 
     multicastInterfaces = mkOption {
@@ -114,11 +70,6 @@ in {
     ifName = mkOption {
       type = types.either (types.enum [ "auto" "none" ]) types.str;
       default = "auto";
-    };
-
-    ifTapMode = mkOption {
-      type = types.bool;
-      default = false;
     };
 
     ifMtu = mkOption {
@@ -164,22 +115,22 @@ in {
         default = false;
       };
 
-      ipv6Destinations = mkOption {
+      ipv6RemoteSubnets = mkOption {
         type = types.attrsOf types.str;
         default = { };
       };
 
-      ipv6Sources = mkOption {
+      ipv6LocalSubnets = mkOption {
         type = types.listOf types.str;
         default = [ ];
       };
 
-      ipv4Destinations = mkOption {
+      ipv4RemoteSubnets = mkOption {
         type = types.attrsOf types.str;
         default = { };
       };
 
-      ipv4Sources = mkOption {
+      ipv4LocalSubnets = mkOption {
         type = types.listOf types.str;
         default = [ ];
       };
@@ -198,35 +149,76 @@ in {
     };
 
     nodeInfo = mkOption {
-      type = types.attrs;
+      type = jsonType;
       default = { };
     };
 
     extraConfig = mkOption {
-      type = types.attrs;
+      type = jsonType;
       default = { };
     };
   };
 
-  config = mkIf cfg.enable {
-    users.groups = mkIf (cfg.group == "yggdrasil") { yggdrasil = { }; };
-
-    systemd.services.yggdrasil = {
-      description = "yggdrasil network";
-      wants = ["network.target"];
-      after = ["network.target"];
-
-      serviceConfig = {
-        Group = cfg.group;
-        ProtectHome = true;
-        ProtectSystem = true;
-        SyslogIdentifier = "yggdrasil";
-        ExecStart = "${cfg.package}/bin/yggdrasil -useconffile ${configFile}";
-        ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-        Restart = "always";
-      };
-
-      wantedBy = ["multi-user.target"];
+  config = {
+    systemd.services.yggdrasil = mkIf cfg.enable {
+      preStart = let
+        privateKey = key: o: c: optionalString (o.isDefined && isPath c) ''
+          printf '{ "${key}": "%s" }' "$(cat ${toString c})"
+        '';
+      in mkOverride 90 ''
+        {
+          ${optionalString (cfg.configFile != null) "cat ${cfg.configFile}"}
+          cat ${configFile}
+          ${privateKey "EncryptionPrivateKey" opt.encryptionPrivateKey cfg.encryptionPrivateKey}
+          ${privateKey "SigningPrivateKey" opt.signingPrivateKey cfg.signingPrivateKey}
+          ${optionalString cfg.persistentKeys "cat /var/lib/yggdrasil/keys.json"}
+        } | ${pkgs.jq}/bin/jq -s add > ${runtimeDir}/yggdrasil.conf
+      '';
+      serviceConfig.BindReadOnlyPaths = let
+        privateKey = o: c: optional (o.isDefined && isPath c) (toString c);
+      in [ "${configFile}" ]
+      ++ privateKey opt.encryptionPrivateKey cfg.encryptionPrivateKey
+      ++ privateKey opt.signingPrivateKey cfg.signingPrivateKey;
+    };
+    networking.firewall.allowedTCPPorts = mkIf (cfg.enable && cfg.openMulticastPort) [ cfg.linkLocalTcpPort ];
+    services.yggdrasil = {
+      address = mkIf opt.encryptionPublicKey.isDefined (mkOptionDefault address);
+      openMulticastPort = mkIf (cfg.linkLocalTcpPort != 0) (mkDefault true);
+      extraConfig = mkMerge [ cfg.config {
+        Peers = mkIf (cfg.peers != [ ]) (mkOptionDefault cfg.peers);
+        InterfacePeers = mkIf (cfg.interfacePeers != [ ]) (mkOptionDefault cfg.interfacePeers);
+        Listen = mkIf (cfg.listen != [ ]) (mkOptionDefault cfg.listen);
+        AdminListen = mkOptionDefault (if cfg.adminListen == null then "none" else "unix://${cfg.adminListen}");
+        MulticastInterfaces = mkIf (cfg.multicastInterfaces != [ ]) (mkOptionDefault cfg.multicastInterfaces);
+        AllowedEncryptionPublicKeys = mkIf (cfg.allowedEncryptionPublicKeys != [ ]) (mkOptionDefault cfg.allowedEncryptionPublicKeys);
+        EncryptionPublicKey = mkIf (opt.encryptionPublicKey.isDefined) (mkOptionDefault cfg.encryptionPublicKey);
+        EncryptionPrivateKey = mkIf (opt.encryptionPrivateKey.isDefined && !isPath cfg.encryptionPrivateKey) (mkOptionDefault cfg.encryptionPrivateKey);
+        SigningPublicKey = mkIf (opt.signingPublicKey.isDefined) (mkOptionDefault cfg.signingPublicKey);
+        SigningPrivateKey = mkIf (opt.signingPrivateKey.isDefined && !isPath cfg.signingPrivateKey) (mkOptionDefault cfg.signingPrivateKey);
+        LinkLocalTCPPort = mkOptionDefault cfg.linkLocalTcpPort;
+        IfName = mkOptionDefault cfg.ifName;
+        IfMTU = mkOptionDefault cfg.ifMtu;
+        SessionFirewall = with cfg.sessionFirewall; mkOptionDefault {
+          Enable = enable;
+          AllowFromDirect = allowFromDirect;
+          AllowFromRemote = allowFromRemote;
+          AlwaysAllowOutbound = alwaysAllowOutbound;
+          WhitelistEncryptionPublicKeys = whitelistEncryptionPublicKeys;
+          BlacklistEncryptionPublicKeys = blacklistEncryptionPublicKeys;
+        };
+        TunnelRouting = with cfg.tunnelRouting; mkIf (versionOlder cfg.package.version "0.4") (mkOptionDefault {
+          Enable = enable;
+          IPv6RemoteSubnets = ipv6RemoteSubnets;
+          IPv6LocalSubnets = ipv6LocalSubnets;
+          IPv4RemoteSubnets = ipv4RemoteSubnets;
+          IPv4LocalSubnets = ipv4LocalSubnets;
+        });
+        SwitchOptions = mkOptionDefault {
+          MaxTotalQueueSize = cfg.switchOptions.maxTotalQueueSize;
+        };
+        NodeInfoPrivacy = mkOptionDefault cfg.nodeInfoPrivacy;
+        NodeInfo = mkIf (cfg.nodeInfo != { }) (mkOptionDefault cfg.nodeInfo);
+      } ];
     };
   };
 }
