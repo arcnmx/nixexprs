@@ -5,9 +5,21 @@
 in with lib; {
   options.services.konawall = {
     enable = mkEnableOption "enable konawall";
+    mode = mkOption {
+      type = types.str;
+      default = "random";
+    };
+    commonTags = mkOption {
+      type = types.listOf types.str;
+      default = [];
+    };
     tags = mkOption {
       type = types.listOf types.str;
       default = ["score:>=200" "width:>=1600" "nobody"];
+    };
+    tagList = mkOption {
+      type = types.listOf (types.listOf types.str);
+      default = singleton cfg.tags;
     };
     package = mkOption {
       type = types.package;
@@ -37,9 +49,14 @@ in with lib; {
           Requisite = PartOf;
         };
         Service = {
-          Environment = ["KONATAGS=${concatStringsSep "+" cfg.tags}"];
           Type = "oneshot";
-          ExecStart = "${cfg.package}/bin/konawall";
+          Environment = [
+            "PATH=${makeSearchPath "bin" (with pkgs; [ feh pkgs.xorg.xsetroot ])}"
+          ];
+          ExecStart = let
+            tags = map (n: concatStringsSep "+" n) cfg.tagList;
+            tags-sep = concatStringsSep " " tags;
+          in "${cfg.package}/bin/konawall ${tags-sep} ${if ((length cfg.commonTags) > 0) then ''--common ${concatStringsSep "+" cfg.commonTags}'' else ""} --mode ${cfg.mode}";
           RemainAfterExit = true;
           IOSchedulingClass = "idle";
           TimeoutStartSec = "5m";
