@@ -23,7 +23,7 @@ in with lib; {
     };
     package = mkOption {
       type = types.package;
-      default = arc.packages.personal.konawall;
+      default = pkgs.konawall or arc.packages.konawall;
     };
     interval = mkOption {
       type = types.nullOr types.str;
