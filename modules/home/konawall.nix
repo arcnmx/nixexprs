@@ -54,9 +54,9 @@ in with lib; {
             "PATH=${makeSearchPath "bin" (with pkgs; [ feh pkgs.xorg.xsetroot ])}"
           ];
           ExecStart = let
-            tags = map (n: concatStringsSep "+" n) cfg.tagList;
+            tags = map (n: concatStringsSep "," n) cfg.tagList;
             tags-sep = concatStringsSep " " tags;
-          in "${cfg.package}/bin/konawall ${if ((length cfg.commonTags) > 0) then ''--common ${concatStringsSep "+" cfg.commonTags}'' else ""} --mode ${cfg.mode} ${tags-sep}";
+          in "${cfg.package}/bin/konawall --mode ${cfg.mode} ${if ((length cfg.commonTags) > 0) then ''--common ${concatStringsSep "," cfg.commonTags}'' else ""} ${tags-sep}";
           RemainAfterExit = true;
           IOSchedulingClass = "idle";
           TimeoutStartSec = "5m";
