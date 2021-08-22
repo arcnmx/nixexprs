@@ -6,16 +6,16 @@ in with lib; {
   options.services.konawall = {
     enable = mkEnableOption "enable konawall";
     mode = mkOption {
-      type = types.str;
+      type = types.enum [ "random" "shuffle" "map" ];
       default = "random";
     };
     commonTags = mkOption {
       type = types.listOf types.str;
-      default = ["score:>=200" "width:>=1600"];
+      default = [ "score:>=200" "width:>=1600" ];
     };
     tags = mkOption {
       type = types.listOf types.str;
-      default = ["nobody"];
+      default = [ "nobody" ];
     };
     tagList = mkOption {
       type = with types; listOf (listOf str);
@@ -50,11 +50,11 @@ in with lib; {
         };
         Service = {
           Type = "oneshot";
-          Environment = mkIf (config.xsession.enable) [
+          Environment = mkIf config.xsession.enable [
             "PATH=${makeBinPath (with pkgs; [ feh pkgs.xorg.xsetroot ])}"
           ];
           ExecStart = let
-            tags = map (n: concatStringsSep "," n) cfg.tagList;
+            tags = map (concatStringsSep ",") cfg.tagList;
             tags-escaped = escapeShellArgs tags;
             common = concatStringsSep "," cfg.commonTags;
             common-escaped = escapeShellArg common;
