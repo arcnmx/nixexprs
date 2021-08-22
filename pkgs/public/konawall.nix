@@ -5,8 +5,8 @@
   src = fetchFromGitHub {
     owner = "kittywitch";
     repo = pname;
-    rev = "cec3c6323ee2328b162c272e0ce3c1e022fceb3a";
-    sha256 = "1p8m606bdrg75mhicbqaj187q496biqv4g4hs4kwv3bab6h6jn90";
+    rev = "7643e4a3c87d612ca8d5a1fdffde29ff797becd4";
+    sha256 = "18zcrang0gqlkzcqyi5rrw12iyy4bhwp1yssi325bfabr868mjiz";
   };
 
   nativeBuildInputs = [ pkg-config ];
