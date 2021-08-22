@@ -12,7 +12,10 @@
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl libX11 libXrandr ];
 
-  meta.broken = ! lib.versionAtLeast rustPlatform.rust.rustc.version "1.53.0";
+  meta = with lib; {
+    platforms = platforms.linux;
+    broken = ! versionAtLeast rustPlatform.rust.rustc.version "1.53.0";
+  };
 
   cargoSha256 = "034njg7nx31lahnw906hvifihzij589braggnbp22bbyr0m5qiff";
 }
