@@ -11,11 +11,11 @@ in with lib; {
     };
     commonTags = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = ["score:>=200" "width:>=1600"];
     };
     tags = mkOption {
       type = types.listOf types.str;
-      default = ["score:>=200" "width:>=1600" "nobody"];
+      default = ["nobody"];
     };
     tagList = mkOption {
       type = types.listOf (types.listOf types.str);
