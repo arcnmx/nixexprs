@@ -18,7 +18,7 @@ in with lib; {
       default = ["nobody"];
     };
     tagList = mkOption {
-      type = types.listOf (types.listOf types.str);
+      type = with types; listOf (listOf str);
       default = singleton cfg.tags;
     };
     package = mkOption {
@@ -50,13 +50,15 @@ in with lib; {
         };
         Service = {
           Type = "oneshot";
-          Environment = [
-            "PATH=${makeSearchPath "bin" (with pkgs; [ feh pkgs.xorg.xsetroot ])}"
+          Environment = mkIf (config.xsession.enable) [
+            "PATH=${makeBinPath (with pkgs; [ feh pkgs.xorg.xsetroot ])}"
           ];
           ExecStart = let
             tags = map (n: concatStringsSep "," n) cfg.tagList;
-            tags-sep = concatStringsSep " " tags;
-          in "${cfg.package}/bin/konawall --mode ${cfg.mode} ${if ((length cfg.commonTags) > 0) then ''--common ${concatStringsSep "," cfg.commonTags}'' else ""} ${tags-sep}";
+            tags-escaped = escapeShellArgs tags;
+            common = concatStringsSep "," cfg.commonTags;
+            common-escaped = escapeShellArg common;
+          in "${cfg.package}/bin/konawall --mode ${cfg.mode} ${optionalString (cfg.commonTags != [ ]) "--common ${common-escaped}"} ${tags-escaped}";
           RemainAfterExit = true;
           IOSchedulingClass = "idle";
           TimeoutStartSec = "5m";
