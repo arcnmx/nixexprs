@@ -6,6 +6,8 @@
   pipewire = ./pipewire.nix;
   alsa = ./alsa.nix;
   yggdrasil = ./yggdrasil.nix;
+  matrix-appservices = ./matrix-appservices.nix;
+  matrix-synapse-appservices = ./matrix-synapse-appservices.nix;
   display = ./display.nix;
   filebin = ./filebin.nix;
   mosh = ./mosh.nix;
@@ -22,6 +24,8 @@
       pipewire
       alsa
       yggdrasil
+      matrix-appservices
+      matrix-synapse-appservices
       display
       filebin
       mosh
