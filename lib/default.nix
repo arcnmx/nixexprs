@@ -138,6 +138,7 @@
 
   gst = import ./gst.nix { inherit lib; };
   alsa = import ./alsa.nix { inherit lib; };
+  json = import ./json.nix { inherit lib; };
 
   # NOTE: a very basic/incomplete parser
   fromYAML = import ./from-yaml.nix lib;
