@@ -138,6 +138,7 @@
 
   gst = import ./gst.nix { inherit lib; };
   alsa = import ./alsa.nix { inherit lib; };
+  sensitive = import ./sensitive.nix { inherit lib; };
   json = import ./json.nix { inherit lib; };
   unmerged = import ./unmerged.nix { inherit lib; };
 
