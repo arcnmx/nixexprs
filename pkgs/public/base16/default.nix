@@ -13,7 +13,7 @@
     sha256 = "0i1bacsbyhmz3vaxrxslxbr16n5fgwgvxsikvz8p6n43k173msiw";
     sources = ./templates.json;
   };
-  base16-templates = import ./templates.nix;
+  #base16-templates = import ./templates.nix; # moved to build-support to avoid being considered a package
   base16-schemes = import ./schemes.nix;
   base16-shell-preview-arc = ./base16-shell-preview.nix;
 }

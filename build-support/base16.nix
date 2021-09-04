@@ -104,4 +104,5 @@
       shell256 = mapAttrs (_: head) lib.base16.shell.mapping256;
     };
   });
+  base16-templates = self.callPackage ../pkgs/public/base16/templates.nix { };
 }
