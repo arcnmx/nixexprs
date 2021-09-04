@@ -105,4 +105,5 @@
     };
   });
   base16-templates = self.callPackage ../pkgs/public/base16/templates.nix { };
+  base16-shell-preview-arc = self.callPackage ../pkgs/public/base16/base16-shell-preview.nix { };
 }
