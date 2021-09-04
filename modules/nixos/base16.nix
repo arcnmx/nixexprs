@@ -20,7 +20,7 @@ in with lib; {
         default = cfg.defaultSchemeName;
       };
       scheme = mkOption {
-        type = types.unspecified;
+        type = with types; coercedTo str (name: cfg.schemes.${name}) attrs;
         default = cfg.schemes.${cfg.console.schemeName};
       };
       getty = {

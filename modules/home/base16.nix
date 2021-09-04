@@ -21,6 +21,7 @@ in {
         module = submodule [
           ../misc/base16.nix
           termModule
+          compatModule
         ];
         convertSlug = scheme: let
           # TODO: allow specifying just the slug, and find the schemeSource automatically
@@ -29,10 +30,36 @@ in {
           schemeSource = head dot;
           slug = last dot;
         };
+        compatModule = { ... }: {
+          options.legacyCompat.index = mkOption {
+            type = with types; nullOr int;
+            default = null;
+          };
+        };
+        compatScheme = index: scheme: let
+          dot = splitString "." scheme;
+          value = {
+            legacyCompat = {
+              inherit index;
+            };
+            schemeSource = head dot;
+            slug = last dot;
+          };
+        in nameValuePair scheme value;
+        convertCompat = schemeNames: listToAttrs (
+          imap0 compatScheme schemeNames
+        );
         coerced = coercedTo str convertSlug module;
-      in attrsOf coerced;
+        compat = coercedTo (listOf str) convertCompat;
+      in compat (attrsOf coerced);
       example = { dark = "tomorrow.tomorrow-night"; };
       default = { };
+    };
+
+    alias = mkOption {
+      type = with types; attrsOf (nullOr str);
+      description = "deprecated";
+      internal = true;
     };
 
     defaultScheme = mkOption {
@@ -82,6 +109,11 @@ in {
     conf = {
       base16 = {
         defaultSchemeName = mkIf (cfg.schemes != { } && ! cfg.schemes ? "default") (mkDefault (head (attrNames cfg.schemes)));
+        alias = let
+          def = attrNames (filterAttrs (_: s: s.legacyCompat.index == 0) cfg.schemes);
+        in mkIf (def != [ ]) {
+          default = mkOptionDefault (head def);
+        };
         shell = {
           package = pkgs.linkFarm "base16-shell" (mapAttrsToList (key: script: {
             name = "${script.name}.sh";
@@ -99,6 +131,20 @@ in {
           }) cfg.vim.colorschemes);
         };
       };
+      lib.arc.base16.schemeForAlias = mapAttrs (alias: scheme:
+        mapAttrs (base: colour: {
+          # compatibility layer for old module
+          hex = {
+            inherit (colour) rgb r g b rgba a;
+          };
+          rgb = {
+            r = colour.red.byte;
+            g = colour.green.byte;
+            b = colour.blue.byte;
+            a = colour.alpha.byte;
+          };
+        }) (getAttrs base16.names cfg.schemes.${scheme})
+      ) cfg.alias;
       _module.args.base16 = cfg.schemes // getAttrs (base16.names ++ [ "alias" "ansi" "map" ]) defaultScheme;
     };
     enableShellInit = cfg.shell.enable && cfg.shell.applyDefault != null;

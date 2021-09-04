@@ -97,5 +97,11 @@
     }.${source.type} {
       inherit (source) owner repo rev sha256;
     };
+    shell = {
+      # legacy compat for old module, do not use
+      shell16 = mapAttrs head lib.base16.shell.mapping16;
+      shells256 = lib.base16.shell.mapping256;
+      shell256 = mapAttrs (_: head) lib.base16.shell.mapping256;
+    };
   });
 }
