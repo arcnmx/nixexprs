@@ -45,7 +45,6 @@ in stdenv.mkDerivation rec {
     "-Dintrospection=${mesonFeature enableIntrospection}"
     "-Dsystem-lua=${mesonBool (lua != null)}"
     "-Ddoc=${mesonFeature enableDocs}"
-    "-Dwpipc=${mesonFeature true}"
     "-Dsystemd-user-unit-dir=${placeholder "out"}/lib/systemd/user"
     "-Dsystemd-system-unit-dir=${placeholder "out"}/lib/systemd/system"
     "-Dsystemd-user-service=true"
