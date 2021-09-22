@@ -6,7 +6,6 @@
   common-root = ./common-root.nix;
   mutable-state = ./mutable-state.nix;
   pulseaudio = ./pulseaudio.nix;
-  pipewire = ./pipewire.nix;
   wireplumber = ./wireplumber.nix;
   alsa = ./alsa.nix;
   yggdrasil = ./yggdrasil.nix;
@@ -34,7 +33,6 @@
       mutable-state
       common-root
       pulseaudio
-      pipewire
       wireplumber
       alsa
       yggdrasil
