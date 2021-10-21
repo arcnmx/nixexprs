@@ -31,6 +31,8 @@ let cfg = config.programs.swaylock; in
           (arg: value:
             if value == true then
               singleton "--${toString arg}"
+            else if value == false then
+              []
             else [
               "--${arg}"
               (toString value)
