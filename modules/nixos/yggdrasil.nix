@@ -8,7 +8,10 @@
   yggdrasil-address = (pkgs.yggdrasil-address or arc.build.yggdrasil-address).override (
     optionalAttrs (pkgs.yggdrasil != cfg.package) { yggdrasil = cfg.package; }
   );
-  address = (yggdrasil-address cfg.encryptionPublicKey).address;
+  yggdrasilLegacy = versionOlder cfg.package.version "0.4";
+  addressKey = if yggdrasilLegacy then cfg.encryptionPublicKey else cfg.signingPublicKey;
+  hasAddressKey = if yggdrasilLegacy then opt.encryptionPublicKey.isDefined else opt.signingPublicKey.isDefined;
+  address = (yggdrasil-address addressKey).address;
   jsonType = with types; oneOf [ int str bool (listOf jsonType) (attrsOf jsonType) ];
 in {
   options.services.yggdrasil = {
@@ -182,7 +185,7 @@ in {
     };
     networking.firewall.allowedTCPPorts = mkIf (cfg.enable && cfg.openMulticastPort) [ cfg.linkLocalTcpPort ];
     services.yggdrasil = {
-      address = mkIf opt.encryptionPublicKey.isDefined (mkOptionDefault address);
+      address = mkIf hasAddressKey (mkOptionDefault address);
       openMulticastPort = mkIf (cfg.linkLocalTcpPort != 0) (mkDefault true);
       extraConfig = mkMerge [ cfg.config {
         Peers = mkIf (cfg.peers != [ ]) (mkOptionDefault cfg.peers);
