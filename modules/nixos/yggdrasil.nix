@@ -5,13 +5,8 @@
   runtimeDir = "/run/${config.services.yggdrasil.serviceConfig.RuntimeDirectory or "yggdrasil"}";
   configFile = pkgs.writeText "yggdrasil.conf" (builtins.toJSON cfg.extraConfig);
   arc = import ../../canon.nix { inherit pkgs; };
-  yggdrasil-address = (pkgs.yggdrasil-address or arc.build.yggdrasil-address).override (
-    optionalAttrs (pkgs.yggdrasil != cfg.package) { yggdrasil = cfg.package; }
-  );
-  yggdrasilLegacy = versionOlder cfg.package.version "0.4";
-  addressKey = if yggdrasilLegacy then cfg.encryptionPublicKey else cfg.signingPublicKey;
-  hasAddressKey = if yggdrasilLegacy then opt.encryptionPublicKey.isDefined else opt.signingPublicKey.isDefined;
-  address = (yggdrasil-address addressKey).address;
+  yggdrasil-address = pkgs.yggdrasil-address or arc.packages.yggdrasil-address;
+  address = yggdrasil-address.importWithPublicKey cfg.publicKey;
   jsonType = with types; oneOf [ int str bool (listOf jsonType) (attrsOf jsonType) ];
 in {
   options.services.yggdrasil = {
@@ -40,7 +35,7 @@ in {
       default = [ ".*" ];
     };
 
-    allowedEncryptionPublicKeys = mkOption {
+    allowedPublicKeys = mkOption {
       type = types.listOf types.str;
       default = [ ];
     };
@@ -49,19 +44,11 @@ in {
       type = types.str;
     };
 
-    encryptionPublicKey = mkOption {
+    publicKey = mkOption {
       type = types.str;
     };
 
-    encryptionPrivateKey = mkOption {
-      type = types.either types.str types.path;
-    };
-
-    signingPublicKey = mkOption {
-      type = types.str;
-    };
-
-    signingPrivateKey = mkOption {
+    privateKey = mkOption {
       type = types.either types.str types.path;
     };
 
@@ -172,20 +159,18 @@ in {
         {
           ${optionalString (cfg.configFile != null) "cat ${cfg.configFile}"}
           cat ${configFile}
-          ${privateKey "EncryptionPrivateKey" opt.encryptionPrivateKey cfg.encryptionPrivateKey}
-          ${privateKey "SigningPrivateKey" opt.signingPrivateKey cfg.signingPrivateKey}
+          ${privateKey "PrivateKey" opt.privateKey cfg.privateKey}
           ${optionalString cfg.persistentKeys "cat /var/lib/yggdrasil/keys.json"}
         } | ${pkgs.jq}/bin/jq -s add > ${runtimeDir}/yggdrasil.conf
       '';
       serviceConfig.BindReadOnlyPaths = let
         privateKey = o: c: optional (o.isDefined && isPath c) (toString c);
       in [ "${configFile}" ]
-      ++ privateKey opt.encryptionPrivateKey cfg.encryptionPrivateKey
-      ++ privateKey opt.signingPrivateKey cfg.signingPrivateKey;
+      ++ privateKey opt.privateKey cfg.privateKey;
     };
     networking.firewall.allowedTCPPorts = mkIf (cfg.enable && cfg.openMulticastPort) [ cfg.linkLocalTcpPort ];
     services.yggdrasil = {
-      address = mkIf hasAddressKey (mkOptionDefault address);
+      address = mkIf opt.publicKey.isDefined (mkOptionDefault address);
       openMulticastPort = mkIf (cfg.linkLocalTcpPort != 0) (mkDefault true);
       extraConfig = mkMerge [ cfg.config {
         Peers = mkIf (cfg.peers != [ ]) (mkOptionDefault cfg.peers);
@@ -193,11 +178,9 @@ in {
         Listen = mkIf (cfg.listen != [ ]) (mkOptionDefault cfg.listen);
         AdminListen = mkOptionDefault (if cfg.adminListen == null then "none" else "unix://${cfg.adminListen}");
         MulticastInterfaces = mkIf (cfg.multicastInterfaces != [ ]) (mkOptionDefault cfg.multicastInterfaces);
-        AllowedEncryptionPublicKeys = mkIf (cfg.allowedEncryptionPublicKeys != [ ]) (mkOptionDefault cfg.allowedEncryptionPublicKeys);
-        EncryptionPublicKey = mkIf (opt.encryptionPublicKey.isDefined) (mkOptionDefault cfg.encryptionPublicKey);
-        EncryptionPrivateKey = mkIf (opt.encryptionPrivateKey.isDefined && !isPath cfg.encryptionPrivateKey) (mkOptionDefault cfg.encryptionPrivateKey);
-        SigningPublicKey = mkIf (opt.signingPublicKey.isDefined) (mkOptionDefault cfg.signingPublicKey);
-        SigningPrivateKey = mkIf (opt.signingPrivateKey.isDefined && !isPath cfg.signingPrivateKey) (mkOptionDefault cfg.signingPrivateKey);
+        AllowedPublicKeys = mkIf (cfg.allowedPublicKeys != [ ]) (mkOptionDefault cfg.allowedPublicKeys);
+        PublicKey = mkIf (opt.publicKey.isDefined) (mkOptionDefault cfg.publicKey);
+        PrivateKey = mkIf (opt.privateKey.isDefined && !isPath cfg.privateKey) (mkOptionDefault cfg.privateKey);
         LinkLocalTCPPort = mkOptionDefault cfg.linkLocalTcpPort;
         IfName = mkOptionDefault cfg.ifName;
         IfMTU = mkOptionDefault cfg.ifMtu;
