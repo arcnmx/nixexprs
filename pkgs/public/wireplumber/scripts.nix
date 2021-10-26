@@ -1,12 +1,12 @@
 { stdenvNoCC, lua-amalg, fetchFromGitHub, lua5_4 ? lua5_3, lua5_3 }: stdenvNoCC.mkDerivation {
   pname = "wireplumber-scripts";
-  version = "2021-09-24";
+  version = "2021-10-26";
 
   src = fetchFromGitHub {
     owner = "arcnmx";
     repo = "wireplumber-scripts";
-    rev = "c950537ff8c373113edd333a7628ef3d96e39a9c";
-    sha256 = "1gnfdq74i7bb1yir00qrllcc8443ymdps7gj41hvq31a6nb9i1fj";
+    rev = "3ff6e735e08cf84add9230f6a129391db1984926";
+    sha256 = "17bhpyjw42c7y8237mf1r3z5lsczax3i7sdsiv93nv5ic35ch6g2";
   };
 
   nativeBuildInputs = [ lua-amalg ];
