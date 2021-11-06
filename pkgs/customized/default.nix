@@ -544,34 +544,7 @@ let
       };
     });
 
-    scream-develop = { scream ? null, stdenv, fetchFromGitHub, libjack2 }: let
-      version = "2021-05-30";
-      drv = scream.override {
-        pulseSupport = true;
-        #jackSupport = true;
-      };
-      broken = stdenv.mkDerivation {
-        pname = "scream";
-        inherit version;
-        meta.broken = true;
-      };
-    in if scream == null then broken else drv.overrideAttrs (old: {
-      inherit version;
-      src = fetchFromGitHub {
-        owner = "duncanthrax";
-        repo = "scream";
-        rev = "91d9a0a3afc49e5fdd02eb079dfd90c7b6ca760a";
-        sha256 = "04i3rwcl1sf21ihhgfsipsv1c9gyc8sryv0hyqsjmvnks8h60liq";
-      };
-
-      # unnecessary once a scream update is released:
-      buildInputs = old.buildInputs ++ [ libjack2 ];
-      cmakeFlags = old.cmakeFlags ++ [
-        "-DJACK_ENABLE=ON"
-      ];
-    });
-
-    scream-arc = { scream-develop, fetchpatch }: scream-develop.overrideAttrs (old: {
+    scream-arc = { scream, fetchpatch, lib }: scream.overrideAttrs (old: {
       pname = "scream-arc";
       patches = old.patches or [] ++ [
         (fetchpatch {
@@ -595,6 +568,9 @@ let
           sha256 = "18pavs8kdqsj43iapfs5x639w613xhahd168c2j86sizy04390ga";
         })
       ];
+      meta = old.meta or { } // {
+        broken = old.meta.broken or lib.isNixpkgsStable;
+      };
     });
 
     xkeyboard-config-arc = { xkeyboard_config, fetchpatch, utilmacros, autoreconfHook }: xkeyboard_config.overrideAttrs (old: rec {
