@@ -82,4 +82,20 @@
       sha256 = "0qjb66ydbqqypyvhhlq8zwry8zcd8609y8d4a0nidhq1g6cp9vcw";
     };
   };
+
+  # used by appending to `pkgs.linuxPackagesOverlays`
+  overlays = { }: {
+    zfsVersionOverride = kself: ksuper: {
+      zfs = ksuper.zfs.overrideAttrs (old: {
+        meta = old.meta // {
+          broken = false;
+        };
+      });
+      zfsUnstable = ksuper.zfsUnstable.overrideAttrs (old: {
+        meta = old.meta // {
+          broken = false;
+        };
+      });
+    };
+  };
 }
