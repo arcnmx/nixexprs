@@ -1,13 +1,4 @@
 {
-  unprivileged_overlay_mounts = { fetchpatch }: rec {
-    name = "unprivileged_overlay_mounts";
-    patch = fetchpatch {
-      name = name + ".patch";
-      url = "https://patchwork.kernel.org/series/397711/mbox/";
-      sha256 = "0k4zsrrwpmjvvwbdbgn5qrj2sgk3b064rpfhxyk22zqs40wkxh47";
-    };
-  };
-
   more_uarches = { lib, fetchpatch, hostPlatform, linux, kernelArch ? null, gccArch ? hostPlatform.linux-kernel.arch or hostPlatform.gcc.arch or "x86-64-v3" }: rec {
     name = "more-uarches";
     patch = let

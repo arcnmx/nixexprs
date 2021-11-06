@@ -249,6 +249,7 @@ in {
   linuxPackages_bleeding = with lib; let
     nonNullPackages = filter (p: p != null) [
       self.linuxPackages_latest
+      self.linuxPackages_5_15 or null
       self.linuxPackages_5_13 or null
       self.linuxPackages_5_12 or null
       self.linuxPackages_testing or null
