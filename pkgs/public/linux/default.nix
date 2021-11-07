@@ -121,7 +121,7 @@ let
     };
 
     rtl8189es = { stdenv, lib, fetchFromGitHub, linux }: stdenv.mkDerivation rec {
-      version = "2021-03-02";
+      version = "2021-10-01";
       pname = let
         pname = "rtl8189es";
         kernel-name = builtins.tryEval "${pname}-${linux.version}";
@@ -130,8 +130,8 @@ let
       src = fetchFromGitHub {
         owner = "jwrdegoede";
         repo = "rtl8189ES_linux";
-        rev = "03ac413135a355b55b693154c44b70f86a39732e";
-        sha256 = "0wiikviwyvy6h55rgdvy7csi1zqniqg26p8x44rd6mhbw0g00h56";
+        rev = "be378f47055da1bae42ff6ec1d62f1a5052ef097";
+        sha256 = "1szayxl5chvmylcla13s9dnfwd0g2k6zmn5bp7m1in5igganlpzv";
       };
       sourceRoot = "source";
 
