@@ -18,6 +18,7 @@
   zsh-completions-abduco = import ./zsh-completions-abduco.nix;
   lua-amalg = import ./lua-amalg.nix;
   yggdrasil-address = import ./yggdrasil-address.nix;
+  rustfmt-nightly = import ./rustfmt.nix;
 }
 // (import ./droid.nix)
 // (import ./base16)
