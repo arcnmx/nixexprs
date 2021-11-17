@@ -31,6 +31,7 @@
           date = "2021-10-21";
           sha256 = "13q35rprfmz4nfwh92x4lgv7hs28zlapjr3l4bsks12h09k09li8";
           manifestPath = ./channel-rust-nightly.toml;
+          rustcDev = true;
         });
         impure = mapAttrs (_: rustPlatformFor) {
           inherit (rustChannel) stable beta nightly;
