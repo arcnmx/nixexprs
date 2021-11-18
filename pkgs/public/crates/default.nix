@@ -147,23 +147,20 @@
     lib, fetchFromGitHub, rustPlatform
   }: rustPlatform.buildRustPackage rec {
     pname = "cargo-call-stack";
-    version = "2020-07-07";
+    version = "0.1.6";
 
     src = fetchFromGitHub {
       owner = "japaric";
       repo = pname;
-      rev = "d8f4338adb4c8cc3dfaeba22b1a4d5d22168cb17";
-      sha256 = "1sdskiykx9bvnr8dny1dg138cm6m8zhvs8n25lksg2s34xdjzh3c";
+      rev = "v${version}";
+      sha256 = "00ka0yx3114wmpngs44fv2j3r6jxh1v1w9kzzmbklynpi3wmb65b";
     };
 
     cargoPatches = [ ./cargo-call-stack-lock.patch ];
     patches = [
       ./cargo-call-stack-udf.patch # https://github.com/japaric/cargo-call-stack/issues/20
     ];
-    cargoSha256 = "05gbh3kklr2d9m1mmj3lgnwqvgd53dzn5ibiz7ny75ch5ykqq720";
-
-    # Only because of the cargo lockfile version...
-    meta.broken = !lib.rustVersionAtLeast rustPlatform "1.41";
+    cargoSha256 = "14qdz805z5h9vryrjcy3vsqcaic8fh9f4x60pvbkbv3r2bz072vc";
   };
 
   cargo-stack-sizes = {
