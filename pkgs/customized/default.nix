@@ -37,6 +37,10 @@ let
       doInstallCheck = false; # old.doInstallCheck or false && !nix.stdenv.isDarwin;
     });
 
+    nix-readline-2_3 = { nix-readline, nix_2_3 ? nix, nix }: nix-readline.override {
+      nix = nix_2_3;
+    };
+
     rink-readline = { lib, rink, rustPlatform, fetchpatch }: rustPlatform.buildRustPackage {
       pname = "${rink.pname}-readline";
       inherit (rink) src version nativeBuildInputs buildInputs doCheck meta;
