@@ -1,4 +1,5 @@
 {
+  nix = ./nix.nix;
   systemd = ./systemd.nix;
   dht22-exporter = ./dht22-exporter.nix;
   modprobe = ./modprobe.nix;
@@ -28,6 +29,7 @@
   __functionArgs = { };
   __functor = self: { ... }: {
     imports = with self; [
+      nix
       systemd
       dht22-exporter
       glauth
