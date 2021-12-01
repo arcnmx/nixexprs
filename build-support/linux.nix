@@ -240,13 +240,11 @@ in {
 
   linuxPackagesOverlays = super.linuxPackagesOverlays or [ ] ++ [ kernelOverlay ];
 
-  linuxPackagesFor = if lib.isNixpkgsStable
-    then kernel: (super.linuxPackagesFor kernel).extend (lib.composeManyExtensions self.linuxPackagesOverlays)
-    else super.linuxPackagesFor;
+  linuxPackagesFor = super.linuxPackagesFor;
 
-  linuxKernel = lib.optionalAttrs lib.isNixpkgsUnstable (super.linuxKernel // {
+  linuxKernel = super.linuxKernel // {
     packagesFor = kernel: (super.linuxKernel.packagesFor kernel).extend (lib.composeManyExtensions self.linuxPackagesOverlays);
-  });
+  };
 
   linuxPackages_bleeding = with lib; let
     nonNullPackages = filter (p: p != null) [
