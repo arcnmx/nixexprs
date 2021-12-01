@@ -58,6 +58,27 @@ let
       cargoSha256 = "1chxf0rgdps21rm3p2c0yn9z0gvzx095n74ryiv89y0d1gka5jy6";
     };
 
+    starship-develop = { starship, fetchpatch, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
+      inherit (starship) pname nativeBuildInputs buildInputs postInstall meta;
+
+      version = "2021-11-30";
+      src = fetchFromGitHub {
+        owner = "starship";
+        repo = "starship";
+        rev = "2a4b922da4d39af53d23a175b8c54da18e976345";
+        sha256 = "0iylcdnzk17yxh8vzab26f6pa55q9gz9sqxwbdjh3mmhx61k01gs";
+      };
+
+      patches = starship.patches or [ ] ++ [ (fetchpatch {
+        url = "https://github.com/arcnmx/starship/commit/d55e18a90b728a03936c2617655f76297db68d1c.patch";
+        sha256 = "1pcz5r8h1b3z193hbcw2iwh4z3ad8qabh1hdhvd6zbx0z04yc0b1";
+      }) ];
+
+      cargoSha256 = "03znb501r2cj15y62lmg6ipyw93l6fjw25bxz8rvaxvxxcy78w1d";
+
+      doCheck = false;
+    };
+
     looking-glass-kvmfr-develop = { looking-glass-kvmfr, looking-glass-client-develop, linux }:
       looking-glass-kvmfr.override {
         looking-glass-client = looking-glass-client-develop;
