@@ -5,6 +5,7 @@
   sshd = ./sshd.nix;
   ssh = ./ssh.nix;
   konawall = ./konawall.nix;
+  screenstub = ./screenstub.nix;
   task = ./task.nix;
   kakoune = ./kakoune.nix;
   rustfmt = ./rustfmt.nix;
@@ -38,6 +39,7 @@
       git github bitbucket
       sshd ssh
       konawall
+      screenstub
       task
       kakoune
       rustfmt
