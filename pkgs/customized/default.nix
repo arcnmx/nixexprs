@@ -60,6 +60,7 @@ let
 
     starship-develop = { starship, fetchpatch, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
       inherit (starship) pname nativeBuildInputs buildInputs postInstall meta;
+      buildFeatures = starship.buildFeatures or [ "notify-rust" ];
 
       version = "2021-11-30";
       src = fetchFromGitHub {
