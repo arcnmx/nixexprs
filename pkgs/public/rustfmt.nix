@@ -3,7 +3,7 @@
 , Security ? darwin.Security, darwin
 , lib, hostPlatform
 }: with lib; let
-  rustPlatform = if false
+  rustPlatform = if true
     then rustPlatformFor {
       # https://github.com/rust-lang/rustfmt/blob/${version}/rust-toolchain
       channel = "nightly";
