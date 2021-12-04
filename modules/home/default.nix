@@ -30,6 +30,7 @@
   offlineimap = ./offlineimap.nix;
   syncplay = ./syncplay.nix;
   imv = ./imv.nix;
+  github-label-sync = ./github-label-sync.nix;
   weechat = ./weechat.nix;
   systemd = ./systemd.nix;
   swaylock = ./swaylock.nix;
@@ -65,6 +66,7 @@
       offlineimap
       syncplay
       imv
+      github-label-sync
       weechat
       systemd
       swaylock
