@@ -86,6 +86,20 @@ let
       doCheck = false;
     };
 
+    page-develop = { page, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
+      inherit (page) pname nativeBuildInputs postInstall meta;
+      version = "2021-12-13";
+
+      src = fetchFromGitHub {
+        owner = "I60R";
+        repo = "page";
+        rev = "9d966eb57607b4671951a6236d8c5200bdfd9cd1";
+        sha256 = "102b27bd5fygq0xzngnbk9pdgddkiymm0w9kaqklkd3imbjah3gz";
+      };
+
+      cargoSha256 = "1wz6xn8nin9l57s8gbd33b6a106y04hs9z1g8qwiks1ljsr3hr8i";
+    };
+
     looking-glass-kvmfr-develop = { looking-glass-kvmfr, looking-glass-client-develop, linux }:
       looking-glass-kvmfr.override {
         looking-glass-client = looking-glass-client-develop;
