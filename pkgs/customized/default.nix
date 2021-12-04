@@ -172,29 +172,9 @@ let
       # TODO: fully disable X11?
     });
 
-    rxvt-unicode-cvs-unwrapped = { rxvt-unicode-unwrapped ? null, fetchcvs, stdenv }: let
-      drv = rxvt-unicode-unwrapped.overrideAttrs (old: rec {
-        pname = "rxvt-unicode-cvs";
-        version = "2020-06-30";
-        enableParallelBuilding = true;
-        src = fetchcvs {
-          cvsRoot = ":pserver:anonymous@cvs.schmorp.de:/schmorpforge";
-          module = "rxvt-unicode";
-          date = version;
-          sha256 = "1kfd09fqls8ah9ydkh2bnsdx7ikg48hcp8rh2yxnsbagzjlmdwqf";
-        };
-        meta = old.meta or {} // {
-          broken = old.meta.broken or false || !rxvt-unicode-unwrapped.stdenv.isLinux;
-        };
-      });
-    in if rxvt-unicode-unwrapped == null then stdenv.mkDerivation {
-      name = "rxvt-unicode-cvs";
-      meta.broken = true;
-    } else drv;
-
-    rxvt-unicode-arc = { rxvt-unicode ? null, rxvt-unicode-cvs-unwrapped, rxvt-unicode-plugins ? { } }: let
+    rxvt-unicode-arc = { rxvt-unicode ? null, rxvt-unicode-unwrapped, rxvt-unicode-plugins ? { } }: let
       drv = (rxvt-unicode.override {
-        rxvt-unicode-unwrapped = rxvt-unicode-cvs-unwrapped;
+        rxvt-unicode-unwrapped = rxvt-unicode-unwrapped;
         configure = { availablePlugins, ... }: {
           plugins = with rxvt-unicode-plugins; with availablePlugins; [
             perl
@@ -209,10 +189,10 @@ let
       }).overrideAttrs (old: {
         pname = "rxvt-unicode-arc";
         meta = old.meta or {} // {
-          broken = old.meta.broken or false || rxvt-unicode-cvs-unwrapped.meta.broken or false;
+          broken = old.meta.broken or false || rxvt-unicode-unwrapped.meta.broken or false;
         };
       });
-    in if rxvt-unicode-cvs-unwrapped.meta.broken or false then rxvt-unicode-cvs-unwrapped
+    in if rxvt-unicode-unwrapped.meta.broken or false then rxvt-unicode-unwrapped
     else drv;
 
     bitlbee-libpurple = { bitlbee }: bitlbee.override { enableLibPurple = true; };
