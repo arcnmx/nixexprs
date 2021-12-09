@@ -361,8 +361,6 @@ let
       };
     });
 
-    xdg_utils-mimi = { xdg_utils }: xdg_utils.override { mimiSupport = true; };
-
     picom-next = { picom, fetchFromGitHub, lib }: picom.overrideAttrs (old: {
       version = "2021-04-13";
       src = fetchFromGitHub {
