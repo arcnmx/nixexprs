@@ -7,6 +7,7 @@
   konawall = ./konawall.nix;
   screenstub = ./screenstub.nix;
   task = ./task.nix;
+  starship = ./starship.nix;
   kakoune = ./kakoune.nix;
   rustfmt = ./rustfmt.nix;
   base16 = import ./base16.nix false;
@@ -41,6 +42,7 @@
       konawall
       screenstub
       task
+      starship
       kakoune
       rustfmt
       base16
