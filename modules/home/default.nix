@@ -7,6 +7,7 @@
   konawall = ./konawall.nix;
   screenstub = ./screenstub.nix;
   task = ./task.nix;
+  page = ./page.nix;
   starship = ./starship.nix;
   kakoune = ./kakoune.nix;
   rustfmt = ./rustfmt.nix;
@@ -42,6 +43,7 @@
       konawall
       screenstub
       task
+      page
       starship
       kakoune
       rustfmt
