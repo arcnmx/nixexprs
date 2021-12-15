@@ -43,7 +43,7 @@ let
 
     rink-readline = { lib, rink, rustPlatform, fetchpatch }: rustPlatform.buildRustPackage {
       pname = "${rink.pname}-readline";
-      inherit (rink) src version nativeBuildInputs buildInputs doCheck meta;
+      inherit (rink) src version nativeBuildInputs buildInputs doCheck;
 
       patches = rink.patches or [ ] ++ [ (fetchpatch {
         url = "https://github.com/kittywitch/rink-rs/commit/d69635621575af36dc1a4802843e085b4e66c903.patch";
@@ -56,6 +56,9 @@ let
       }) ];
 
       cargoSha256 = "1chxf0rgdps21rm3p2c0yn9z0gvzx095n74ryiv89y0d1gka5jy6";
+      meta = rink.meta or { } // {
+        broken = rink.meta.broken or false || lib.isNixpkgsUnstable;
+      };
     };
 
     starship-develop = { starship, fetchpatch, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
