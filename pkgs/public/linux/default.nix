@@ -192,26 +192,15 @@ let
       '';
     in stdenvNoCC.mkDerivation {
       pname = "nvidia-patch";
-      version = "2021-10-26";
+      version = "2021-12-15";
 
       src = fetchFromGitHub {
         # mirror: git clone https://ipfs.io/ipns/Qmed4r8yrBP162WK1ybd1DJWhLUi4t6mGuBoB9fLtjxR7u
         owner = "keylase";
         repo = "nvidia-patch";
-        rev = "6e7cdeef11bc2035438212b8ba74b4709d1b248b";
-        sha256 = "02ky2v69brk9ld9l1y649wvrik6vshgjpdmapdm2vraqnsa11iiy";
+        rev = "30d943515c3ab4ec5aef942c4bc8ce22eb16ded1";
+        sha256 = "13jm0zhz0ncg0ylz5vb659lnbkyy7h9z710mkzgn9rjr0vkfgznz";
       };
-
-      patches = [
-        (fetchpatch {
-          url = "https://github.com/keylase/nvidia-patch/pull/449.patch";
-          sha256 = "0rxq1xammgkrb03a0cjl6b1fjgnb8iam02dzv8m7ynclbqq0wnj6";
-        })
-        (fetchpatch {
-          url = "https://github.com/arcnmx/nvidia-patch/commit/a55fc5e22a097ca907facb41d15ce018c393dcbc.patch";
-          sha256 = "1v4iax6x1cx6lfkcap1b2iab36j6zby1rm1h5pfwd954ks3xq1lw";
-        })
-      ];
 
       nativeBuildInputs = [ nvpatch lndir ];
       patchedLibs = [
