@@ -463,17 +463,6 @@ let
       doCheck = !hostPlatform.isDarwin;
     });
 
-    mustache = { nodeEnv, fetchurl }: nodeEnv.buildNodePackage rec {
-      name = "mustache";
-      packageName = "mustache";
-      version = "4.0.0";
-      src = fetchurl {
-        url = "https://registry.npmjs.org/${packageName}/-/${packageName}-${version}.tgz";
-        sha512 = "34bjsgdkm5f3z2yx33z9jgk9jqmx31f1bz3svrhl571dnnm1jgyw84dhx6fz7a4aj5vcg25dalhl133irzw053n0pblcmn8gz4j760l";
-      };
-      production = true;
-    };
-
     mpd-youtube-dl = { lib, mpd, fetchpatch, makeWrapper, youtube-dl }: mpd.overrideAttrs (old: let
       patchVersion =
         if lib.versionOlder old.version "0.22" then "0.21.25"
