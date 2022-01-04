@@ -213,8 +213,8 @@
       owner = "arcnmx";
       repo = pname;
       # xinput branch
-      rev = "415a93acaa043de6e138d0a56276ae4b6adce803";
-      sha256 = "04fpgal5kizgz6zqsn0xqm1f4zmy27kwpmnf0iy4rndx9i0irr7z";
+      rev = "1e2e121f18d6f5e0ea18fe94e8a95feb87955e25";
+      sha256 = "02s33msf9dx9qrry42dnsn19chjqkxvvf9329zpxayw6rmjbzzmr";
     };
 
     nativeBuildInputs = [ pkg-config python3 ];
