@@ -131,6 +131,18 @@
         type = types.int;
         default = 0;
       };
+      class = mkOption {
+        type = types.str;
+        default = "Audio/Sink";
+      };
+      defaultAction = mkOption {
+        type = types.enum [ "mix" "cork" "duck" ];
+        default = "cork";
+      };
+      roleAction = mkOption {
+        type = with types; nullOr (enum [ "mix" "cork" "duck" ]);
+        default = "mix";
+      };
       actions = mkOption {
         type = with types; attrsOf str;
         default = { };
@@ -139,13 +151,17 @@
         enable = mkEnableOption "role endpoint" // { default = true; };
         name = mkOption {
           type = types.str;
-          default = name;
+          default = replaceStrings [ "-" ] [ "_" ] name;
         };
         class = mkOption {
           type = types.str;
-          default = "Audio/Sink";
+          default = config.class;
         };
       };
+    };
+    config.actions = {
+      default = mkOptionDefault config.defaultAction;
+      ${config.name} = mkIf (config.roleAction != null) (mkOptionDefault config.roleAction);
     };
   });
   constraintType = types.submodule ({ config, options, ... }: let
@@ -343,6 +359,11 @@ in {
       persistent = mkEnableOption "store preferences to the file system and restore them at startup" // {
         default = true;
       };
+      volume = mkOption {
+        type = types.float;
+        default = 0.4;
+        description = "the default volume to apply to ACP device nodes, in the linear scale";
+      };
       properties = mkOption {
         type = json.types.attrs;
       };
@@ -374,11 +395,13 @@ in {
         };
       };
       roles = {
+        enable = mkEnableOption "enable role-based endpoints - this is not yet ready for desktop use";
         role = mkOption {
           type = with types; attrsOf policyRoleType;
         };
         endpointsProperties = mkOption {
           type = json.types.attrs;
+          default = { };
         };
         properties = mkOption {
           type = json.types.attrs;
@@ -531,6 +554,7 @@ in {
           "audio.convert.*" = "audioconvert/libspa-audioconvert";
           "support.*" = "support/libspa-support";
         };
+        rt.enable = mkIf cfg.bluez.enable (mkDefault true);
       };
       access.rules = {
         flatpak = {
@@ -555,9 +579,19 @@ in {
           ];
           permissions = mkOptionDefault "all";
         };
+        restrictedAccess = {
+          # pulse TCP clients are assigned "restricted" access
+          matches = mkOptionDefault {
+            subject = "pipewire.access";
+            comparison = "restricted";
+            verb = "=";
+          };
+          permissions = mkOptionDefault "rx";
+        };
       };
       defaults.properties = mapAttrs (_: mkOptionDefault) {
         "use-persistent-storage" = cfg.defaults.persistent;
+        "default-volume" = cfg.defaults.volume;
       };
       policy = {
         properties = mapAttrs (_: mkOptionDefault) {
@@ -566,41 +600,62 @@ in {
           "audio.no-dsp" = !cfg.policy.session.dsp.enable;
           "duck.level" = cfg.policy.duck.level;
         } // {
-          roles = cfg.policy.roles.properties;
+          roles = mkIf cfg.policy.roles.enable cfg.policy.roles.properties;
         };
         roles = {
           role = {
+            capture = mapAttrs (_: mkDefault) {
+              name = "Capture";
+              aliases = [ "Multimedia" "Music" "Voice" "Capture" ];
+              priority = 25;
+              class = "Audio/Source";
+              roleAction = null;
+            } // {
+              actions.capture = mkOptionDefault "mix";
+            };
             multimedia = mapAttrs (_: mkDefault) {
               name = "Multimedia";
               aliases = [ "Movie" "Music" "Game" ];
-              priority = 10;
-            } // {
-              actions.default = mkOptionDefault "mix";
+              priority = 25;
+              roleAction = null;
             };
-            notification = mapAttrs (_: mkDefault) {
-              name = "Notification";
-              endpoint.name = "notifications";
-              priority = 20;
-            } // {
-              actions = mapAttrs (_: mkOptionDefault) {
-                default = "duck";
-                Notification = "mix";
-              };
-            };
-            alert = mapAttrs (_: mkDefault) {
-              name = "Alert";
+            speech-low = mapAttrs (_: mkDefault) {
+              name = "Speech-Low";
               priority = 30;
-            } // {
-              actions = mapAttrs (_: mkOptionDefault) {
-                default = "cork";
-                Alert = "mix";
-              };
+            };
+            custom-low = mapAttrs (_: mkDefault) {
+              name = "Custom-Low";
+              priority = 35;
+            };
+            navigation = mapAttrs (_: mkDefault) {
+              name = "Navigation";
+              priority = 50;
+              defaultAction = "duck";
+            };
+            speech-high = mapAttrs (_: mkDefault) {
+              name = "Speech-High";
+              priority = 60;
+            };
+            custom-high = mapAttrs (_: mkDefault) {
+              name = "Custom-High";
+              priority = 65;
+            };
+            communication = mapAttrs (_: mkDefault) {
+              name = "Communication";
+              priority = 75;
+            };
+            emergency = mapAttrs (_: mkDefault) {
+              name = "Emergency";
+              aliases = [ "Alert" ];
+              priority = 99;
             };
           };
-          endpointsProperties = mapAttrs' (_: role: nameValuePair "endpoint.${role.endpoint.name}" (mkIf (role.enable && role.endpoint.enable) {
-            "media.class" = mkOptionDefault role.endpoint.class;
-            role = role.name;
-          })) cfg.policy.roles.role;
+          endpointsProperties = mkIf cfg.policy.roles.enable (
+            mapAttrs' (_: role: nameValuePair "endpoint.${role.endpoint.name}" (mkIf (role.enable && role.endpoint.enable) {
+              "media.class" = mkOptionDefault role.endpoint.class;
+              role = role.name;
+            })) cfg.policy.roles.role
+          );
           properties = mapAttrs' (_: role: nameValuePair role.name (mkIf role.enable (
             mapAttrs' (key: action: nameValuePair "action.${key}" action) role.actions
             // {
