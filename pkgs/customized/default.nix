@@ -174,15 +174,6 @@ let
 
       doCheck = false;
 
-      postInstall = ''
-        ${old.postInstall or ""}
-        make -C bindings/ruby vendordir=$out/lib/ruby \
-          SHELL=$SHELL \
-          $makeFlags ''${makeFlagsArray+"''${makeFlagsArray[@]}"} \
-          $installFlags ''${installFlagsArray+"''${installFlagsArray[@]}"} \
-          install
-      '';
-
       meta = old.meta or {} // {
         broken = old.meta.broken or false || hostPlatform.isDarwin;
       };
