@@ -164,13 +164,11 @@ let
 
       postInstall = ''
         ${old.postInstall or ""}
-        make -C bindings/ruby exec_prefix=$out \
+        make -C bindings/ruby vendordir=$out/lib/ruby \
           SHELL=$SHELL \
           $makeFlags ''${makeFlagsArray+"''${makeFlagsArray[@]}"} \
           $installFlags ''${installFlagsArray+"''${installFlagsArray[@]}"} \
           install
-        mv $out/lib/ruby/vendor_ruby/* $out/lib/ruby/
-        rmdir $out/lib/ruby/vendor_ruby
       '';
 
       meta = old.meta or {} // {
