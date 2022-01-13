@@ -149,28 +149,6 @@ let
       meta.platforms = lib.platforms.linux;
     };
 
-    looking-glass-kvmfr = { stdenv, looking-glass-client, lib, linux }: stdenv.mkDerivation rec {
-      inherit (looking-glass-client) version;
-      pname = let
-        pname = "${looking-glass-client.pname}-kvmfr";
-        kernel-name = builtins.tryEval "${pname}-${linux.version}";
-      in if kernel-name.success then kernel-name.value else pname;
-
-      inherit (looking-glass-client) src;
-      sourceRoot = "source/module";
-
-      kernelVersion = linux.modDirVersion;
-      modules = [ "kvmfr" ];
-      makeFlags = kernelMakeFlags linux;
-      enableParallelBuilding = true;
-
-      installPhase = ''
-        install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/ kvmfr.ko
-      '';
-
-      meta.platforms = lib.platforms.linux;
-    };
-
     nvidia-patch = { stdenvNoCC, fetchFromGitHub, fetchpatch, writeShellScriptBin, lib, lndir, nvidia_x11 ? linuxPackages.nvidia_x11, linuxPackages ? { } }: let
       nvpatch = writeShellScriptBin "nvpatch" ''
         set -eu

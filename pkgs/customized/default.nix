@@ -100,12 +100,6 @@ let
       cargoSha256 = "1wz6xn8nin9l57s8gbd33b6a106y04hs9z1g8qwiks1ljsr3hr8i";
     };
 
-    looking-glass-kvmfr-develop = { looking-glass-kvmfr, looking-glass-client-develop, linux }:
-      looking-glass-kvmfr.override {
-        looking-glass-client = looking-glass-client-develop;
-        inherit linux;
-      };
-
     rnnoise-plugin-extern = { stdenv, rnnoise-plugin, rnnoise, ladspaH, pkg-config }: rnnoise-plugin.overrideAttrs (old: rec {
       nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
       buildInputs = old.buildInputs or [ ] ++ [ rnnoise ladspaH ];
