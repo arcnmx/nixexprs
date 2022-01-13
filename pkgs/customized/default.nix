@@ -100,6 +100,24 @@ let
       cargoSha256 = "1wz6xn8nin9l57s8gbd33b6a106y04hs9z1g8qwiks1ljsr3hr8i";
     };
 
+    gir-rs-0_14 = { gir-rs, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
+      inherit (gir-rs) pname meta;
+      version = "0.14-2021-10-08";
+      src = fetchFromGitHub {
+        owner = "gtk-rs";
+        repo = pname;
+        rev = "8891a2f2c34ba87828eddcc292f7bcbaab72b5de";
+        sha256 = "038af19w95a0bdn7dsgqxvb0lfxf1bxlqdcypasknj7cpimkjwg8";
+      };
+      cargoSha256 = "0vx5zv8p0dnayvrz75d332c7xf1mn5xhcknc4qvbhjyvr9gjla8v";
+
+      postPatch = ''
+        rm build.rs
+        sed -i '/build = "build\.rs"/d' Cargo.toml
+        echo "pub const VERSION: &str = \"$version\";" > src/gir_version.rs
+      '';
+    };
+
     rnnoise-plugin-extern = { stdenv, rnnoise-plugin, rnnoise, ladspaH, pkg-config }: rnnoise-plugin.overrideAttrs (old: rec {
       nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkg-config ];
       buildInputs = old.buildInputs or [ ] ++ [ rnnoise ladspaH ];
