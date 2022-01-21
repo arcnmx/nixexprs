@@ -1,4 +1,19 @@
 {
+  rustdoc-stripper = {
+    rustPlatform, fetchFromGitHub,
+  }: rustPlatform.buildRustPackage rec {
+    pname = "rustdoc-stripper";
+    version = "0.1.18";
+    src = fetchFromGitHub {
+      owner = "GuillaumeGomez";
+      repo = pname;
+      rev = "f6643dd300a71c876625260f190c63a5be41f331";
+      sha256 = "01h15sczxgc778avxsk7zakf9sakg7rx9dkjhmq4smx4pr5l033r";
+    };
+
+    cargoSha256 = "17bj63lqx0wm39dxdc4mid80gzdpyv2z59fx5zndvz1ns260v5yy";
+  };
+
   cargo-download-arc = {
     fetchFromGitHub, rustPlatform, lib
   , openssl, pkgconfig, hostPlatform, darwin,
