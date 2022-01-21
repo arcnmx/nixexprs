@@ -170,15 +170,17 @@ let
       '';
     in stdenvNoCC.mkDerivation {
       pname = "nvidia-patch";
-      version = "2021-12-15";
+      version = "2021-12-26";
 
       src = fetchFromGitHub {
         # mirror: git clone https://ipfs.io/ipns/Qmed4r8yrBP162WK1ybd1DJWhLUi4t6mGuBoB9fLtjxR7u
         owner = "keylase";
         repo = "nvidia-patch";
-        rev = "30d943515c3ab4ec5aef942c4bc8ce22eb16ded1";
-        sha256 = "13jm0zhz0ncg0ylz5vb659lnbkyy7h9z710mkzgn9rjr0vkfgznz";
+        rev = "035ac19d7078470c68b8443f2fdcd456ad71d905";
+        sha256 = "123fp8ss9bl8crmf33c1s7j8zvr8ly1vnrrrzxnqff5cv0j1f1bh";
       };
+
+      patches = [ ./nvidia-patch-510.patch ];
 
       nativeBuildInputs = [ nvpatch lndir ];
       patchedLibs = [
