@@ -283,13 +283,13 @@ let
       };
     });
 
-    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, libopus, libjack2, celt_0_7, poco, pcre, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, libopus, libjack2, flac, libogg, libvorbis, celt_0_7, poco, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
       drv = mumble.override {
         speechdSupport = true;
         jackSupport = true;
       };
-      version = "2021-08-31";
-      runtimeDependencies = [ libpulseaudio pipewire libopus libjack2 ];
+      version = "2022-01-19";
+      runtimeDependencies = [ libpulseaudio libopus libjack2 pipewire ];
     in with lib; drv.overrideAttrs (old: {
       pname = "mumble-develop";
       inherit version;
@@ -297,14 +297,14 @@ let
       src = fetchFromGitHub {
         owner = "mumble-voip";
         repo = "mumble";
-        rev = "207dbe0d8adffb24b807a7f1d39165a81e59785e";
-        sha256 = "1c7k6h77sfbsv7zr2hn86dq6gc54vkam60l59bkixv2hx4v3j59m";
+        rev = "36e6592603a257c721bf667b9d284f173eef201e";
+        sha256 = "1v4wd1s1sijzxx8lwhg9qbgg6zdw06hzrjx9ly9az01kpqnsxws4";
         fetchSubmodules = false;
       };
 
       patches = [ ];
       nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook qt5.qttools ];
-      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco pcre ]
+      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco flac libogg libvorbis ]
         ++ optional qtspeechSupport qt5.qtspeech;
       qtWrapperArgs = old.qtWrapperArgs or [ ] ++ [
         "--prefix" "LD_LIBRARY_PATH" ":" (makeLibraryPath runtimeDependencies)
@@ -319,6 +319,7 @@ let
         "-Dqtspeech=${if qtspeechSupport then "YES" else "NO"}"
         "-Dembed-qt-translations=NO"
         "-Dupdate=OFF"
+        "-Dtracy=OFF" "-DTRACY_ON_DEMAND=OFF"
         "-Doverlay-xcompile=OFF"
       ];
 
@@ -333,6 +334,10 @@ let
           target_link_libraries(mumble PRIVATE PkgConfig::PIPEWIRE)
         ' >> src/mumble/CMakeLists.txt
 
+        sed -i src/CMakeLists.txt \
+          -e '/add_subdirectory.*tracy/d' \
+          -e '/disable_warnings_for.*tracy/d' \
+          -e '/target_link_libraries.*Tracy/d'
         sed -i src/mumble/CMakeLists.txt \
           -e /set_target_properties.rnnoise/d \
           -e /install_library.rnnoise/d
