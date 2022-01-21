@@ -265,12 +265,12 @@ let
     in drv;
 
     mumble_1_4 = { mumble-develop, fetchFromGitHub }: mumble-develop.overrideAttrs (old: rec {
-      version = "1.4.0-release-candidate-01";
+      version = "1.4.230";
       src = fetchFromGitHub {
         owner = "mumble-voip";
         repo = "mumble";
-        rev = version;
-        sha256 = "02mr9rp2b5cyj916jqxxm0fn879chwi24rs482n12a5mh83pi8pz";
+        rev = "v${version}";
+        sha256 = "124xp9wmi6zvr62q9nv5dzab9bdyblzbzvmc291w4ns4wxi9lvdl";
 
         # fetch a single submodule
         fetchSubmodules = false;
