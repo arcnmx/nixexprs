@@ -233,20 +233,15 @@ let
 
     ddclient-develop = { ddclient, autoreconfHook, makeWrapper, fetchFromGitHub, fetchpatch }: let
       drv = ddclient.overrideAttrs (old: {
-        version = "2021-09-04";
+        version = "2022-01-13";
         src = fetchFromGitHub {
           owner = "ddclient";
           repo = "ddclient";
-          rev = "c56ce4182471aaa33d916a5709c1b9316ddab9f0";
-          sha256 = "1rwwa9i11mr76z20bk2idmlgfbv5ywlqhqka6xqswd9z8rg5zmk9";
+          rev = "17160fb016448106d21742e53404f9e7a16348fc";
+          sha256 = "1izl028pbihii9zirj80l31gnbsk5bvg6j81p675sz9kxvmjj9nb";
         };
         patches = old.patches or [ ] ++ [
           ./ddclient-nodaemon.patch
-          (fetchpatch {
-            # fix cloudflare response parsing
-            url = "https://github.com/ddclient/ddclient/pull/353.patch";
-            sha256 = "0xmryrv6sbd919c1b9rakrqlwx80byj62xwsn9vqmf8fyzzbpadl";
-          })
         ];
         preConfigure = ''
           touch Makefile.PL
