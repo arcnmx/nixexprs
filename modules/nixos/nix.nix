@@ -1,8 +1,9 @@
 { pkgs, config, lib, ... }: with lib; let
   cfg = config.nix;
-  accessTokens = concatStringsSep " " (mapAttrsToList (key: value:
+  accessTokens = mapAttrsToList (key: value:
     "${key}=${value}"
-  ) cfg.accessTokens);
+  ) cfg.accessTokens;
+  accessTokensStr = concatStringsSep " " accessTokens;
   experimentalFeatures = concatStringsSep " " cfg.experimentalFeatures;
 in {
   options.nix = {
@@ -12,10 +13,6 @@ in {
       example = {
         "github.com" = "23ac...b289";
       };
-    };
-    buildersUseSubstitutes = mkOption {
-      type = types.bool;
-      default = false;
     };
     isNix24 = mkOption {
       type = types.bool;
@@ -40,7 +37,7 @@ in {
             fi
             exec @nix@/bin/nix \
               --extra-experimental-features ${escapeShellArg experimentalFeatures} \
-              --access-tokens ${escapeShellArg accessTokens} \
+              --access-tokens ${escapeShellArg accessTokensStr} \
               "$@"
           '';
           inherit (pkgs) runtimeShell;
@@ -58,11 +55,8 @@ in {
       default = [ ];
     };
   };
-  config.nix = {
-    extraOptions = mkMerge [
-      (mkIf (cfg.isNix24 && cfg.accessTokens != { }) "access-tokens = ${accessTokens}")
-      (mkIf (cfg.isNix24 && cfg.experimentalFeatures != [ ]) "experimental-features = ${experimentalFeatures}")
-      (mkIf cfg.buildersUseSubstitutes "builders-use-substitutes = true")
-    ];
+  config.nix.settings = {
+    access-tokens = mkIf (cfg.isNix24 && cfg.accessTokens != { }) accessTokens;
+    experimental-features = mkIf (cfg.isNix24 && cfg.experimentalFeatures != [ ]) cfg.experimentalFeatures;
   };
 }
