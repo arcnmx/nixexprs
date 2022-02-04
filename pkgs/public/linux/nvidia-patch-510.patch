@@ -19,19 +19,21 @@ diff --git a/patch-fbc.sh b/patch-fbc.sh
 index 2eced4c..0469b42 100755
 --- a/patch-fbc.sh
 +++ b/patch-fbc.sh
-@@ -135,6 +135,7 @@ declare -A patch_list=(
+@@ -135,6 +135,8 @@ declare -A patch_list=(
      ["495.29.05"]='s/\x83\xfe\x01\x73\x08\x48/\x83\xfe\x00\x72\x08\x48/'
      ["495.44"]='s/\x83\xfe\x01\x73\x08\x48/\x83\xfe\x00\x72\x08\x48/'
      ["495.46"]='s/\x83\xfe\x01\x73\x08\x48/\x83\xfe\x00\x72\x08\x48/'
 +    ["510.39.01"]='s/\x83\xfe\x01\x73\x08\x48/\x83\xfe\x00\x72\x08\x48/'
++    ["510.47.03"]='s/\x83\xfe\x01\x73\x08\x48/\x83\xfe\x00\x72\x08\x48/'
  )
  
  declare -A object_list=(
-@@ -218,6 +219,7 @@ declare -A object_list=(
+@@ -218,6 +219,8 @@ declare -A object_list=(
      ["495.29.05"]='libnvidia-fbc.so'
      ["495.44"]='libnvidia-fbc.so'
      ["495.46"]='libnvidia-fbc.so'
 +    ["510.39.01"]='libnvidia-fbc.so'
++    ["510.47.03"]='libnvidia-fbc.so'
  )
  
  check_version_supported () {
@@ -39,19 +41,21 @@ diff --git a/patch.sh b/patch.sh
 index 690b009..6a4b28b 100755
 --- a/patch.sh
 +++ b/patch.sh
-@@ -173,6 +173,7 @@ declare -A patch_list=(
+@@ -173,6 +173,8 @@ declare -A patch_list=(
      ["495.29.05"]='s/\xe8\x35\x1f\xff\xff\x85\xc0\x41\x89\xc4/\xe8\x35\x1f\xff\xff\x29\xc0\x41\x89\xc4/g'
      ["495.44"]='s/\xe8\x35\x1f\xff\xff\x85\xc0\x41\x89\xc4/\xe8\x35\x1f\xff\xff\x29\xc0\x41\x89\xc4/g'
      ["495.46"]='s/\xe8\x35\x1f\xff\xff\x85\xc0\x41\x89\xc4/\xe8\x35\x1f\xff\xff\x29\xc0\x41\x89\xc4/g'
 +    ["510.39.01"]='s/\xe8\x35\x1f\xff\xff\x85\xc0\x41\x89\xc4/\xe8\x35\x1f\xff\xff\x29\xc0\x41\x89\xc4/g'
++    ["510.47.03"]='s/\xe8\x35\x1f\xff\xff\x85\xc0\x41\x89\xc4/\xe8\x35\x1f\xff\xff\x29\xc0\x41\x89\xc4/g'
  )
  
  declare -A object_list=(
-@@ -292,6 +293,7 @@ declare -A object_list=(
+@@ -292,6 +293,8 @@ declare -A object_list=(
      ["495.29.05"]='libnvidia-encode.so'
      ["495.44"]='libnvidia-encode.so'
      ["495.46"]='libnvidia-encode.so'
 +    ["510.39.01"]='libnvidia-encode.so'
++    ["510.47.03"]='libnvidia-encode.so'
  )
  
  check_version_supported () {
