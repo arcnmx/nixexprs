@@ -293,6 +293,32 @@
       default_permissions = config.permissions;
     };
   });
+  restoreRuleType = types.submodule ({ config, ... }: {
+    options = {
+      enable = mkEnableOption "rule" // { default = true; };
+      matches = mkOption {
+        type = orConstraints;
+      };
+      props = mkOption {
+        type = types.bool;
+        default = cfg.defaults.restore.props;
+      };
+      target = mkOption {
+        type = types.bool;
+        default = cfg.defaults.restore.target;
+      };
+      out = {
+        properties = mkOption {
+          type = types.unspecified;
+        };
+      };
+    };
+    config.out.properties = {
+      matches = mapMatches config.matches;
+      "state.restore-props" = config.props;
+      "state.restore-target" = config.target;
+    };
+  });
   fileType = types.submodule ({ config, name, ... }: {
     options = {
       text = mkOption {
@@ -363,6 +389,42 @@ in {
         type = types.float;
         default = 0.4;
         description = "the default volume to apply to ACP device nodes, in the linear scale";
+      };
+      restore = {
+        enable = mkEnableOption "Save and restore stream-specific properties" // {
+          default = true;
+        };
+        props = mkOption {
+          type = types.bool;
+          default = true;
+          description = "whether to restore the last stream properties or not";
+        };
+        target = mkOption {
+          type = types.bool;
+          default = true;
+          description = "whether to restore the last stream target or not";
+        };
+        rules = mkOption {
+          type = types.attrsOf restoreRuleType;
+          default = { };
+          description = "Rules to override settings per node";
+        };
+        properties = mkOption {
+          type = json.types.attrs;
+        };
+      };
+      echoCancel = {
+        enable = mkEnableOption "auto-switch to echo cancel sink and source nodes";
+        sink = mkOption {
+          type = types.str;
+          default = "echo-cancel-sink";
+          description = "the default echo-cancel-sink node name to automatically switch to";
+        };
+        source = mkOption {
+          type = types.str;
+          default = "echo-cancel-source";
+          description = "the default echo-cancel-source node name to automatically switch to";
+        };
       };
       properties = mkOption {
         type = json.types.attrs;
@@ -591,7 +653,17 @@ in {
       };
       defaults.properties = mapAttrs (_: mkOptionDefault) {
         "use-persistent-storage" = cfg.defaults.persistent;
+        "auto-echo-cancel" = cfg.defaults.echoCancel.enable;
+        "echo-cancel-sink-name" = cfg.defaults.echoCancel.sink;
+        "echo-cancel-source-name" = cfg.defaults.echoCancel.source;
         "default-volume" = cfg.defaults.volume;
+      };
+      defaults.restore.properties = {
+        properties = mapAttrs (_: mkOptionDefault) {
+          "restore-props" = cfg.defaults.restore.props;
+          "restore-target" = cfg.defaults.restore.target;
+        };
+        rules = mapRulesToLua cfg.defaults.restore.rules;
       };
       policy = {
         properties = mapAttrs (_: mkOptionDefault) {
@@ -704,15 +776,19 @@ in {
           { name = "default-routes.lua"; type = "script/lua"; arguments = cfg.defaults.properties; }
         ] ++ optionals cfg.defaults.persistent [
           { name = "libwireplumber-module-default-profile"; type = "module"; }
-          { name = "restore-stream.lua"; type = "script/lua"; }
-        ];
+        ] ++ optional cfg.defaults.restore.enable {
+          name = "restore-stream.lua"; type = "script/lua";
+          ${if versionAtLeast cfg.package.version "0.4.8" then "arguments" else null} = cfg.defaults.restore.properties;
+        };
         policy = [
           { name = "libwireplumber-module-si-node"; type = "module"; }
           { name = "libwireplumber-module-si-audio-adapter"; type = "module"; }
           { name = "libwireplumber-module-si-standard-link"; type = "module"; }
           { name = "libwireplumber-module-si-audio-endpoint"; type = "module"; }
           { name = "libwireplumber-module-default-nodes-api"; type = "module"; } # access default nodes from scripts
+        ] ++ optional (versionOlder cfg.package.version "0.4.8")
           { name = "libwireplumber-module-route-settings-api"; type = "module"; } # access volume of streams from scripts
+        ++ [
           { name = "libwireplumber-module-mixer-api"; type = "module"; } # needed for volume ducking
           { name = "static-endpoints.lua"; type = "script/lua"; arguments = cfg.policy.roles.endpointsProperties; }
           { name = "create-item.lua"; type = "script/lua"; arguments = cfg.policy.properties; }
