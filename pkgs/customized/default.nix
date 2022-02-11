@@ -353,17 +353,6 @@ let
       '';
     });
 
-    pidgin-arc = { pidgin, purple-plugins-arc }: let
-      wrapped = pidgin.override {
-        plugins = purple-plugins-arc;
-      };
-    in wrapped.overrideAttrs (old: {
-      pname = "pidgin-arc";
-      meta = old.meta or {} // {
-        broken = pidgin.stdenv.isDarwin;
-      };
-    });
-
     weechat-arc = { lib, wrapWeechat, weechat-unwrapped, weechatScripts, python3Packages }: let
       filterBroken = lib.filter (s: ! s.meta.broken or false && s.meta.available or true); # matrix-nio is often broken
       weechat-wrapped = (wrapWeechat.override { inherit python3Packages; }) weechat-unwrapped {
