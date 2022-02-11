@@ -374,7 +374,7 @@ let
             ]))
           ];
           scripts = with weechatScripts; filterBroken [
-            go auto_away autoconf autosort colorize_nicks unread_buffer urlgrab vimode-develop weechat-matrix
+            weechat-go auto_away autoconf weechat-autosort colorize_nicks unread_buffer urlgrab vimode-develop weechat-matrix
           ];
         };
       };

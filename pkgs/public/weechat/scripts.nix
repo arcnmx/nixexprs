@@ -1,14 +1,4 @@
 {
-  go = { buildWeechatScript }: buildWeechatScript {
-    pname = "go.py";
-    version = "2.7";
-    sha256 = "0bnbfpj1qg4yzwbikh1aw5ajc8l44lkb0y0m6mz8grpf5bxk5cwm";
-  };
-  highmon = { buildWeechatScript }: buildWeechatScript {
-    pname = "highmon.pl";
-    version = "2.7";
-    sha256 = "1vvgzscb12l3cp2nq954fx6j3awvpjsb0nqylal51ps9cq9a3wir";
-  };
   auto_away = { buildWeechatScript }: buildWeechatScript {
     pname = "auto_away.py";
     version = "0.4";
@@ -19,15 +9,10 @@
     version = "0.3";
     sha256 = "122krj58hvsn7z6221ra7f1l5h6xa4g0dsdsrxzwkvkq83j01f00";
   };
-  autosort = { buildWeechatScript }: buildWeechatScript {
-    pname = "autosort.py";
-    version = "3.8";
-    sha256 = "1y0xrblzlygggn05l95zb195w9pd85rig4y1mfqca2f922izcccp";
-  };
-  colorize_nicks = { buildWeechatScript }: buildWeechatScript {
-    pname = "colorize_nicks.py";
-    version = "27";
-    sha256 = "0hiay88vvy171jiq6ahflm0ipb7sslfxwhmmm8psv6qk19rv2sxs";
+  emoji = { buildWeechatScript }: buildWeechatScript {
+    pname = "emoji.lua";
+    version = "5";
+    sha256 = "072ampdhvvmah5hjc2raxvgjx632mmqa1j42sf3jabh0q4ha52ps";
   };
   parse_relayed_msg = { buildWeechatScript }: buildWeechatScript {
     pname = "parse_relayed_msg.pl";
@@ -82,11 +67,6 @@
     '';
 
     passthru.scripts = [ pname ];
-  };
-  zncplayback = { buildWeechatScript }: buildWeechatScript {
-    pname = "zncplayback.py";
-    version = "0.2.1";
-    sha256 = "1k32p6naxg40g664ip48zvm61xza7l9az3v3rawmjw97i0mwz7y3";
   };
   weechat-matrix = { python3Packages, weechat-matrix }: python3Packages.weechat-matrix or weechat-matrix;
 }
