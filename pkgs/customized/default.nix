@@ -57,7 +57,7 @@ let
 
       cargoSha256 = "1chxf0rgdps21rm3p2c0yn9z0gvzx095n74ryiv89y0d1gka5jy6";
       meta = rink.meta or { } // {
-        broken = rink.meta.broken or false || lib.isNixpkgsUnstable;
+        broken = rink.meta.broken or false || true;
       };
     };
 
