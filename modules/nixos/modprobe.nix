@@ -1,5 +1,6 @@
 { pkgs, config, lib, ... }: with lib; let
   # this partially exists to work around https://github.com/NixOS/nixpkgs/issues/25456
+  # https://github.com/NixOS/nixpkgs/pull/145013 simplifies this as of 22.05
   cfg = config.boot.modprobe;
   optionString = option: value: let
     str =
@@ -73,18 +74,23 @@ in {
     };
   };
   config.boot = mkIf cfg.enable {
-    initrd.prepend = singleton "${pkgs.makeInitrd {
-      name = "initrd-modprobe";
-      inherit (config.boot.initrd) compressor;
+    initrd = let
+      includedModules = filter (mod: mod.includeInInitrd) (attrValues cfg.modules);
+    in if versionAtLeast version "22.05pre" then {
+      extraModprobeConfig = mkMerge (map (mod: mod.modprobeConfig) includedModules);
+    } else {
+      prepend = singleton "${pkgs.makeInitrd {
+        name = "initrd-modprobe";
+        inherit (config.boot.initrd) compressor;
 
-      contents = singleton {
-        symlink = "/etc/modprobe.d/nixos-arc.conf";
-        object = let
-          includedModules = filter (mod: mod.includeInInitrd) (attrValues cfg.modules);
-          modprobeConfig = concatMapStringsSep "\n" (mod: mod.modprobeConfig) includedModules;
-        in pkgs.writeText "modprobe.conf" modprobeConfig;
-      };
-    }}/initrd";
+        contents = singleton {
+          symlink = "/etc/modprobe.d/nixos-arc.conf";
+          object = pkgs.writeText "modprobe.conf" (
+            concatMapStringsSep "\n" (mod: mod.modprobeConfig) includedModules
+          );
+        };
+      }}/initrd";
+    };
     extraModprobeConfig = mkMerge (mapAttrsToList (_: mod: mod.modprobeConfig) cfg.modules);
   };
 }
