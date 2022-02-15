@@ -120,7 +120,7 @@ in {
           };
         };
         config = {
-          package = pkgs.mautrix-hangouts;
+          package = mkDefault pkgs.mautrix-hangouts;
           registration = {
             id = mkDefaultOverride "hangouts";
             namespaces.users = mkDefault [ {
@@ -202,10 +202,10 @@ in {
         };
       };
       mautrix-signal = {
-        package = pkgs.mautrix-signal;
+        package = mkDefault pkgs.mautrix-signal;
       };
       mautrix-telegram = {
-        package = pkgs.mautrix-telegram;
+        package = mkDefault pkgs.mautrix-telegram;
       };
       mautrix-whatsapp = { config, ... }: {
         imports = [ matrix-appservices.mautrix ];
@@ -290,7 +290,7 @@ in {
           };
         };
         config = {
-          package = pkgs.mautrix-whatsapp;
+          package = mkDefault pkgs.mautrix-whatsapp;
           registration = {
             id = mkDefaultOverride "whatsapp";
             senderLocalpart = mkDefaultOverride config.appservice.bot.username;
@@ -428,14 +428,14 @@ in {
       matrix-appservice-irc = { config, ... }: {
         imports = [ matrix-appservices.matrix-appservice-bridge ];
         config = {
-          package = pkgs.matrix-appservice-irc;
+          package = mkDefault pkgs.matrix-appservice-irc;
           port = mkOptionDefault 8090;
         };
       };
       matrix-appservice-discord = { config, ... }: {
         imports = [ matrix-appservices.matrix-appservice-bridge ];
         config = {
-          package = pkgs.matrix-appservice-discord;
+          package = mkDefault pkgs.matrix-appservice-discord;
           port = mkOptionDefault 9005;
           registration = {
             id = mkDefaultOverride "discord-bridge";
@@ -467,7 +467,7 @@ in {
           };
         };
         config = {
-          package = pkgs.mx-puppet-discord;
+          package = mkDefault pkgs.mx-puppet-discord;
           registrationPrefix = mkOptionDefault "_discordpuppet_";
           bridge = {
             port = mkDefaultOverride 8434;
@@ -520,7 +520,7 @@ in {
           };
         };
         config = {
-          package = pkgs.heisenbridge;
+          package = mkDefault pkgs.heisenbridge;
           homeserverUrl = mkIf matrix-synapse.enable (mkOptionDefault matrix-synapse.public_baseurl);
           registration = {
             senderLocalpart = mkDefaultOverride "heisenbridge";
