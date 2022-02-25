@@ -25,6 +25,7 @@
   mosh = ./mosh.nix;
   base16 = ./base16.nix;
   base16-shared = import ../home/base16.nix true;
+  doc-warnings = ./doc-warnings.nix;
 
   __functionArgs = { };
   __functor = self: { ... }: {
@@ -50,6 +51,7 @@
       filebin
       mosh
       base16 base16-shared
+      doc-warnings
     ];
   };
 }
