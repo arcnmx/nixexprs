@@ -250,32 +250,13 @@ let
       });
     in drv;
 
-    mumble_1_4 = { mumble-develop, fetchFromGitHub }: mumble-develop.overrideAttrs (old: rec {
-      version = "1.4.230";
-      src = fetchFromGitHub {
-        owner = "mumble-voip";
-        repo = "mumble";
-        rev = "v${version}";
-        sha256 = "124xp9wmi6zvr62q9nv5dzab9bdyblzbzvmc291w4ns4wxi9lvdl";
-
-        # fetch a single submodule
-        fetchSubmodules = false;
-        leaveDotGit = true;
-        postFetch = ''
-          git -C $out reset -- themes/Mumble
-          git -C $out submodule update --init --depth 1 -- themes/Mumble &&
-            rm -r $out/.git
-        '';
-      };
-    });
-
-    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, pipewire, libopus, libjack2, flac, libogg, libvorbis, celt_0_7, poco, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, alsa-lib, pipewire, libopus, libjack2, flac, libogg, libvorbis, celt_0_7, poco, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
       drv = mumble.override {
         speechdSupport = true;
         jackSupport = true;
       };
       version = "2022-01-19";
-      runtimeDependencies = [ libpulseaudio libopus libjack2 pipewire ];
+      runtimeDependencies = [ libpulseaudio libopus libjack2 pipewire alsa-lib ];
     in with lib; drv.overrideAttrs (old: {
       pname = "mumble-develop";
       inherit version;
