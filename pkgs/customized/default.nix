@@ -63,16 +63,16 @@ let
 
     page-develop = { page, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
       inherit (page) pname nativeBuildInputs postInstall meta;
-      version = "2021-12-13";
+      version = "2021-12-31";
 
       src = fetchFromGitHub {
         owner = "I60R";
         repo = "page";
-        rev = "9d966eb57607b4671951a6236d8c5200bdfd9cd1";
-        sha256 = "102b27bd5fygq0xzngnbk9pdgddkiymm0w9kaqklkd3imbjah3gz";
+        rev = "2bf1f53dfe9f2dd1724d67aea43511e466bfde17";
+        sha256 = "0pc8j2kqivr2jwwsnwf2zpcvjpykrqd1na60bfzn78y09g2v43cy";
       };
 
-      cargoSha256 = "1wz6xn8nin9l57s8gbd33b6a106y04hs9z1g8qwiks1ljsr3hr8i";
+      cargoSha256 = "15014y1330kvwcc4pxj4iprrypk4n2g47c55hl11n0ffnwshd54v";
     };
 
     gir-rs-0_14 = { gir-rs, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage rec {
