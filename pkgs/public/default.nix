@@ -20,6 +20,7 @@
   github-label-sync = import ./github-label-sync;
   yggdrasil-address = import ./yggdrasil-address.nix;
   rustfmt-nightly = import ./rustfmt.nix;
+  switch-lan-play = import ./switch-lan-play.nix;
 }
 // (import ./droid.nix)
 // (import ./base16)
