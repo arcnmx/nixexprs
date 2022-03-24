@@ -22,7 +22,7 @@
   in pkgs.writeText "${strings.sanitizeDerivationName name}" ''
     components = ${lua.serializeExpr componentsConfig}
   '';
-  pipewireModuleArgs = json.types.attrs;
+  pipewireModuleArgs = with types; either (attrsOf json.type) (listOf json.type);
   pipewireModuleType = types.submodule ({ config, ... }: {
     options = {
       name = mkOption {
