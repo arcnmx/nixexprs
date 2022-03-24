@@ -293,6 +293,26 @@
       default_permissions = config.permissions;
     };
   });
+  persistentProfileRuleType = types.submodule ({ config, ... }: {
+    options = {
+      enable = mkEnableOption "rule" // { default = true; };
+      matches = mkOption {
+        type = orConstraints;
+      };
+      profileNames = mkOption {
+        type = with types; listOf str;
+      };
+      out = {
+        properties = mkOption {
+          type = types.unspecified;
+        };
+      };
+    };
+    config.out.properties = {
+      matches = mapMatches config.matches;
+      profile_names = config.profileNames;
+    };
+  });
   restoreRuleType = types.submodule ({ config, ... }: {
     options = {
       enable = mkEnableOption "rule" // { default = true; };
@@ -389,6 +409,22 @@ in {
         type = types.float;
         default = 0.4;
         description = "the default volume to apply to ACP device nodes, in the linear scale";
+      };
+      device = {
+        enable = mkEnableOption "Selects appropriate profile for devices" // {
+          default = true;
+        };
+        persistentProfiles = mkOption {
+          type = types.attrsOf persistentProfileRuleType;
+          default = { };
+          description = ''
+            persistent device profiles that should never change when wireplumber is running,
+            even if a new profile with higher priority becomes available
+          '';
+        };
+        properties = mkOption {
+          type = json.types.attrs;
+        };
       };
       restore = {
         enable = mkEnableOption "Save and restore stream-specific properties" // {
@@ -528,9 +564,6 @@ in {
     suspend-node.enable = mkEnableOption ''
       Automatically suspends idle nodes after 3 seconds
     '' // { default = true; };
-    device-activation.enable = mkEnableOption ''
-      Automatically sets device profiles to 'On'
-    '' // { default = true; };
     pipewire = {
       modules = mkOption {
         type = types.listOf pipewireModuleTypeSloppy;
@@ -665,6 +698,21 @@ in {
         };
         rules = mapRulesToLua cfg.defaults.restore.rules;
       };
+      defaults.device = {
+        persistentProfiles = {
+          default = {
+            matches = mkOptionDefault {
+              subject = "device.name";
+              comparison = "*";
+              verb = "matches";
+            };
+            profileNames = mkOptionDefault [ "off" "pro-audio" ];
+          };
+        };
+        properties = {
+          persistent = mapRulesToLua cfg.defaults.device.persistentProfiles;
+        };
+      };
       policy = {
         properties = mapAttrs (_: mkOptionDefault) {
           move = cfg.policy.session.move;
@@ -771,9 +819,15 @@ in {
           { name = "libwireplumber-module-portal-permissionstore"; type = "module"; }
           { name = "access/access-portal.lua"; type = "script/lua"; }
         ];
+        policyRoutes = if versionOlder cfg.package.version "0.4.9"
+          then "default-routes.lua"
+          else "policy-device-routes.lua";
         defaults = [
           { name = "libwireplumber-module-default-nodes"; type = "module"; arguments = cfg.defaults.properties; }
-          { name = "default-routes.lua"; type = "script/lua"; arguments = cfg.defaults.properties; }
+        ] ++ optionals (cfg.defaults.device.enable && versionAtLeast cfg.package.version "0.4.9") [
+          { name = "policy-device-profile.lua"; type = "script/lua"; arguments = cfg.defaults.device.properties; }
+        ] ++ [
+          { name = policyRoutes; type = "script/lua"; arguments = cfg.defaults.properties; }
         ] ++ optionals cfg.defaults.persistent [
           { name = "libwireplumber-module-default-profile"; type = "module"; }
         ] ++ optional cfg.defaults.restore.enable {
@@ -831,7 +885,7 @@ in {
           ++ optional cfg.suspend-node.enable {
             name = "suspend-node.lua"; type = "script/lua";
           }
-          ++ optional cfg.device-activation.enable {
+          ++ optional (cfg.defaults.device.enable && versionOlder cfg.package.version "0.4.9") {
             name = "libwireplumber-module-device-activation"; type = "module";
           } ++ optionals cfg.policy.enable policy
         ))
