@@ -61,31 +61,6 @@ let
       };
     };
 
-    starship-develop = { starship, fetchpatch, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
-      inherit (starship) pname nativeBuildInputs buildInputs postInstall meta;
-      buildFeatures = starship.buildFeatures or [ "notify-rust" ];
-
-      version = "2021-11-30";
-      src = fetchFromGitHub {
-        owner = "starship";
-        repo = "starship";
-        rev = "2a4b922da4d39af53d23a175b8c54da18e976345";
-        sha256 = "0iylcdnzk17yxh8vzab26f6pa55q9gz9sqxwbdjh3mmhx61k01gs";
-      };
-
-      patches = starship.patches or [ ] ++ [ (fetchpatch {
-        url = "https://github.com/arcnmx/starship/commit/d55e18a90b728a03936c2617655f76297db68d1c.patch";
-        sha256 = "1pcz5r8h1b3z193hbcw2iwh4z3ad8qabh1hdhvd6zbx0z04yc0b1";
-      }) (fetchpatch {
-        url = "https://github.com/arcnmx/starship/commit/6d7ca76d652eb101adcbdb72cb362a735c7405b9.patch";
-        sha256 = "0pa3rpsra0220nplisnn2yfg8vkgx0bxnh0hm3v4y2csrqr5k1gh";
-      }) ];
-
-      cargoSha256 = "03znb501r2cj15y62lmg6ipyw93l6fjw25bxz8rvaxvxxcy78w1d";
-
-      doCheck = false;
-    };
-
     page-develop = { page, fetchFromGitHub, rustPlatform }: rustPlatform.buildRustPackage {
       inherit (page) pname nativeBuildInputs postInstall meta;
       version = "2021-12-13";
