@@ -76,9 +76,7 @@ in {
   config.boot = mkIf cfg.enable {
     initrd = let
       includedModules = filter (mod: mod.includeInInitrd) (attrValues cfg.modules);
-    in if versionAtLeast version "22.05pre" then {
-      extraModprobeConfig = mkMerge (map (mod: mod.modprobeConfig) includedModules);
-    } else {
+    in optionalAttrs (versionOlder version "22.05pre") {
       prepend = singleton "${pkgs.makeInitrd {
         name = "initrd-modprobe";
         inherit (config.boot.initrd) compressor;

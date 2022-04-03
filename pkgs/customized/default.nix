@@ -154,9 +154,9 @@ let
       };
     });
 
-    vim_configurable-pynvim = { vim_configurable, python3 }: (vim_configurable.override {
+    vim_configurable-pynvim = { lib, vim_configurable, python3 }: (vim_configurable.override {
       # vim with python3
-      python = python3.withPackages(ps: with ps; [ pynvim ]);
+      ${if lib.isNixpkgsUnstable then "python3" else "python"} = python3.withPackages(ps: with ps; [ pynvim ]);
       wrapPythonDrv = true;
       guiSupport = "no";
       luaSupport = false;
