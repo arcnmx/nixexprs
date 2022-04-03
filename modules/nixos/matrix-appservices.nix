@@ -97,7 +97,10 @@
       };
       database.postgresql.uri = let
         pw = optionalString (config.database.password != null) ":${config.database.password}";
-      in mkOptionDefault "postgres://${config.database.user}${pw}@${toString config.database.host}/${config.database.name}";
+        host = if config.database.host == null
+          then "%2Frun%2Fpostgresql"
+          else config.database.host;
+      in mkOptionDefault "postgres://${config.database.user}${pw}@${host}/${config.database.name}";
       setSystemdService = {
         serviceConfig = mkMerge [ {
           ExecStart = config.cmdline;

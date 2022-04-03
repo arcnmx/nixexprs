@@ -1,14 +1,22 @@
-{ fetchFromGitHub, fetchpatch, lib, python3Packages, e2be ? true, metrics ? false }: with python3Packages;
+{ fetchFromGitHub, fetchpatch, lib, python3Packages, e2be ? true, metrics ? false }: with python3Packages; let
 
-buildPythonApplication {
+  mautrix = python3Packages.mautrix.overridePythonAttrs (old: rec {
+    version = "0.15.0";
+    src = old.src.override {
+      inherit version;
+      sha256 = "00h6r5znb8hbjr69ihx8qxvbj9fls2723k82dnaky6yq2g42v9d7";
+    };
+  });
+
+in buildPythonApplication rec {
   pname = "mautrix-googlechat";
-  version = "2022-02-16";
+  version = "0.3.1";
 
   src = fetchFromGitHub {
     owner = "mautrix";
     repo = "googlechat";
-    rev = "bafd1f7e0a016d7a68adaae833d87b10990ea6f3";
-    sha256 = "1grdjxacnadhhmyrqkm9q6c11xdxjsmmpvf8l9rpx8nkyw98dj1z";
+    rev = "v${version}";
+    sha256 = "1wwmj2wcyzw89q34vbya20idwy13wpiinl2wr7f0bbwqp0xicjak";
   };
 
   patches = [ ./entrypoint.patch ];
