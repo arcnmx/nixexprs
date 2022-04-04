@@ -225,12 +225,12 @@ let
       });
     in drv;
 
-    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, alsa-lib, pipewire, libopus, libjack2, flac, libogg, libvorbis, celt_0_7, poco, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
+    mumble-develop = { fetchFromGitHub, lib, mumble, libpulseaudio, alsa-lib, pipewire, libopus, libjack2, flac, libogg, libvorbis, celt_0_7, nlohmann_json, microsoft_gsl, poco, cmake, ninja, qt5, pkg-config, qtspeechSupport ? false }: let
       drv = mumble.override {
         speechdSupport = true;
         jackSupport = true;
       };
-      version = "2022-01-19";
+      version = "2022-04-01";
       runtimeDependencies = [ libpulseaudio libopus libjack2 pipewire alsa-lib ];
     in with lib; drv.overrideAttrs (old: {
       pname = "mumble-develop";
@@ -239,14 +239,14 @@ let
       src = fetchFromGitHub {
         owner = "mumble-voip";
         repo = "mumble";
-        rev = "36e6592603a257c721bf667b9d284f173eef201e";
-        sha256 = "1v4wd1s1sijzxx8lwhg9qbgg6zdw06hzrjx9ly9az01kpqnsxws4";
+        rev = "7a6cbc8046009b773aafb1ea1501f7a320e8d871";
+        sha256 = "1870bbr0x2djyhgm8km37kn262w8jh8p0b49975ajscnjr8hw4i0";
         fetchSubmodules = false;
       };
 
       patches = [ ];
       nativeBuildInputs = [ pkg-config cmake ninja qt5.wrapQtAppsHook qt5.qttools ];
-      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco flac libogg libvorbis ]
+      buildInputs = old.buildInputs ++ runtimeDependencies ++ [ celt_0_7 poco flac libogg libvorbis nlohmann_json microsoft_gsl ]
         ++ optional qtspeechSupport qt5.qtspeech;
       qtWrapperArgs = old.qtWrapperArgs or [ ] ++ [
         "--prefix" "LD_LIBRARY_PATH" ":" (makeLibraryPath runtimeDependencies)
@@ -257,23 +257,23 @@ let
         "-Dbundled-opus=NO"
         "-Dbundled-celt=NO"
         "-Dbundled-speex=NO"
+        "-Dbundled-rnnoise=NO"
+        "-Dbundled-json=NO"
+        "-Dbundled-gsl=NO"
         "-Dportaudio=NO"
         "-Dqtspeech=${if qtspeechSupport then "YES" else "NO"}"
         "-Dembed-qt-translations=NO"
+        "-Dbundle-qt-translations=NO"
         "-Dupdate=OFF"
         "-Dtracy=OFF" "-DTRACY_ON_DEMAND=OFF"
+        "-Dwarnings-as-errors=OFF"
         "-Doverlay-xcompile=OFF"
       ];
 
       postPatch = old.postPatch or "" + ''
         echo '
-          pkg_search_module(RNNOISE IMPORTED_TARGET rnnoise)
-          add_library(rnnoise ALIAS PkgConfig::RNNOISE)
-        ' > 3rdparty/rnnoise-build/CMakeLists.txt
-
-        echo '
           pkg_search_module(PIPEWIRE IMPORTED_TARGET libpipewire-0.3)
-          target_link_libraries(mumble PRIVATE PkgConfig::PIPEWIRE)
+          target_link_libraries(mumble_client_object_lib PRIVATE PkgConfig::PIPEWIRE)
         ' >> src/mumble/CMakeLists.txt
 
         sed -i src/CMakeLists.txt \
