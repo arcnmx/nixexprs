@@ -64,16 +64,6 @@
     patch = ./public/linux/efifb-nobar.patch;
   };
 
-  relax-tsc = { fetchpatch }: rec {
-    # https://old.reddit.com/r/linux_gaming/comments/rsvjqb/psa_if_your_clocksource_is_hpet_rather_than_tsc/hqpyec6/
-    name = "relax-tsc";
-    patch = fetchpatch {
-      name = name + ".patch";
-      url = "https://pastebin.com/raw/aF2nvu0f";
-      sha256 = "0b3bm3a193dphmzwwnkyi9ga3wlva3qamncrvzsi6gr8z41rmjp3";
-    };
-  };
-
   i915-vga-arbiter = { fetchpatch }: rec {
     name = "i915-vga-arbiter";
     patch = fetchpatch {
