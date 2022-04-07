@@ -78,13 +78,6 @@ in {
     };
   };
   jobs = {
-    stable = {
-      system = "x86_64-linux";
-      channels = {
-        nixpkgs.version = "stable";
-        home-manager = "release-22.05";
-      };
-    };
     unstable = {
       system = "x86_64-linux";
       channels.nixpkgs.version = "unstable";
@@ -92,26 +85,6 @@ in {
     unstable-small = {
       system = "x86_64-linux";
       channels.nixpkgs.version = "unstable-small";
-      warn = true;
-    };
-    unstable-nixpkgs = {
-      system = "x86_64-linux";
-      channels.nixpkgs.version = "nixpkgs-unstable";
-      warn = true;
-    };
-    stable-mac = {
-      ci.gh-actions.enable = mkForce false;
-      system = "x86_64-darwin";
-      channels = {
-        nixpkgs.version = "21.05";
-        home-manager = "release-21.05";
-      };
-      warn = true;
-    };
-    unstable-mac = {
-      ci.gh-actions.enable = mkForce false;
-      system = "x86_64-darwin";
-      channels.nixpkgs.version = "unstable";
       warn = true;
     };
   };
