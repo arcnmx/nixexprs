@@ -211,7 +211,7 @@ in {
             permissions = mkMerge [
               { }
               (mkIf matrix-synapse.enable {
-                ${matrix-synapse.settings.server_name or matrix-synapse.server_name} = mkOptionDefault "user";
+                ${matrix-synapse.settings.server_name} = mkOptionDefault "user";
                 #"@admin:example.com" = "admin";
               })
             ];
@@ -321,7 +321,7 @@ in {
             permissions = mkMerge [
               { }
               (mkIf matrix-synapse.enable {
-                ${matrix-synapse.settings.server_name or matrix-synapse.server_name} = mkOptionDefault "user";
+                ${matrix-synapse.settings.server_name} = mkOptionDefault "user";
                 #"@admin:example.com" = "admin";
               })
             ];
@@ -452,8 +452,8 @@ in {
             } ];
           };
           homeserver = mkIf matrix-synapse.enable {
-            address = mkOptionDefault matrix-synapse.settings.public_baseurl or matrix-synapse.public_baseurl;
-            domain = mkOptionDefault matrix-synapse.settings.server_name or matrix-synapse.server_name;
+            address = mkOptionDefault matrix-synapse.settings.public_baseurl;
+            domain = mkOptionDefault matrix-synapse.settings.server_name;
           };
           appservice.bot = {
             username = mkDefaultOverride "whatsappbot";
@@ -531,7 +531,7 @@ in {
                 "*" = "relaybot";
               }
               (mkIf matrix-synapse.enable {
-                ${matrix-synapse.settings.server_name or matrix-synapse.server_name} = mkOptionDefault "user";
+                ${matrix-synapse.settings.server_name} = mkOptionDefault "user";
                 #"@admin:example.com" = "admin";
               })
             ];
@@ -684,7 +684,7 @@ in {
         };
         config = {
           package = mkDefault pkgs.heisenbridge;
-          homeserverUrl = mkIf matrix-synapse.enable (mkOptionDefault matrix-synapse.settings.public_baseurl or matrix-synapse.public_baseurl);
+          homeserverUrl = mkIf matrix-synapse.enable (mkOptionDefault matrix-synapse.settings.public_baseurl);
           registration = {
             senderLocalpart = mkDefaultOverride "heisenbridge";
             port = mkDefaultOverride config.listen.port;
@@ -994,8 +994,8 @@ in {
         };
         config = {
           homeserver = mkIf matrix-synapse.enable {
-            address = mkOptionDefault matrix-synapse.settings.public_baseurl or matrix-synapse.public_baseurl;
-            domain = mkOptionDefault matrix-synapse.settings.server_name or matrix-synapse.server_name;
+            address = mkOptionDefault matrix-synapse.settings.public_baseurl;
+            domain = mkOptionDefault matrix-synapse.settings.server_name;
           };
           database.type = mkDefaultOverride "sqlite3";
           appservice.database.uri = mkMerge [
@@ -1380,11 +1380,11 @@ in {
         };
         config = {
           provisioning.whitelist = mkIf matrix-synapse.enable (mkDefault [
-            "@.*:${escapeRegex matrix-synapse.settings.server_name or matrix-synapse.server_name}"
+            "@.*:${escapeRegex matrix-synapse.settings.server_name}"
           ]);
           bridge = mkIf matrix-synapse.enable {
-            homeserverUrl = mkOptionDefault matrix-synapse.settings.public_baseurl or matrix-synapse.public_baseurl;
-            domain = mkOptionDefault matrix-synapse.settings.server_name or matrix-synapse.server_name;
+            homeserverUrl = mkOptionDefault matrix-synapse.settings.public_baseurl;
+            domain = mkOptionDefault matrix-synapse.settings.server_name;
           };
           registration = {
             host = mkDefaultOverride config.bridge.bindAddress;

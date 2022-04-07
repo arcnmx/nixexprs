@@ -194,11 +194,9 @@ let
       bind_addresses = singleton config.binding.out.address;
     };
   };
-  serviceMatrixSynapse = { pkgs, config, options, lib, ... }: with lib; let
+  serviceMatrixSynapse = { config, options, lib, ... }: with lib; let
     opts = options.services.matrix-synapse;
     cfg = config.services.matrix-synapse;
-    arc = import ../../canon.nix { inherit pkgs; };
-    isNixpkgsStable = lib.isNixpkgsStable or arc.lib.isNixpkgsStable;
   in {
     options.services.matrix-synapse = {
       domains = {
@@ -215,18 +213,14 @@ let
       };
     };
     config = {
-      services.matrix-synapse = let
+      services.matrix-synapse = {
         settings = {
           server_name = mkIf opts.domains.discovery.isDefined (mkDefault cfg.domains.discovery.fqdn);
           public_baseurl = mkIf opts.domains.public.isDefined (mkDefault cfg.domains.public.url);
           listeners = mkIf (cfg.domains.listeners != { }) (mapAttrsToList (_: listener: {
-            inherit (listener) port type tls x_forwarded resources;
-            ${if isNixpkgsStable then null else "bind_addresses"} = listener.bind_addresses;
-            ${if isNixpkgsStable then "bind_address" else null} = head listener.bind_addresses;
+            inherit (listener) port bind_addresses type tls x_forwarded resources;
           }) cfg.domains.listeners);
         };
-      in if isNixpkgsStable then settings else {
-        inherit settings;
       };
       networking.enabledBindings = mkIf cfg.enable (mkMerge (mapAttrsToList (_: l:
         mkIf l.hasBinding [ l.binding ]
