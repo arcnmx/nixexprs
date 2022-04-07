@@ -573,17 +573,25 @@ let
       };
     });
 
-    xkeyboard-config-arc = { xkeyboard_config, fetchpatch, utilmacros, autoreconfHook }: xkeyboard_config.overrideAttrs (old: rec {
+    xkeyboard-config-arc = { xkeyboard_config, fetchpatch, utilmacros, autoreconfHook, nix-gitignore }: xkeyboard_config.overrideAttrs (old: rec {
       pname = "xkeyboard-config-arc";
-      #name = "${pname}-${old.version}";
       patches = old.patches or [ ] ++ [
         (fetchpatch {
-          url = "https://github.com/arcnmx/xkeyboard-config/commit/e6178ff48d0687d730b069fe908b526cbb6bcee8.patch";
-          sha256 = "0v8akjczsbk2mv20c5hbq1g2ppy8gsklrypyfacc5rjxqbqpx0d9";
+          url = "https://github.com/arcnmx/xkeyboard-config/commit/e521f4435f62029f4246ca2c4851321dda962c39.patch";
+          sha256 = "0jzwdi8fy4mjw5752nfykpi29is5w5x56bz7fd3i752ybaqhl51s";
         })
       ];
 
       nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ autoreconfHook utilmacros ];
+
+      /*src = nix-gitignore.gitignoreSourcePure [ /home/arc/projects/fork/xkeyboard-config/.gitignore ''
+        *.nix
+        .git
+      '' ] /home/arc/projects/fork/xkeyboard-config;
+
+      preBuild = ''
+        patchShebangs rules/compat/*.py
+      '';*/
     });
 
     mosh-client = { mosh, stdenvNoCC }: stdenvNoCC.mkDerivation {
