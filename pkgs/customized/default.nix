@@ -354,8 +354,8 @@ let
       src = fetchFromGitHub {
         owner = "mortie";
         repo = "swaylock-effects";
-        rev = "5cb9579faaf5662b111f5722311b701eff1c1d00";
-        sha256 = "036dkhfqgk7g9vbr5pxgrs66h5fz0rwdsc67i1w51aa9v01r35ca";
+        rev = "a8fc557b86e70f2f7a30ca9ff9b3124f89e7f204";
+        sha256 = "0f9571blnn7lg317js1j1spc5smz69i5aw6zkhskkm5m633rrpqq";
       };
 
       patches = [
