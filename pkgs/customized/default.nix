@@ -495,6 +495,11 @@ let
         name = "qemu-cpu-pinning.patch";
         url = "https://github.com/64kramsystem/qemu-pinning/commit/851970fe429b9ff8c24e935864bb8e7c235b1187.patch";
         sha256 = "1732rxx1wsrx9nycpja4ixxhqn9sxv9sgdgylgqqybbzcl716hkg";
+      }) ++ lib.optional (qemu.version == "7.0.0") (fetchpatch {
+        # https://gitlab.com/qemu-project/qemu/-/issues/997
+        name = "iothread-spin.patch";
+        url = "https://github.com/arcnmx/qemu/commit/fd3a94d18d8a8133ccdeb7048e8da7e84ce232db.patch";
+        sha256 = "0rqprr1p9b7r07q9gr14y6z4i11nx7lr9x9ggci1lrwm89kj14nw";
       }) ++ lib.singleton (fetchpatch {
         name = "qemu-smb-symlinks.patch";
         url = "https://github.com/64kramsystem/qemu-pinning/commit/646a58799e0791c4074148a21d57786f100b7076.patch";
