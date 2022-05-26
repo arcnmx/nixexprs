@@ -54,7 +54,7 @@ in {
       };
     };
     experimentalFeatures = mkOption {
-      type = with types; listOf (enum [ "nix-command" "flakes" "ca-derivations" "recursive-nix" "no-url-literals" ]);
+      type = with types; listOf (enum [ "nix-command" "flakes" "ca-derivations" "impure-derivations" "recursive-nix" "no-url-literals" ]);
       default = [ ];
     };
   };
