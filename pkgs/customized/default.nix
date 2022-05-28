@@ -428,7 +428,7 @@ let
           else if patchVersion == "0.22.6" then "16fzj27m9xyh3aqnmfgwrbfr4rcljw7z7vdszlfgq8zj1z8zrdir"
           else if patchVersion == "0.22.7" then "1way27q3m9zzps2wkmjsqk22grp727fzky7ds30gdnzn4dygbcrp"
           else if patchVersion == "0.22.10" then "14sndl4b8zaf7l8ia4n6qq6l4iq5d9h7f495p0dzchw6ck536nhq"
-          else if patchVersion == "0.23.2" then "06dhl23n18ki6amplsqk5wf82l6j7criygfqksfwrn1j8k4m5drv"
+          else if patchVersion == "0.23.2" then "sha256-rFN/w/V/Mz+IQbkfZf1CD4Gpm4kd9bVwHOZXFOpXBAM"
           else lib.fakeSha256;
       }) ];
 
