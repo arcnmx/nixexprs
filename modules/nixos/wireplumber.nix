@@ -480,10 +480,23 @@ in {
         move = mkOption {
           type = types.bool;
           default = true;
+          description = "moves session items when metadata target.node changes";
         };
         follow = mkOption {
           type = types.bool;
           default = true;
+          description = "moves session items to the default device when it has changed";
+        };
+        filter = {
+          forwardFormat = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              Whether to forward the ports format of filter stream nodes to their
+              associated filter device nodes. This is needed for application to stream
+              surround audio if echo-cancel is enabled.
+            '';
+          };
         };
       };
       duck = {
@@ -546,13 +559,16 @@ in {
       enable = mkEnableOption "Load v4l2 device monitor";
     };
     libcamera = {
-      enable = mkEnableOption "Load libcamera device monitor";
+      enable = mkEnableOption "Load libcamera device monitor" // {
+        default = true;
+      };
       properties = mkOption {
         type = json.types.attrs;
         default = { };
       };
       rules = mkOption {
         type = types.attrsOf alsaRuleType;
+        default = { };
       };
     };
     bluez = {
@@ -717,6 +733,7 @@ in {
         properties = mapAttrs (_: mkOptionDefault) {
           move = cfg.policy.session.move;
           follow = cfg.policy.session.follow;
+          "filter.forward-format" = cfg.policy.session.filter.forwardFormat;
           "audio.no-dsp" = !cfg.policy.session.dsp.enable;
           "duck.level" = cfg.policy.duck.level;
         } // {
@@ -873,8 +890,10 @@ in {
           optionals cfg.access.enable access
         ))
         (
-          optionals cfg.alsa.enable alsa
+          optional (versionAtLeast cfg.package.version "0.4.10") { name = "libwireplumber-module-i18n"; type = "module"; }
+          ++ optionals cfg.alsa.enable alsa
           ++ optionals cfg.v4l2.enable v4l2
+          ++ optionals cfg.libcamera.enable libcamera
           ++ optionals cfg.bluez.enable bluez
         )
         (mkAfter (
