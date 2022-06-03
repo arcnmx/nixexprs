@@ -890,8 +890,7 @@ in {
           optionals cfg.access.enable access
         ))
         (
-          optional (versionAtLeast cfg.package.version "0.4.10") { name = "libwireplumber-module-i18n"; type = "module"; }
-          ++ optionals cfg.alsa.enable alsa
+          optionals cfg.alsa.enable alsa
           ++ optionals cfg.v4l2.enable v4l2
           ++ optionals cfg.libcamera.enable libcamera
           ++ optionals cfg.bluez.enable bluez
