@@ -146,7 +146,7 @@ let
 
     vim_configurable-pynvim = { lib, vim_configurable, python3 }: (vim_configurable.override {
       # vim with python3
-      ${if lib.isNixpkgsUnstable then "python3" else "python"} = python3.withPackages(ps: with ps; [ pynvim ]);
+      python3 = python3.withPackages(ps: with ps; [ pynvim ]);
       wrapPythonDrv = true;
       guiSupport = "no";
       luaSupport = false;
