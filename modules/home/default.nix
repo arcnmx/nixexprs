@@ -26,6 +26,7 @@
   tridactyl = ./tridactyl.nix;
   ncpamixer = ./ncpamixer.nix;
   ncmpcpp = ./ncmpcpp.nix;
+  mpc = ./mpc.nix;
   mpd = ./mpd.nix;
   pulsemixer = ./pulsemixer.nix;
   nix-path = ./nix-path.nix;
@@ -64,7 +65,7 @@
       firefox
       tridactyl
       ncpamixer
-      ncmpcpp
+      ncmpcpp mpc
       mpd
       pulsemixer
       nix-path
