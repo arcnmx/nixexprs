@@ -38,6 +38,7 @@
   xdg = ./xdg.nix;
   watchdog = ./watchdog.nix;
   user = ./user.nix;
+  bindings = ./bindings.nix;
 
   __functionArgs = { };
   __functor = self: { ... }: {
@@ -76,6 +77,7 @@
       xdg
       watchdog
       user
+      bindings
     ];
   };
 }
