@@ -15,6 +15,10 @@ in {
     host = mkOption {
       type = types.str;
     };
+    address = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+    };
     extraUrlArgs = mkOption {
       type = types.attrsOf types.unspecified;
       default = { };
@@ -33,9 +37,12 @@ in {
       inherit (config.binding) protocol port explicitPort;
       isUrl = config.binding.ipProtocol != "unix";
     } // config.extraUrlArgs);
-    host = if config.binding.isLocal && (config.binding.isWildcard || !config.binding.isAddress)
-      then localaddr.${config.binding.ipProtocol}
-      else config.address;
+    host =
+      if config.address != null then config.address
+      else if config.binding.isLocal && (config.binding.isWildcard || !config.binding.isAddress)
+        then localaddr.${config.binding.ipProtocol}
+      else if config.binding.isAddress then config.binding.address
+      else throw "unknown address for binding ${config.binding.name}";
   in {
     url = mkOptionDefault (if config.binding.ipProtocol == "unix" then config.address else url);
     host = mkOptionDefault host;
