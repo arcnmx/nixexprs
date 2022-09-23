@@ -37,6 +37,7 @@
   swaylock = ./swaylock.nix;
   xdg = ./xdg.nix;
   watchdog = ./watchdog.nix;
+  user = ./user.nix;
 
   __functionArgs = { };
   __functor = self: { ... }: {
@@ -74,6 +75,7 @@
       swaylock
       xdg
       watchdog
+      user
     ];
   };
 }
