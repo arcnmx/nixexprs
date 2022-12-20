@@ -101,7 +101,9 @@
           then "%2Frun%2Fpostgresql"
           else config.database.host;
       in mkOptionDefault "postgres://${config.database.user}${pw}@${host}/${config.database.name}";
-      setSystemdService = {
+      setSystemdService = let
+        localMatrix = matrix-synapse.enable && matrix-synapse.appservices.${name}.enable;
+      in rec {
         serviceConfig = mkMerge [ {
           ExecStart = config.cmdline;
           WorkingDirectory = config.dataDir;
@@ -110,9 +112,10 @@
           User = config.user;
           Group = config.group;
         }) ];
-        requisite = mkIf (matrix-synapse.enable && matrix-synapse.appservices.${name}.enable) [ "matrix-synapse.service" ];
-        wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
+        requisite = mkIf localMatrix [ "matrix-synapse.service" ];
+        wantedBy = if !localMatrix then [ "multi-user.target" ] else requisite;
+        bindsTo = requisite;
+        after = [ "network.target" "matrix-synapse.service" ];
         preStart = ''
           ${config.registration.configuration.out.generate}
         '';
