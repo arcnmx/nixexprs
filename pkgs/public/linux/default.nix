@@ -120,35 +120,6 @@ let
       meta.platforms = lib.platforms.linux;
     };
 
-    rtl8189es = { stdenv, lib, fetchFromGitHub, linux }: stdenv.mkDerivation rec {
-      version = "2021-10-01";
-      pname = let
-        pname = "rtl8189es";
-        kernel-name = builtins.tryEval "${pname}-${linux.version}";
-      in if kernel-name.success then kernel-name.value else pname;
-
-      src = fetchFromGitHub {
-        owner = "jwrdegoede";
-        repo = "rtl8189ES_linux";
-        rev = "be378f47055da1bae42ff6ec1d62f1a5052ef097";
-        sha256 = "1szayxl5chvmylcla13s9dnfwd0g2k6zmn5bp7m1in5igganlpzv";
-      };
-      sourceRoot = "source";
-
-      kernelVersion = linux.modDirVersion;
-      modules = [ "8189es" ];
-      makeFlags = kernelMakeFlags linux ++ [
-        "CONFIG_RTL8189ES=m"
-      ];
-      enableParallelBuilding = true;
-
-      installPhase = ''
-        install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/net/wireless 8189es.ko
-      '';
-
-      meta.platforms = lib.platforms.linux;
-    };
-
     nvidia-patch = { stdenvNoCC, fetchFromGitHub, fetchpatch, writeShellScriptBin, lib, lndir, nvidia_x11 ? linuxPackages.nvidia_x11, linuxPackages ? { } }: let
       nvpatch = writeShellScriptBin "nvpatch" ''
         set -eu
