@@ -11,7 +11,7 @@ buildPythonPackage rec {
     webcolors
     atomicwrites
     attrs
-    Logbook
+    pythonPackages.logbook or pythonPackages.Logbook
     pygments
     requests
     python_magic
@@ -26,7 +26,12 @@ buildPythonPackage rec {
     }))
   ] ++ lib.optional (pythonOlder "3.5") typing
   ++ lib.optional (pythonOlder "3.2") future
-  ++ lib.optional (pythonAtLeast "3.5") aiohttp;
+  ++ lib.optional (pythonAtLeast "3.5") aiohttp
+  ++ lib.optionals enableOlm [
+    cachetools
+    python-olm
+    peewee
+  ];
 
   passAsFile = [ "setup" ];
   setup = ''
