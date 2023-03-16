@@ -31,4 +31,8 @@
       packages.namespace = [ name ]; # TODO: this is just to work around a bug, really?
     };
   };
+  nixConfig = {
+    extra-substituters = [ "https://arc.cachix.org" ];
+    extra-trusted-public-keys = [ "arc.cachix.org-1:DZmhclLkB6UO0rc0rBzNpwFbbaeLfyn+fYccuAy7YVY=" ];
+  };
 }
