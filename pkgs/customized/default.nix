@@ -35,6 +35,10 @@ let
         name = "json-uescape.patch";
         url = "https://github.com/nixos/nix/commit/52a8f9295b828872586c5b9e5587064a25dae9b2.patch";
         sha256 = "1dby05qwzxgiih6h2ka424qd7ia4krwxl4b8h96frv2v304lnrxl";
+      }) ++ lib.optional (lib.versionAtLeast nix.version "2.13.0" && lib.versionOlder nix.version "2.14.0") (fetchurl {
+        name = "fix-cmd-completion.patch";
+        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nix/pull/7804.patch";
+        sha256 = "sha256-y/eBqiHB6j3oUBOACWpT+6XEiejVUCqkiT/bpNeIPlQ";
       });
       EDITLINE_LIBS = "${readline}/lib/libreadline${nix.stdenv.hostPlatform.extensions.sharedLibrary}";
       EDITLINE_CFLAGS = "-DREADLINE";
