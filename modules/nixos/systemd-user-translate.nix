@@ -111,7 +111,7 @@
     systemctl-user = pkgs.writeShellScript "systemctl-user-translate" ''
       SYSU_STATUS=$(${systemctl} --user --wait is-system-running)
       case $SYSU_STATUS in
-        active|degraded)
+        active|running|degraded)
           ${systemctl} --user --no-block "$1" "$2"
           ;;
         *)
