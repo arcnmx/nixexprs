@@ -55,8 +55,8 @@
     };
 
     patches = let
-      fixrev = "a5b99eab821220d3803afb48eeb493dbfa3acccd";
-      sha256 = "04k38crya59sz6kk3cr7rbv9hdxq4vyc1nmmrqvisg3c5rp3spcr";
+      fixrev = "d67f36d01890b042f084e60f4f3b61e0803ada5b";
+      sha256 = "sha256-IIiaMDd4eSag2MGcpmOy5A97kZ/f4xXfI0EEHeh5TrA=";
     in [ (fetchurl {
       name = "weechat-vimode-arc.patch";
       url = "https://github.com/GermainZ/weechat-vimode/compare/GermainZ:${rev}...arcnmx:${fixrev}.diff";
