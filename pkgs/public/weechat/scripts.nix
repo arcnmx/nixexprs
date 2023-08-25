@@ -7,7 +7,7 @@
   };
   autoconf = { buildWeechatScript }: buildWeechatScript {
     pname = "autoconf.py";
-    version = "0.3";
+    version = "0.4";
     sha256 = "122krj58hvsn7z6221ra7f1l5h6xa4g0dsdsrxzwkvkq83j01f00";
   };
   emoji = { buildWeechatScript }: buildWeechatScript {
