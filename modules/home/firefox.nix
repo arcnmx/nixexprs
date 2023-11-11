@@ -1,4 +1,5 @@
 { config, pkgs, lib, ... }: with lib; let
+  homeConfig = config;
   cfg = config.programs.firefox;
   wrapperConfig = cfg.wrapperConfig;
   wrapped = cfg.wrapper cfg.packageUnwrapped cfg.wrapperConfig;
@@ -48,6 +49,10 @@
         type = listOf (attrsOf (oneOf [ str bool int ]));
         default = [ ];
       };
+      importBukuBookmarks = mkOption {
+        type = bool;
+        default = false;
+      };
     };
 
     config = {
@@ -75,6 +80,26 @@
         identities
         (mkAfter [ webextStorage ])
       ]);
+      bookmarks = let
+        inherit (homeConfig.programs) buku;
+        bukuFolders = mapAttrs (_: folder: {
+          inherit (folder) tag name;
+          bookmarks = filter (bookmark: elem folder.tag bookmark.tags) (attrValues buku.bookmarks);
+        }) buku.folders;
+        topLevelBookmarks = filter (bookmark: ! any (folder: elem folder.tag bookmark.tags) (attrValues bukuFolders)) (attrValues buku.bookmarks);
+        bukuImport = bookmark: {
+          name = bookmark.title;
+          tags = attrNames (removeAttrs (genAttrs bookmark.tags id) (attrNames bukuFolders));
+          inherit (bookmark) url;
+        };
+        bookmarks = mkMerge [
+          (mapAttrs (folder: { name, bookmarks, ... }: {
+            inherit name;
+            bookmarks = map bukuImport bookmarks;
+          }) bukuFolders)
+          (map bukuImport topLevelBookmarks)
+        ];
+      in mkIf config.importBukuBookmarks bookmarks;
     };
   };
 in {
