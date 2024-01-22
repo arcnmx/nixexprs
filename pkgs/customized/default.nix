@@ -346,16 +346,6 @@ let
       };
     });
 
-    picom-next = { picom, fetchFromGitHub, lib }: picom.overrideAttrs (old: {
-      version = "2021-04-13";
-      src = fetchFromGitHub {
-        owner = "yshui";
-        repo = "picom";
-        rev = "7ba87598c177092a775d5e8e4393cb68518edaac";
-        sha256 = "0za3ywdn27dzp7140cpg1imbqpbflpzgarr76xaqmijz97rv1909";
-      };
-    });
-
     luakit-develop = { fetchFromGitHub, luakit, lib }: luakit.overrideAttrs (old: rec {
       pname = "luakit-develop";
       version = "2021-03-23";
