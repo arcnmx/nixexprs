@@ -385,7 +385,6 @@ let
     electrum-cli = { lib, electrum }: let
       electrum-cli = electrum.override { enableQt = false; };
     in electrum-cli.overrideAttrs (old: {
-      ${if lib.isNixpkgsUnstable then "buildInputs" else null} = [ ];
       meta = old.meta // {
         broken = old.meta.broken or false || electrum.stdenv.isDarwin;
       };
