@@ -587,5 +587,28 @@ let
         ln -s $mosh/bin/mosh $mosh/bin/mosh-client $out/bin/
       '';
     };
+
+    kanidm-develop = { lib, rustPlatform, fetchFromGitHub, kanidm }: rustPlatform.buildRustPackage rec {
+      inherit (kanidm) pname KANIDM_BUILD_PROFILE postPatch nativeBuildInputs buildInputs postBuild preFixup meta;
+      version = "2024-01-21";
+      src = fetchFromGitHub {
+        owner = "kanidm";
+        repo = "kanidm";
+        rev = "eaafa9a6856342fc01ad112828bdf40e6759323d";
+        sha256 = "sha256-fqt9VPvvpFMOos+Qt7BPz+F+zOnaIA/CNMtlnlY/0nc=";
+      };
+      patches = [ ];
+      doCheck = false;
+      cargoLock = {
+        lockFile = "${src}/Cargo.lock";
+        outputHashes = {
+          "base64urlsafedata-0.1.3" = "sha256-lYVWuKqF4c34LpFmTIg98TEXIlP4dHen0XkGnLOiq8Q=";
+          "sshkeys-0.3.2" = "sha256-CNG9HW8kSwezAdIYW+CR5rqFfmuso4R0+m4OpIyXbSM=";
+        };
+      };
+      passthru = kanidm.passthru or { } // {
+        ci.skip = if lib.isNixpkgsStable then "stable" else false;
+      };
+    };
   };
 in packages
