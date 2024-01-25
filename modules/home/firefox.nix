@@ -1,12 +1,7 @@
 { config, pkgs, lib, ... }: with lib; let
   homeConfig = config;
   cfg = config.programs.firefox;
-  wrapperConfig = cfg.wrapperConfig;
   wrapped = cfg.wrapper cfg.packageUnwrapped cfg.wrapperConfig;
-  package' = wrapped // {
-    # HACK: work around https://github.com/nix-community/home-manager/issues/1962
-    override = _: package';
-  };
   firefoxConfigPath = if pkgs.hostPlatform.isDarwin then "Library/Application Support/Firefox" else ".mozilla/firefox";
   profilesPath = firefoxConfigPath + optionalString pkgs.hostPlatform.isDarwin "/Profiles";
   profileType = { config, ... }: {
@@ -137,12 +132,9 @@ in {
   };
   config = mkIf cfg.enable {
     programs.firefox = {
-      package = mkDefault package';
-      wrapperConfig = {
-        cfg = {
-          enableGnomeExtensions = mkOptionDefault cfg.enableGnomeExtensions;
-        };
-      };
+      package = mkIf (cfg.wrapperConfig != { }) (
+        mkDefault wrapped
+      );
     };
     home.file = mkMerge (flip mapAttrsToList cfg.profiles (_: profile: {
       "${profilesPath}/${profile.path}/containers.json" = mkIf (profile.containersIdentities != [ ]) {
