@@ -564,6 +564,33 @@ let
       };
     });
 
+    pfsshell-develop = { pfsshell, pkg-config, fuse, fetchpatch, fetchFromGitHub, lib, enableFuse ? true }: pfsshell.overrideAttrs (old: {
+      version = "2023-10-03";
+
+      src = fetchFromGitHub {
+        owner = "ps2homebrew";
+        repo = "pfsshell";
+        rev = "57af531b43026ccadaf531097c8936e188953035";
+        sha256 = "sha256-M5MpSZwe3AB+p5zeM+VT4ChkL7JWhmI7h+EFFWpOTiQ=";
+      };
+
+      patches = [
+        (fetchpatch {
+          name = "stdin-eof.patch";
+          url = "https://github.com/ps2homebrew/pfsshell/pull/48/commits/4a631358e8e195756697015917c2faa4ade867b6.patch";
+          sha256 = "sha256-nRBxCsu/CM/VDQ7k7g4nBDgGBqI2gabkwff4gA9dZT0=";
+        })
+      ];
+
+      nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [
+        pkg-config
+      ];
+      buildInputs = old.buildInputs or [ ]
+        ++ lib.optional enableFuse fuse;
+      mesonFlags = old.mesonFlags or [ ]
+        ++ lib.optional enableFuse "-Denable_pfsfuse=true";
+    });
+
     xkeyboard-config-arc = { xkeyboard_config, fetchpatch, utilmacros, autoreconfHook }: xkeyboard_config.overrideAttrs (old: rec {
       pname = "xkeyboard-config-arc";
       #name = "${pname}-${old.version}";
@@ -590,29 +617,6 @@ let
         ln -s $mosh/share $out/
         ln -s $mosh/bin/mosh $mosh/bin/mosh-client $out/bin/
       '';
-    };
-
-    kanidm-develop = { lib, rustPlatform, fetchFromGitHub, kanidm }: rustPlatform.buildRustPackage rec {
-      inherit (kanidm) pname KANIDM_BUILD_PROFILE postPatch nativeBuildInputs buildInputs postBuild preFixup meta;
-      version = "2024-01-21";
-      src = fetchFromGitHub {
-        owner = "kanidm";
-        repo = "kanidm";
-        rev = "eaafa9a6856342fc01ad112828bdf40e6759323d";
-        sha256 = "sha256-fqt9VPvvpFMOos+Qt7BPz+F+zOnaIA/CNMtlnlY/0nc=";
-      };
-      patches = [ ];
-      doCheck = false;
-      cargoLock = {
-        lockFile = "${src}/Cargo.lock";
-        outputHashes = {
-          "base64urlsafedata-0.1.3" = "sha256-lYVWuKqF4c34LpFmTIg98TEXIlP4dHen0XkGnLOiq8Q=";
-          "sshkeys-0.3.2" = "sha256-CNG9HW8kSwezAdIYW+CR5rqFfmuso4R0+m4OpIyXbSM=";
-        };
-      };
-      passthru = kanidm.passthru or { } // {
-        ci.skip = if lib.isNixpkgsStable then "stable" else false;
-      };
     };
   };
 in packages
