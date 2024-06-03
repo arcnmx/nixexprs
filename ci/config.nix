@@ -104,7 +104,8 @@ in {
       channels.nixpkgs.version = "unstable-small";
       warn = true;
     };
-    unstable-nixpkgs = {
+    # XXX: fails due to: nixpkgs-24.11preXXXXXX.XXXXXXXXXXXX/lib/tests/modules/declare-bare-submodule-deep-option.nix in tarball has unsupported file type
+    unstable-nixpkgs = mkIf false {
       system = "x86_64-linux";
       channels.nixpkgs.version = "nixpkgs-unstable";
       warn = true;
