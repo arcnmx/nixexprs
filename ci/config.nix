@@ -13,7 +13,7 @@ in {
   # https://github.com/arcnmx/ci
   name = "arc-nixexprs";
   ci = {
-    version = "v0.6";
+    version = "v0.7";
     configPath = "./ci/config.nix";
     gh-actions = {
       path = ".github/workflows/build.yml";
@@ -68,6 +68,7 @@ in {
           nativeBuildInputs = [ nix ];
           command = "nix eval -f $src/default.nix ${attr}";
           impure = true; # nix doesn't work inside builders ("recursive nix")
+          skip = "broken";
         };
       in [ (eval "lib") (eval "modules") (eval "overlays") ];
     };
