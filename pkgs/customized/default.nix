@@ -384,11 +384,14 @@ let
       ];
     });
 
-    electrum-cli = { lib, electrum, python3Packages }: let
-      electrum-cli = electrum.override { enableQt = false; };
+    electrum-cli = { lib, electrum, python3Packages, python311Packages ? python3Packages }: let
+      electrum-cli = electrum.override {
+        enableQt = false;
+        python3 = python311Packages.python;
+      };
     in electrum-cli.overridePythonAttrs (old: {
       propagatedBuildInputs = old.propagatedBuildInputs
-        ++ lib.optional (lib.versionOlder electrum.version "4.5.3") python3Packages.pyperclip;
+        ++ lib.optional (lib.versionOlder electrum.version "4.5.3") python311Packages.pyperclip;
 
       # work around nixpkgs breakage
       doCheck = false;
