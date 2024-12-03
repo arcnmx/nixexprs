@@ -11,9 +11,9 @@ let
     });
 
     nix-readline = { nix, readline, fetchurl, lib }: let
-      drv = nix.override {
+      drv = if nix ? override then nix.override {
         editline = null;
-      };
+      } else nix;
     patches = version: lib.optional (lib.versionOlder version "2.9") [
       (fetchurl {
         name = "readline-completion.patch";
@@ -47,6 +47,7 @@ let
     };
     in drv.overrideAttrs (old: {
       pname = "nix-readline";
+      name = "nix-readline-${old.version}";
       buildInputs = old.buildInputs ++ [ readline ];
       patches = old.patches or [] ++ patches old.version;
       EDITLINE_LIBS = "${readline}/lib/libreadline${nix.stdenv.hostPlatform.extensions.sharedLibrary}";
@@ -60,9 +61,24 @@ let
       nix = nix_2_3;
     };
 
-    nix-readline-2_19 = { nix-readline, nix_2_19 ? nixVersions.nix_2_19 or nixVersions.nix_2_18 or nix, nixVersions ? {}, nix }: nix-readline.override {
-      nix = nix_2_19;
-    };
+    nix-readline-2_19 = { nix-readline, nix_2_19 ? nixVersions.nix_2_19 or nixVersions.nix_2_18 or nix, nixVersions ? {}, nix, lib }: let
+      # every single nix version was removed from nixpkgs in 25.04, so base it off the flake instead for now...
+      nixAvailable = lib.isNixpkgsStable or true && (builtins.tryEval nix_2_19.meta.available).value;
+      rev-2_19_7 = "185a92ba6cae0a514b74c3630a6a06431b66dee1";
+      nixFlake = builtins.getFlake "github:NixOS/nix/${rev-2_19_7}";
+      inherit (nix-readline.stdenv) system;
+      nixFlakePackages = nixFlake.outputs.packages.${system};
+      nixFlakeNixpkgs = nixFlake.inputs.nixpkgs.legacyPackages.${system};
+      nixFlakePackage = nixFlakePackages.nix.overrideAttrs (old: {
+        buildInputs = builtins.filter (p: p.pname or null != "editline") old.buildInputs;
+      });
+      overrideArgs = if nixAvailable then {
+        nix = nix_2_19;
+      } else {
+        nix = nixFlakePackage;
+        readline = nixFlakeNixpkgs.readline;
+      };
+    in nix-readline.override overrideArgs;
 
     rink-readline = { lib, rink, rustPlatform, fetchpatch }: rustPlatform.buildRustPackage {
       pname = "${rink.pname}-readline";
