@@ -1,43 +1,6 @@
 { lib, pythonPackages, weechat-matrix, fetchFromGitHub, enableOlm ? true }:
 
-with pythonPackages; let
-
-  matrix-nio-0_21 = (pythonPackages.matrix-nio.override {
-    logbook = null;
-  }).overridePythonAttrs (old: rec {
-    version = "0.21.2";
-    src = fetchFromGitHub {
-      owner = "poljar";
-      repo = "matrix-nio";
-      rev = version;
-      sha256 = "sha256-eK5DPmPZ/hv3i3lzoIuS9sJXKpUNhmBv4+Nw2u/RZi0=";
-    };
-  });
-  matrix-nio-0_24 = pythonPackages.matrix-nio.override {
-    aiohttp-socks = pythonPackages.aiohttp-socks.overridePythonAttrs (old: rec {
-      version = "0.8.4";
-      src = fetchPypi {
-        inherit version;
-        pname = "aiohttp_socks";
-        hash = "sha256-a2EdTOg46c8sL+1eDbpEfMhIJKbLqV3FdHYGIB2kbLQ=";
-      };
-    });
-  };
-  matrix-nio = if lib.versionOlder pythonPackages.matrix-nio.version "0.21"
-    then matrix-nio-0_21
-    else if lib.isNixpkgsStable
-    then pythonPackages.matrix-nio.overridePythonAttrs (old: {
-      nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [
-        pythonRelaxDepsHook
-      ];
-      pythonRelaxDeps = [
-        "cachetools"
-      ];
-    }) else if pythonPackages.matrix-nio.version == "0.24.0" && lib.versionAtLeast pythonPackages.aiohttp-socks.version "0.9"
-    then matrix-nio-0_24
-    else pythonPackages.matrix-nio;
-
-in buildPythonPackage rec {
+with pythonPackages; buildPythonPackage rec {
   pname = "weechat-matrix";
   version = "2023.07.23";
   src = fetchFromGitHub {
