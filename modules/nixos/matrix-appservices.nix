@@ -686,7 +686,7 @@ in {
             };
             permissions = mkMerge [
               {
-                "*" = "relaybot";
+                #"*" = "relaybot"; # invalid permission level, where did this come from?
               }
               (mkIf matrix-synapse.enable {
                 ${matrix-synapse.settings.server_name} = mkOptionDefault "user";
