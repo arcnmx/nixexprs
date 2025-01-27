@@ -395,6 +395,9 @@ let
       };
       enableParallelBuilding = true;
       patches = old.patches or [] ++ [ ./luakit-nodoc.patch ];
+      passthru = old.passthru or { } // {
+        ci.skip = "unmaintained";
+      };
       meta = old.meta // {
         broken = old.meta.broken or false || luakit.stdenv.isDarwin;
       };
