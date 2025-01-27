@@ -29,6 +29,11 @@ in myNodePackages.package.override {
   nativeBuildInputs = [ nodejs.pkgs.node-pre-gyp pkg-config ];
   buildInputs = [ libjpeg vips pixman cairo pango ];
 
+  preRebuild = ''
+    substituteInPlace node_modules/@discordjs/opus/deps/binding.gyp \
+      --replace-fail '"cflags": [' '"cflags": ["-Wno-incompatible-pointer-types","-Wno-implicit-function-declaration",'
+  '';
+
   postInstall = ''
     # Patch shebangs in node_modules, otherwise the webpack build fails with interpreter problems
     patchShebangs --build "$out/lib/node_modules/mx-puppet-discord/node_modules/"
