@@ -82,10 +82,19 @@ let
 
       outputs = [ "bin" "out" ];
 
+      postPatch = lib.optionalString (lib.versionAtLeast linux.version "6.13") ''
+        substituteInPlace Makefile \
+          --replace '$(TARGET).o:' '$(TARGET).ko:'
+      '';
+
       installPhase = ''
+        runHook preInstall
+
         install -Dm644 -t $out/lib/modules/$kernelVersion/kernel/drivers/video/fbdev/ forcefully_remove_bootfb.ko
         install -Dm755 forcefully_remove_bootfb.sh $bin/bin/forcefully-remove-bootfb
         wrapProgram $bin/bin/forcefully-remove-bootfb --prefix PATH : $shellPath
+
+        runHook postInstall
       '';
 
       dontStrip = true;
