@@ -1,7 +1,7 @@
 let
   mergeLinuxConfig = { wrapShellScriptBin, fetchurl, stdenvNoCC, makeWrapper, bash, lib, coreutils, gnused, gnugrep, gnumake, flex ? null, bison ? null }: let
     src = fetchurl {
-      url = https://github.com/torvalds/linux/raw/v5.0/scripts/kconfig/merge_config.sh;
+      url = "https://github.com/torvalds/linux/raw/v5.0/scripts/kconfig/merge_config.sh";
       sha256 = "063v44ffcs24x0ywj4xklglkvm62n2m690gd9pdj00wpbz7z3hni";
     };
   in wrapShellScriptBin "merge_config.sh" src {
