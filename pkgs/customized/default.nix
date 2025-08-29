@@ -63,7 +63,7 @@ let
 
     nix-readline-2_19 = { nix-readline, nix_2_19 ? nixVersions.nix_2_19 or nixVersions.nix_2_18 or nix, nixVersions ? {}, nix, lib }: let
       # every single nix version was removed from nixpkgs in 25.04, so base it off the flake instead for now...
-      nixAvailable = lib.isNixpkgsStable or true && (builtins.tryEval nix_2_19.meta.available).value;
+      nixAvailable = (builtins.tryEval nix_2_19.meta.available).value;
       rev-2_19_7 = "185a92ba6cae0a514b74c3630a6a06431b66dee1";
       nixFlake = builtins.getFlake "github:NixOS/nix/${rev-2_19_7}";
       inherit (nix-readline.stdenv) system;
