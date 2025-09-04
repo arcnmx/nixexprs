@@ -148,10 +148,10 @@
     ensureDBOwnership = cfg.database.user == cfg.database.name;
     postStart = {
       owner = ''
-        $PSQL -tAc 'ALTER DATABASE "${cfg.database.name}" OWNER TO "${cfg.database.user}"'
+        ''${PSQL-psql} -tAc 'ALTER DATABASE "${cfg.database.name}" OWNER TO "${cfg.database.user}"'
       '';
       ${toString false} = ''
-        $PSQL -tAc 'GRANT ALL PRIVILEGES ON DATABASE "${cfg.database.name}" TO "${cfg.database.user}"'
+        ''${PSQL-psql} -tAc 'GRANT ALL PRIVILEGES ON DATABASE "${cfg.database.name}" TO "${cfg.database.user}"'
       '';
     };
   in mkIf (!ensureDBOwnership && postStart ? ${toString ensurePermissions}) {
