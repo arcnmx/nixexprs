@@ -107,6 +107,10 @@ let
           rev = version;
           hash = "sha256-vhpQT67+849WV1SFthQdUeFnYe/okudTQJoL3y+wXwI=";
         };
+
+        NIX_CFLAGS_COMPILE = old.NIX_CFLAGS_COMPILE or [] ++ [
+          "-Wno-error=incompatible-pointer-types"
+        ];
       });
     in if lib.versionAtLeast wireplumber.version "0.5" then drv else wireplumber;
 
@@ -183,10 +187,6 @@ let
       pname = "notmuch-arc";
 
       doCheck = false;
-
-      patches = old.patches or [ ] ++ [
-        ./notmuch-ruby.patch
-      ];
 
       meta = old.meta or {} // {
         broken = old.meta.broken or false || hostPlatform.isDarwin;
@@ -425,7 +425,6 @@ let
     electrum-cli = { lib, electrum, python3Packages, python311Packages ? python3Packages }: let
       electrum-cli = electrum.override {
         enableQt = false;
-        python3 = python311Packages.python;
       };
     in electrum-cli.overridePythonAttrs (old: {
       ${if old ? propagatedBuildInputs then "propagatedBuildInputs" else null} = old.propagatedBuildInputs
@@ -433,6 +432,9 @@ let
 
       # work around nixpkgs breakage
       doCheck = false;
+      disabledTestPaths = [
+        "tests/test_qml_types.py"
+      ];
 
       meta = old.meta // {
         broken = old.meta.broken or false || electrum.stdenv.isDarwin;

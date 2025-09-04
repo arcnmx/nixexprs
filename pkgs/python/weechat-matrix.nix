@@ -1,6 +1,25 @@
-{ lib, pythonPackages, weechat-matrix, fetchFromGitHub, enableOlm ? true }:
+{ lib, pythonPackages, weechat-matrix, fetchFromGitHub, fetchpatch, enableOlm ? true }: let
 
-with pythonPackages; buildPythonPackage rec {
+  jsonschema = (pythonPackages.jsonschema.override {
+    rpds-py = null;
+  }).overrideAttrs (old: rec {
+    name = "${old.pname}-${version}";
+    version = "4.17.3";
+    src = pythonPackages.jsonschema.src.override {
+      inherit version;
+      hash = "sha256-D4ZEN6uLYHa6ZwdFPvj5imoNUSqA6T+KvbZ29zfstg0=";
+    };
+    propagatedBuildInputs = old.propagatedBuildInputs ++ [
+      pythonPackages.pyrsistent
+    ];
+  });
+  matrix-nio = (pythonPackages.matrix-nio.override {
+    inherit jsonschema;
+    #${if enableOlm then "withOlm" else null} = true;
+  }).overrideAttrs (old: {
+    doInstallCheck = false;
+  });
+in with pythonPackages; buildPythonPackage rec {
   pname = "weechat-matrix";
   version = "2023.07.23";
   src = fetchFromGitHub {
@@ -15,6 +34,7 @@ with pythonPackages; buildPythonPackage rec {
     pip
   ];
   propagatedBuildInputs = [
+    pyrsistent # why isn't this propagated from jsonschema via nio? .-.
     pyopenssl
     webcolors
     atomicwrites
@@ -32,6 +52,25 @@ with pythonPackages; buildPythonPackage rec {
     python-olm
     peewee
   ]);
+
+  patches = [
+    (fetchpatch {
+      # python-future is gone on 3.13
+      # https://github.com/poljar/weechat-matrix/pull/368
+      url = "https://github.com/poljar/weechat-matrix/pull/368.patch";
+      name = "python-future";
+      hash = "sha256-BhOfHfNV9GtCcKTGUy+7ByqJcDxBW/YubHQpHOnVv7Q=";
+    })
+    # conflicts with above patch .-.
+    /*(fetchpatch {
+      # fixes ImportError: PyO3 modules do not yet support subinterpreters
+      # https://github.com/poljar/weechat-matrix/pull/367
+      url = "https://github.com/poljar/weechat-matrix/pull/367.patch";
+      name = "pyopenssl-pyo3";
+      hash = "sha256-pPh/M+BMq5X7WWmUI4fPxyhBn1FNqliQ4VhHSCybD3U=";
+    })*/
+    ./pyopenssl-pyo3.patch
+  ];
 
   passAsFile = [ "setup" ];
   setup = ''

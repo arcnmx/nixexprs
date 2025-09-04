@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitLab, pkgs, lib, nodejs-18_x, nodeEnv, pkg-config, libjpeg
+{ stdenv, fetchFromGitLab, lib, nodejs-18_x, nodeEnv, pkg-config, libjpeg
 , vips, pixman, cairo, pango
 , fetchgit, fetchurl
 }:
@@ -55,5 +55,6 @@ in myNodePackages.package.override {
     license = licenses.asl20;
     homepage = "https://gitlab.com/mx-puppet/mx-puppet-discord";
     platforms = platforms.unix;
+    broken = true;
   };
 }
