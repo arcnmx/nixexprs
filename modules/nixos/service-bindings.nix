@@ -231,7 +231,7 @@ let
     cfg = config.services.vaultwarden;
   in {
     options.services.vaultwarden = {
-      domain = mkOption {
+      bindDomain = mkOption {
         type = types.unspecified;
       };
       bindings = {
@@ -244,12 +244,15 @@ let
       };
     };
     config = {
-      services.vaultwarden.config = {
-        domain = mkIf opts.domain.isDefined (mkDefault cfg.domain.url);
-        rocketPort = mkIf opts.bindings.rocket.isDefined (mkDefault cfg.bindings.rocket.port);
-        rocketAddress = mkIf opts.bindings.rocket.isDefined (mkDefault cfg.bindings.rocket.out.address);
-        websocketPort = mkIf opts.bindings.websocket.isDefined (mkDefault cfg.bindings.websocket.port);
-        websocketAddress = mkIf opts.bindings.websocket.isDefined (mkDefault cfg.bindings.websocket.out.address);
+      services.vaultwarden = {
+        domain = mkIf opts.bindDomain.isDefined (mkDefault cfg.bindDomain.url);
+        config = {
+          domain = mkIf opts.bindDomain.isDefined (mkDefault cfg.bindDomain.url);
+          rocketPort = mkIf opts.bindings.rocket.isDefined (mkDefault cfg.bindings.rocket.port);
+          rocketAddress = mkIf opts.bindings.rocket.isDefined (mkDefault cfg.bindings.rocket.out.address);
+          websocketPort = mkIf opts.bindings.websocket.isDefined (mkDefault cfg.bindings.websocket.port);
+          websocketAddress = mkIf opts.bindings.websocket.isDefined (mkDefault cfg.bindings.websocket.out.address);
+        };
       };
       networking.enabledBindings = mkMerge [
         (mkIf (cfg.enable && opts.bindings.rocket.isDefined) [ cfg.bindings.rocket ])
