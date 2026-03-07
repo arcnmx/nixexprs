@@ -42,7 +42,7 @@ in with pythonPackages; buildPythonPackage rec {
     pythonPackages.logbook or pythonPackages.Logbook
     pygments
     requests
-    python_magic
+    pythonPackages.python-magic or pythonPackages.python_magic
     matrix-nio
   ] ++ lib.optional (pythonOlder "3.5") typing
   ++ lib.optional (pythonOlder "3.2") future
