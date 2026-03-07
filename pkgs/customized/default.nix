@@ -519,7 +519,7 @@ let
       };
     });
 
-    libmpdclient-buffer = { mpd_clientlib, libmpdclient ? mpd_clientlib }: libmpdclient.overrideAttrs (old: {
+    libmpdclient-buffer = { mpd_clientlib ? null, libmpdclient ? mpd_clientlib }: libmpdclient.overrideAttrs (old: {
       pname = "${old.pname}-buffer";
 
       # raise mpd line length limit from 4KB to 32KB
