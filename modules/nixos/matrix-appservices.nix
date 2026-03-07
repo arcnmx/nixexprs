@@ -1599,6 +1599,9 @@ in {
           cmdargs = [
             "-f" config.registration.configuration.path
           ];
+          setSystemdService.serviceConfig.LogFilterPatterns = [
+            "~access_token=.*"
+          ];
         };
       };
     };
