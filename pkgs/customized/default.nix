@@ -103,10 +103,10 @@ let
     wireplumber-0_4 = { wireplumber, lib }: let
       drv = wireplumber.overrideAttrs (old: rec {
         version = "0.4.17";
-        src = old.src.override {
-          rev = version;
+        src = old.src.override (prev: {
+          ${if prev.tag or null != null then "tag" else "rev"} = version;
           hash = "sha256-vhpQT67+849WV1SFthQdUeFnYe/okudTQJoL3y+wXwI=";
-        };
+        });
 
         NIX_CFLAGS_COMPILE = old.NIX_CFLAGS_COMPILE or [] ++ [
           "-Wno-error=incompatible-pointer-types"
