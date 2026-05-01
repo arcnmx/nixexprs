@@ -101,17 +101,19 @@ let
     };
 
     wireplumber-0_4 = { wireplumber, lib }: let
-      drv = wireplumber.overrideAttrs (old: rec {
+      drv = wireplumber.overrideAttrs (old: let
+        env.NIX_CFLAGS_COMPILE = lib.toList (old.env.NIX_CFLAGS_COMPILE or old.NIX_CFLAGS_COMPILE or []) ++ [
+          "-Wno-error=incompatible-pointer-types"
+        ];
         version = "0.4.17";
+      in {
+        inherit version;
         src = old.src.override (prev: {
           ${if prev.tag or null != null then "tag" else "rev"} = version;
           hash = "sha256-vhpQT67+849WV1SFthQdUeFnYe/okudTQJoL3y+wXwI=";
         });
-
-        NIX_CFLAGS_COMPILE = old.NIX_CFLAGS_COMPILE or [] ++ [
-          "-Wno-error=incompatible-pointer-types"
-        ];
-      });
+        ${if old.__structuredAttrs or false then "env" else null} = lib.mapAttrs (_: toString) env;
+      } // lib.optionalAttrs (! old.__structuredAttrs or false) env);
     in if lib.versionAtLeast wireplumber.version "0.5" then drv else wireplumber;
 
     rnnoise-plugin-extern = { rnnoise-plugin
