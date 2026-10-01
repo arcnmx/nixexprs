@@ -144,9 +144,10 @@ in {
     home.file = mkMerge (flip mapAttrsToList cfg.profiles (_: profile: {
       "${profilesPath}/${profile.path}/containers.json" = mkIf (profile.containersIdentities != [ ]) {
         text = mkOverride 75 (builtins.toJSON {
-          version = 5;
+          version = 6;
           lastUserContextId = foldl max 0 (map ({ id, ... }: id) (attrValues profile.containers));
           identities = profile.containersIdentities;
+          siteAssociations = {};
         });
       };
     }));
