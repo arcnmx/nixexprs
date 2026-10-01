@@ -91,7 +91,13 @@
             inherit name;
             bookmarks = map bukuImport bookmarks;
           }) bukuFolders)
-          (map bukuImport topLevelBookmarks)
+          {
+            # TODO: top level should still have some way to add these...
+            unsorted = {
+              name = "unsorted buku";
+              bookmarks = map bukuImport topLevelBookmarks;
+            };
+          }
         ];
       in mkIf config.importBukuBookmarks bookmarks;
     };
